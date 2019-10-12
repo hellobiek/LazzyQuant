@@ -86,6 +86,7 @@ QString makeOptionID(const QString &futureID, OPTION_TYPE type, int exercisePric
         {"CF", "%1%2%3"},
         {"cu", "%1%2%3"},
         {"ru", "%1%2%3"},
+        {"au", "%1%2%3"},
     };
 
     QChar middle = (type == CALL_OPT) ? 'C' : 'P';

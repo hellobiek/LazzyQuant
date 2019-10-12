@@ -71,9 +71,9 @@ const QString SQ[] = {"wr"};
 // 上海期货交易所 (夜盘)              铜,   铝,   锌,   铅,   镍,   锡,   金,   银,螺纹钢,热轧卷板,沥青,天然橡胶.
 const QString SY[] = {"cu", "al", "zn", "pb", "ni", "sn", "au", "ag", "rb", "hc", "bu", "ru", "fu", "sc", "nr", "sp", "ss"};
 // 大连商品交易所                                  玉米, 玉米淀粉, 纤维板,  胶合板, 鸡蛋, 线型低密度聚乙烯, 聚氯乙烯, 聚丙烯.
-const QString DL[] = {"c",  "cs", "fb", "bb", "jd", "l",  "v",  "pp"};
+const QString DL[] = {"fb", "bb", "jd"};
 // 大连商品交易所  (夜盘)          黄大豆1号, 黄大豆2号, 豆粕, 大豆原油, 棕榈油, 冶金焦炭, 焦煤, 铁矿石.
-const QString DY[] = {"a",  "b",  "m",  "y",  "p",  "j",  "jm", "i", "rr", "eb", "eg"};
+const QString DY[] = {"a",  "b",  "c",  "cs", "l",  "v",  "pp", "m",  "y",  "p",  "j",  "jm", "i", "rr", "eb", "eg"};
 // 郑州商品交易所.
 const QString ZZ[] = {"jr", "lr", "pm", "ri", "rs", "sf", "sm", "wh", "ap", "cj", "ur"};
 // 郑州商品交易所 (夜盘)
