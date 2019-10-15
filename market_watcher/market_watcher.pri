@@ -8,7 +8,8 @@ SOURCES *= \
     $$COMMON_FOLDER/trading_calendar.cpp \
     $$COMMON_FOLDER/time_mapper.cpp \
     $$MARKET_WATCHER_FOLDER/market_watcher.cpp \
-    $$MARKET_WATCHER_FOLDER/tick_receiver.cpp
+    $$MARKET_WATCHER_FOLDER/tick_receiver.cpp \
+    $$MARKET_WATCHER_FOLDER/time_validator.cpp
 
 HEADERS *= \
     $$COMMON_FOLDER/market.h \
@@ -17,7 +18,8 @@ HEADERS *= \
     $$COMMON_FOLDER/trading_calendar.h \
     $$COMMON_FOLDER/time_mapper.h \
     $$MARKET_WATCHER_FOLDER/market_watcher.h \
-    $$MARKET_WATCHER_FOLDER/tick_receiver.h
+    $$MARKET_WATCHER_FOLDER/tick_receiver.h \
+    $$MARKET_WATCHER_FOLDER/time_validator.h
 
 INCLUDEPATH *= \
     $$COMMON_FOLDER \

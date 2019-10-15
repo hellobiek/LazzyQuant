@@ -16,6 +16,7 @@ class CTickReceiver;
 struct CThostFtdcDepthMarketDataField;
 struct CONFIG_ITEM;
 class MultipleTimer;
+class TimeValidator;
 
 class MarketWatcher : public QObject {
     Q_OBJECT
@@ -38,8 +39,7 @@ protected:
 
     bool loggedIn = false;
     QSet<QString> subscribeSet;
-    QHash<QString, QList<QPair<QTime, QTime>>> tradingTimeMap;  //!< 各合约交易时间段表.
-    QHash<QString, QVector<qint64>> mappedTimePointLists;       //!< 当前交易日, 各合约交易开始及结束时间点表.
+    QHash<QString, TimeValidator*> timeValidators;
 
     bool saveDepthMarketData;
     QString saveDepthMarketDataPath;
@@ -59,8 +59,7 @@ protected:
 
     void login();
     void subscribe();
-    void setupTradingTimeRanges();
-    void mapTradingTimePoints();
+    void setupTimeValidators();
     void processDepthMarketData(const CThostFtdcDepthMarketDataField &depthMarketDataField);
 
 signals:

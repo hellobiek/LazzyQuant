@@ -2,8 +2,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <algorithm>
-#include <iterator>
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
@@ -18,6 +16,7 @@
 #include "multiple_timer.h"
 #include "market_watcher.h"
 #include "tick_receiver.h"
+#include "time_validator.h"
 
 MarketWatcher::MarketWatcher(const CONFIG_ITEM &config, QObject *parent) :
     QObject(parent),
@@ -37,7 +36,6 @@ MarketWatcher::MarketWatcher(const CONFIG_ITEM &config, QObject *parent) :
     }
 
     subscribeSet = getSettingItemList(settings, "SubscribeList").toSet();
-    setupTradingTimeRanges();
 
     settings->beginGroup("AccountInfo");
     brokerID = settings->value("BrokerID").toByteArray();
@@ -80,7 +78,7 @@ MarketWatcher::MarketWatcher(const CONFIG_ITEM &config, QObject *parent) :
 
 MarketWatcher::~MarketWatcher()
 {
-    qDebug() << "~MarketWatcher()";
+    qDeleteAll(timeValidators);
     pUserApi->Release();
     delete pReceiver;
     delete multiTimer;
@@ -185,7 +183,7 @@ void MarketWatcher::customEvent(QEvent *event)
         if (currentTradingDay != tradingDay) {
             emit tradingDayChanged(tradingDay);
             mapTime.setTradingDay(tradingDay);
-            mapTradingTimePoints();
+            setupTimeValidators();
             currentTradingDay = tradingDay;
         }
     }
@@ -245,32 +243,24 @@ void MarketWatcher::subscribe()
     delete[] subscribe_array;
 }
 
-void MarketWatcher::setupTradingTimeRanges()
+void MarketWatcher::setupTimeValidators()
 {
-    tradingTimeMap.clear();
+    qDeleteAll(timeValidators);
+    timeValidators.clear();
     for (const auto &instrumentID : qAsConst(subscribeSet)) {
-        auto tradingTimeRanges = getTradingTimeRanges(instrumentID);
-        if (tradingTimeRanges.empty()) {
-            qCritical().noquote() << instrumentID << "has no proper trading time!";
-        } else {
-            tradingTimeMap.insert(instrumentID, tradingTimeRanges);
+        const auto tradingTimeRanges = getTradingTimeRanges(instrumentID);
+        QList<qint64> times;
+        for (const auto &tradingTimeRange : tradingTimeRanges) {
+            times << mapTime(tradingTimeRange.first.msecsSinceStartOfDay() / 1000);
+            times << mapTime(tradingTimeRange.second.msecsSinceStartOfDay() / 1000);
         }
-    }
-}
-
-void MarketWatcher::mapTradingTimePoints()
-{
-    mappedTimePointLists.clear();
-    const auto keys = tradingTimeMap.keys();
-    for (const auto &key : keys) {
-        QVector<qint64> mappedTimePoints;
-        const auto tradingTimes = tradingTimeMap.value(key);
-        for (const auto &pair : tradingTimes) {
-            mappedTimePoints.append(mapTime(pair.first.msecsSinceStartOfDay() / 1000));
-            mappedTimePoints.append(mapTime(pair.second.msecsSinceStartOfDay() / 1000));
+        if (times.empty()) {
+            continue;
         }
-        std::sort(mappedTimePoints.begin(), mappedTimePoints.end());
-        mappedTimePointLists.insert(key, mappedTimePoints);
+        std::sort(times.begin(), times.end());
+        const auto endPoints = getEndPoints(instrumentID);
+        TimeValidator *pValidator = new TimeValidator(times.first(), times.last(), endPoints);
+        timeValidators.insert(instrumentID, pValidator);
     }
 }
 
@@ -283,25 +273,14 @@ void MarketWatcher::mapTradingTimePoints()
  *
  * \param depthMarketDataField 深度市场数据.
  */
-void MarketWatcher::processDepthMarketData(const CThostFtdcDepthMarketDataField& depthMarketDataField)
+void MarketWatcher::processDepthMarketData(const CThostFtdcDepthMarketDataField &depthMarketDataField)
 {
     const QString instrumentID(depthMarketDataField.InstrumentID);
-    const auto mappedTimePoints = mappedTimePointLists.value(instrumentID);
+    int time = hhmmssToSec(depthMarketDataField.UpdateTime);
     qint64 mappedTime = 0;
-    if (!mappedTimePoints.empty()) {
-        int time = hhmmssToSec(depthMarketDataField.UpdateTime);
-        mappedTime = mapTime(time);
-        int idx = mappedTimePoints.indexOf(mappedTime);
-        if (idx >= 0) {
-            if (idx % 2 == 1) {
-                mappedTime --;
-            }
-        } else {
-            auto it = std::upper_bound(mappedTimePoints.cbegin(), mappedTimePoints.cend(), mappedTime);
-            if (std::distance(mappedTimePoints.cbegin(), it) % 2 == 0) {
-                mappedTime = 0;
-            }
-        }
+    auto pValidator = timeValidators.value(instrumentID);
+    if (pValidator) {
+        mappedTime = pValidator->validate(time, depthMarketDataField.UpdateMillisec, mapTime(time));
     }
 
     if (mappedTime > 0) {
@@ -385,9 +364,8 @@ void MarketWatcher::subscribeInstruments(const QStringList &instruments, bool up
         }
     }
 
-    setupTradingTimeRanges();
     if (loggedIn) {
-        mapTradingTimePoints();
+        setupTimeValidators();
     }
     setupTimers();
 
