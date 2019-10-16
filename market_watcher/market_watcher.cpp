@@ -370,15 +370,8 @@ void MarketWatcher::subscribeInstruments(const QStringList &instruments, bool up
     setupTimers();
 
     if (updateIni) {
+        QStringList enabledSubscribeList = getSettingItemList(settings, "SubscribeList");
         settings->beginGroup("SubscribeList");
-        const auto subscribeList = settings->childKeys();
-        QStringList enabledSubscribeList;
-        for (const auto &key : subscribeList) {
-            if (settings->value(key).toBool()) {
-                enabledSubscribeList.append(key);
-            }
-        }
-
         for (const auto &instrument : instruments) {
             if (!enabledSubscribeList.contains(instrument)) {
                 settings->setValue(instrument, "1");

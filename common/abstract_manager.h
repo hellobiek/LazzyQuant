@@ -95,7 +95,7 @@ void RealManager<W, T, E>::init()
 template<class W, class T, class E>
 bool RealManager<W, T, E>::checkReady()
 {
-    return pWatcher->getStatus() == "Ready" && pExecuter->getStatus() == "Ready";
+    return pWatcher->getStatus() == "Ready" && (!pExecuter || pExecuter->getStatus() == "Ready");
 }
 
 // ReplayManager --------------------------------------------------------------
