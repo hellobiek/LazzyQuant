@@ -1,3 +1,4 @@
+#include <functional>
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
@@ -9,6 +10,8 @@
 #include "sinyee_tick.h"
 #include "sinyee_bar.h"
 #include "sinyee_replayer.h"
+
+using namespace std::placeholders;
 
 SinYeeReplayer::SinYeeReplayer(const CONFIG_ITEM &config, QObject *parent) :
     TickReplayer(parent)
@@ -55,6 +58,7 @@ void SinYeeReplayer::appendTicksToList(const QString &date, const QString &instr
     mapTime.setTradingDay(date);
     for (const auto &contractName : contractNames) {
         QSet<int> minutes;  // 用于检查某个时间是否是在交易时段内.
+        QVector<int> endPoints; // 可能是交易时间段结束点.
 
         const auto offsetNums = contractOffsetNum.values(contractName);
         if (!offsetNums.isEmpty()) {
@@ -65,23 +69,27 @@ void SinYeeReplayer::appendTicksToList(const QString &date, const QString &instr
             auto oneMinuteBars = SinYeeBar::readBars(barStream, num);
             barStream.rollbackTransaction();
 
+            QList<int> oneMinuteBarTimes;
+            std::transform(oneMinuteBars.begin(), oneMinuteBars.end(), std::back_inserter(oneMinuteBarTimes), std::bind(&SinYeeBar::time, _1));
+
             // 由于数据源的质量问题，可能需要把夜盘最后一分钟不属于交易时段的Bar去除.
             int i = 0;
-            int size = oneMinuteBars.size();
+            int size = oneMinuteBarTimes.size();
             for (; i < size; i++) {
-                if (oneMinuteBars[i].time % (3600 * 24) == (3600 * 9)) {
+                if (oneMinuteBarTimes[i] % (3600 * 24) == (3600 * 9)) {
                     break;
                 }
             }
             if (i > 0 && i != size) {
                 if (i % 5 == 1) {
-                    oneMinuteBars.removeAt(i - 1);
+                    oneMinuteBarTimes.removeAt(i - 1);
                 }
             }
 
-            for (const auto &bar : qAsConst(oneMinuteBars)) {
-                minutes << bar.time / 60;
+            for (const auto &barTime : qAsConst(oneMinuteBarTimes)) {
+                minutes << barTime / 60;
             }
+            endPoints = findEndPoints(oneMinuteBarTimes);
         }
 
         qint32 num;
@@ -98,7 +106,8 @@ void SinYeeReplayer::appendTicksToList(const QString &date, const QString &instr
             }
             int sumVol = 0;
             for (const auto &sinYeeTick : tickList) {
-                if (minutes.contains(sinYeeTick.time / 60)) {
+                bool atEndPoint = endPoints.contains(sinYeeTick.time);
+                if (atEndPoint || minutes.contains(sinYeeTick.time / 60)) {
                     sumVol += sinYeeTick.volume;
                     CommonTick commonTick = {0,
                                              sinYeeTick.price,
@@ -115,7 +124,13 @@ void SinYeeReplayer::appendTicksToList(const QString &date, const QString &instr
                             hhmmssTime += 86400;
                         }
                     }
-                    commonTick.setTimeStamp(mapTime(hhmmssTime), sinYeeTick.msec);
+                    qint64 mappedTime = mapTime(hhmmssTime);
+                    qint16 msec = sinYeeTick.msec;
+                    if (atEndPoint) {
+                        mappedTime --;
+                        msec = 999;
+                    }
+                    commonTick.setTimeStamp(mappedTime, msec);
                     tickPairList << qMakePair(normalizedContractName, commonTick);
                 }
             }

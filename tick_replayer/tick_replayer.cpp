@@ -1,3 +1,4 @@
+#include <QSet>
 #include <QPair>
 
 #include "tick_replayer.h"
@@ -13,6 +14,27 @@ void TickReplayer::sortTickPairList()
     });
     tickCnt = tickPairList.size();
     replayIdx = 0;
+}
+
+QVector<int> TickReplayer::findEndPoints(const QList<int> &oneMinuteBarTimes)
+{
+    QVector<int> endPoints;
+    QSet<int> allMin15;
+    for (const auto &barTime : qAsConst(oneMinuteBarTimes)) {
+        allMin15 << barTime / (15 * 60);
+    }
+    if (!allMin15.empty()) {
+        QList<int> sortedMin15 = allMin15.toList();
+        std::sort(sortedMin15.begin(), sortedMin15.end());
+        const int size15_1 = sortedMin15.size() - 1;
+        for (int i = 0; i < size15_1; i++) {
+            if (sortedMin15[i] + 1 != sortedMin15[i + 1]) {
+                endPoints << (sortedMin15[i] + 1) * (15 * 60);
+            }
+        }
+        endPoints << (sortedMin15.last() + 1) * (15 * 60);
+    }
+    return endPoints;
 }
 
 /*!

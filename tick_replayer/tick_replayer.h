@@ -2,6 +2,7 @@
 #define TICK_REPLAYER_H
 
 #include <QObject>
+#include <QVector>
 #include <QStringList>
 
 #include "common_tick.h"
@@ -21,6 +22,8 @@ public:
     explicit TickReplayer(QObject *parent = nullptr);
 
 protected:
+    QVector<int> findEndPoints(const QList<int> &oneMinuteBarTimes);    //!< 查找所有可能的交易时间段结束点.
+
     virtual void appendTicksToList(const QString &date, const QString &instrument) = 0;
     virtual void sortTickPairList();
 
