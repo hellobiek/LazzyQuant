@@ -41,7 +41,7 @@ static inline QByteArray getLocalMsg(QtMsgType type, const QMessageLogContext &c
 static void toStdOut(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = getLocalMsg(type, context, msg);
-    fprintf(stdout, "%s\n", localMsg.constData());
+    puts(localMsg.constData());
     if (type == QtFatalMsg) {
         abort();
     }
@@ -50,8 +50,9 @@ static void toStdOut(QtMsgType type, const QMessageLogContext &context, const QS
 static void toStdOutAndFile(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = getLocalMsg(type, context, msg);
-    fprintf(stdout, "%s\n", localMsg.constData());
-    fprintf(pLogFile, "%s\n", localMsg.constData());
+    puts(localMsg.constData());
+    fputs(localMsg.constData(), pLogFile);
+    fputc('\n', pLogFile);
     if (type == QtFatalMsg) {
         fclose(pLogFile);
         abort();
@@ -61,7 +62,8 @@ static void toStdOutAndFile(QtMsgType type, const QMessageLogContext &context, c
 static void toFile(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = getLocalMsg(type, context, msg);
-    fprintf(pLogFile, "%s\n", localMsg.constData());
+    fputs(localMsg.constData(), pLogFile);
+    fputc('\n', pLogFile);
     if (type == QtFatalMsg) {
         fclose(pLogFile);
         abort();

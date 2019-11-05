@@ -5,11 +5,11 @@
 
 class TradeLogger
 {
-    QString name;
+    QString tableName;
     QMap<QString, int> positionMap;
 
 public:
-    explicit TradeLogger(const QString &name);
+    explicit TradeLogger(const QString &recordName);
 
     void positionChanged(qint64 actionTime, const QString &instrumentID, int newPosition, double price);
     void openLong(qint64 actionTime, const QString &instrumentID, double price, int volume);

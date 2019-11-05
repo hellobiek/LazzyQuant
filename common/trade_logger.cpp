@@ -5,13 +5,13 @@
 #include <QSqlError>
 #include <QDebug>
 
-TradeLogger::TradeLogger(const QString &name):
-    name(name)
+TradeLogger::TradeLogger(const QString &recordName):
+    tableName(recordName + "_actions")
 {
     createDbIfNotExist("tradelog");
     createTablesIfNotExist("tradelog", {"records"}, " (id INT NOT NULL AUTO_INCREMENT, strategy VARCHAR(255) NULL, instrument VARCHAR(255) NULL, timeframe VARCHAR(255) NULL, datasource VARCHAR(255) NULL, initbalance FLOAT NULL, commissionratio FLOAT NULL, startdate DATE NULL, stopdate DATE NULL, actiontable VARCHAR(255) NULL, dottable VARCHAR(255) NULL, balancetable VARCHAR(255) NULL, PRIMARY KEY (id)) CHARACTER SET = utf8");
     addRecord();
-    createTablesIfNotExist("tradelog", {name + "_actions"}, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
+    createTablesIfNotExist("tradelog", {tableName}, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
 }
 
 void TradeLogger::positionChanged(qint64 actionTime, const QString &instrumentID, int newPosition, double price)
@@ -73,7 +73,7 @@ void TradeLogger::addRecord()
     qry.bindValue(1, "");
     qry.bindValue(2, "MIN15");
     qry.bindValue(3, "CTP");
-    qry.bindValue(4, name + "_actions");
+    qry.bindValue(4, tableName);
     bool ok = qry.exec();
     if (!ok) {
         qCritical().noquote() << qry.lastError();
@@ -84,7 +84,7 @@ void TradeLogger::addRecord()
 void TradeLogger::saveActionToDB(qint64 actionTime, const QString &instrumentID, double price, int volume, bool direction, bool openCloseFlag)
 {
     QSqlQuery qry;
-    QString tableOfDB = QString("tradelog.%1").arg(name + "_actions");
+    QString tableOfDB = QString("tradelog.%1").arg(tableName);
     qry.prepare("INSERT INTO " + tableOfDB + " (time, instrument, price, volume, direction, opencloseflag, label) "
                                              "VALUES (?, ?, ?, ?, ?, ?, ?)");
     qry.bindValue(0, actionTime);
