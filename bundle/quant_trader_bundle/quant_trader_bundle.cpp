@@ -22,7 +22,7 @@ using std::placeholders::_4;
 
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source)
 {
-    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn.ini").get());
+    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
 
     CtpExecuter *pExecuter = nullptr;
