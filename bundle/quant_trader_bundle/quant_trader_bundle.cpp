@@ -1,7 +1,10 @@
+#include <QSettings>
 #include <QDateTime>
 #include <QTimeZone>
 
 #include "config.h"
+#include "db_helper.h"
+#include "common_utility.h"
 #include "market_watcher.h"
 #include "ctp_replayer.h"
 #include "sinyee_replayer.h"
@@ -19,6 +22,7 @@ using std::placeholders::_4;
 
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source)
 {
+    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn.ini").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
 
     CtpExecuter *pExecuter = nullptr;

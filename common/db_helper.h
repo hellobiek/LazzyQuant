@@ -1,8 +1,16 @@
 #ifndef DB_HELPER_H
 #define DB_HELPER_H
 
+class QSettings;
 class QString;
 class QStringList;
+
+/*!
+ * \brief 根据配置连接到数据库.
+ * \param pSettings 数据库连接配置.
+ * \return 打开数据库是否成功.
+ */
+bool connectSqlDb(QSettings *pSettings);
 
 /*!
  * \brief 检查数据库连接状态, 如果连接已经失效, 断开重连.

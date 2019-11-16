@@ -1,7 +1,10 @@
+#include <QSettings>
 #include <QDateTime>
 #include <QTimeZone>
 
 #include "config.h"
+#include "db_helper.h"
+#include "common_utility.h"
 #include "trade_logger.h"
 #include "quant_trader.h"
 #include "quant_trader_adaptor.h"
@@ -22,6 +25,7 @@ using namespace com::lazzyquant;
 
 QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
 {
+    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn.ini").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
 
     trade_executer *pExecuter = nullptr;

@@ -48,26 +48,10 @@ void QuantTrader::loadQuantTraderSettings(const CONFIG_ITEM &config)
     kt_export_dir = settings->value("ktexport").toString();
     settings->endGroup();
 
-    settings->beginGroup("Database");
-    auto dbDriver = settings->value("driver").toString();
-    auto dbHostName = settings->value("hostname").toString();
-    auto dbUserName = settings->value("username").toString();
-    auto dbPassword = settings->value("password").toString();
-    settings->endGroup();
-
-    QSqlDatabase sqlDB = QSqlDatabase::addDatabase(dbDriver);
-    sqlDB.setHostName(dbHostName);
-    sqlDB.setUserName(dbUserName);
-    sqlDB.setPassword(dbPassword);
-
-    bool ok = sqlDB.open();
-    if (!ok) {
-        qCritical() << "Open database failed!" << sqlDB.lastError().text();
-    }
-
     settings->beginGroup("Collector");
     const auto instrumentIDs = settings->childKeys();
 
+    bool ok = false;
     for (const auto &instrumentID : instrumentIDs) {
         QString combinedTimeFrameString = settings->value(instrumentID).toString();
         int timeFrameFlags = QMetaEnum::fromType<BarCollector::TimeFrames>().keysToValue(combinedTimeFrameString.toLatin1().constData(), &ok);

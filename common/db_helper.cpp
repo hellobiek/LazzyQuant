@@ -1,10 +1,33 @@
 #include "db_helper.h"
 
+#include <QSettings>
 #include <QStringList>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
+
+bool connectSqlDb(QSettings *pSettings)
+{
+    auto driver   = pSettings->value("Driver").toString();
+    auto hostname = pSettings->value("Hostname").toString();
+    auto port     = pSettings->value("Port").toInt();
+    auto username = pSettings->value("Username").toString();
+    auto password = pSettings->value("Password").toString();
+
+    QSqlDatabase sqlDB = QSqlDatabase::addDatabase(driver);
+    sqlDB.setHostName(hostname);
+    sqlDB.setPort(port);
+    sqlDB.setUserName(username);
+    sqlDB.setPassword(password);
+
+    bool ok = sqlDB.open();
+    if (!ok) {
+        qCritical().noquote() << sqlDB.lastError();
+        qCritical().noquote() << "Open database failed!";
+    }
+    return ok;
+}
 
 bool checkAndReopenDbIfNotAlive()
 {
