@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions(quantTraderOptions);
-    parser.addOption({{"c", "source"}, "main", "Market source", "ctp/sinyee"});
+    parser.addOption({{"c", "source"}, "Market source", "ctp/sinyee"});
 
     parser.process(a);
     QuantTraderOptions options = getQuantTraderOptions(parser);

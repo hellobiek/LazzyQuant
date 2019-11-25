@@ -76,9 +76,9 @@ void RealManager<W, T, E>::init()
 {
     auto checkPrepare = [=]() -> void {
         if (checkReady()) {
+            prepareOpen();
             QString tradingDay = pWatcher->getTradingDay();
             pTrader->setTradingDay(tradingDay);
-            prepareOpen();
         } else {
             qWarning() << "MarketWatcher or TradeExecuter is not ready!";
         }

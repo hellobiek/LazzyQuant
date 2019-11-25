@@ -27,6 +27,7 @@ QuantTraderRealManager<W, T, E>::QuantTraderRealManager(W *pWatcher, T *pTrader,
 template<class W, class T, class E>
 void QuantTraderRealManager<W, T, E>::init()
 {
+    QObject::connect(this->pWatcher, &W::tradingDayChanged, checkAndReopenDbIfNotAlive);
     AbstractManager::makeDefaultConnections();
     RealManager<W, T, E>::init();
 
