@@ -22,13 +22,15 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     parser.addOptions(quantTraderOptions);
     parser.addOption({{"c", "source"}, "Market source", "ctp/sinyee"});
+    parser.addOption({{"w", "weekend"}, "Start at weekend (workaround)"});
 
     parser.process(a);
     QuantTraderOptions options = getQuantTraderOptions(parser);
     QString source = parser.value("source");
+    bool atWeekend = parser.isSet("weekend");
 
     setupMessageHandler(true, options.log2File, "quant_trader_bundle", !options.replayMode);
-    QuantTraderBundle bundle(options, source);
+    QuantTraderBundle bundle(options, source, atWeekend);
     int ret = a.exec();
     restoreMessageHandler();
 

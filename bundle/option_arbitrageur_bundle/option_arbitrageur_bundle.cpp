@@ -18,7 +18,7 @@ using std::placeholders::_4;
 std::function<void(const QString&, int, double, int)>  buyLimit = [](auto, auto, auto, auto) -> void {};
 std::function<void(const QString&, int, double, int)> sellLimit = [](auto, auto, auto, auto) -> void {};
 
-OptionArbitrageurBundle::OptionArbitrageurBundle(const OptionArbitrageurOptions &options)
+OptionArbitrageurBundle::OptionArbitrageurBundle(const OptionArbitrageurOptions &options, bool atWeekend)
 {
     MarketWatcher *pWatcher = nullptr;
     TickReplayer *pReplayer = nullptr;
@@ -29,6 +29,9 @@ OptionArbitrageurBundle::OptionArbitrageurBundle(const OptionArbitrageurOptions 
         instruments = pReplayer->getReplayList();
     } else {
         pWatcher = new MarketWatcher(watcherConfigs[0]);
+        if (atWeekend) {
+            pWatcher->setWeekend();
+        }
         pExecuter = new CtpExecuter(executerConfigs[0]);
         instruments = pExecuter->getCachedInstruments();
     }

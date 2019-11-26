@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions(optionArbitrageurOptions);
+    parser.addOption({{"w", "weekend"}, "Start at weekend (workaround)"});
     parser.process(a);
 
     auto options = getOptionArbitrageurOptions(parser);
@@ -29,9 +30,10 @@ int main(int argc, char *argv[])
         qCritical().noquote() << "Can not do update in replay mode!";
         return -1;
     }
+    bool atWeekend = parser.isSet("weekend");
 
     setupMessageHandler(true, options.log2File, "option_arbitrageur_bundle", !options.replayMode);
-    OptionArbitrageurBundle bundle(options);
+    OptionArbitrageurBundle bundle(options, atWeekend);
     int ret = a.exec();
     restoreMessageHandler();
 

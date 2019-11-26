@@ -8,6 +8,7 @@
 #include <QDataStream>
 #include <QCoreApplication>
 #include <QDebugStateSaver>
+#include <QTimeZone>
 
 #include "config_struct.h"
 #include "market.h"
@@ -251,8 +252,11 @@ void MarketWatcher::setupTimeValidators()
         const auto tradingTimeRanges = getTradingTimeRanges(instrumentID);
         QList<qint64> times;
         for (const auto &tradingTimeRange : tradingTimeRanges) {
-            times << mapTime(tradingTimeRange.first.msecsSinceStartOfDay() / 1000);
-            times << mapTime(tradingTimeRange.second.msecsSinceStartOfDay() / 1000);
+            auto rangeStart = mapTime(tradingTimeRange.first.msecsSinceStartOfDay() / 1000);
+            if (rangeStart >= earliestTime) {
+                times << rangeStart;
+                times << mapTime(tradingTimeRange.second.msecsSinceStartOfDay() / 1000);
+            }
         }
         if (times.empty()) {
             continue;
@@ -399,4 +403,10 @@ QStringList MarketWatcher::getSubscribeList() const
 void MarketWatcher::quit()
 {
     QCoreApplication::quit();
+}
+
+void MarketWatcher::setWeekend()
+{
+    QDate nextTradingday = TradingCalendar::getInstance()->nextTradingDay(QDate::currentDate());
+    earliestTime = QDateTime(nextTradingday, QTime(8, 0), QTimeZone::utc()).toSecsSinceEpoch();
 }

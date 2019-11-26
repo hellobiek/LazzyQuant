@@ -67,3 +67,12 @@ int TradingCalendar::getTradingDays(const QDate &startDate, const QDate &endDate
     }
     return sum;
 }
+
+QDate TradingCalendar::nextTradingDay(const QDate &date) const
+{
+    QDate nextTradingDay = date;
+    while (!isTradingDay(nextTradingDay)) {
+        nextTradingDay = nextTradingDay.addDays(1);
+    }
+    return nextTradingDay;
+}

@@ -11,7 +11,7 @@ class OptionArbitrageurBundle
     OptionHelper *pHelper = nullptr;
 
 public:
-    explicit OptionArbitrageurBundle(const OptionArbitrageurOptions &options);
+    explicit OptionArbitrageurBundle(const OptionArbitrageurOptions &options, bool atWeekend);
     ~OptionArbitrageurBundle();
 };
 

@@ -20,7 +20,7 @@ using std::placeholders::_2;
 using std::placeholders::_3;
 using std::placeholders::_4;
 
-QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source)
+QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend)
 {
     connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
@@ -46,6 +46,9 @@ QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QS
         pManager = managerReplay;
     } else {
         auto pWatcher = new MarketWatcher(watcherConfigs[0]);
+        if (atWeekend) {
+            pWatcher->setWeekend();
+        }
         pManager = new QuantTraderRealManager<MarketWatcher, QuantTrader, CtpExecuter>(pWatcher, pTrader, pExecuter);
     }
 

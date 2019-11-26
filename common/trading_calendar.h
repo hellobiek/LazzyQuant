@@ -61,6 +61,13 @@ public:
      */
     int getTradingDays(const QDate &startDate, const QDate &endDate) const;
 
+    /*!
+     * \brief 计算下一交易日日期.
+     * \param date 日期.
+     * \return 下一交易日日期.
+     */
+    QDate nextTradingDay(const QDate &date) const;
+
 };
 
 #endif // TRADING_CALENDAR_H

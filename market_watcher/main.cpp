@@ -19,16 +19,21 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     parser.addOptions({
+        {{"w", "weekend"}, "Start at weekend (workaround)"},
         {{"f", "logtofile"}, "Save log to a file"},
     });
 
     parser.process(a);
+    bool atWeekend = parser.isSet("weekend");
     bool log2File = parser.isSet("logtofile");
     setupMessageHandler(true, log2File, "market_watcher");
 
     QList<MarketWatcher*> watcherList;
     for (const auto & config : watcherConfigs) {
         MarketWatcher *pWatcher = new MarketWatcher(config);
+        if (atWeekend) {
+            pWatcher->setWeekend();
+        }
         new Market_watcherAdaptor(pWatcher);
         QDBusConnection dbus = QDBusConnection::sessionBus();
         dbus.registerObject(config.dbusObject, pWatcher);

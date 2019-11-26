@@ -39,6 +39,7 @@ protected:
 
     bool loggedIn = false;
     QSet<QString> subscribeSet;
+    qint64 earliestTime = 0;    //!< 允许接收的行情的最早时间戳.
     QHash<QString, TimeValidator*> timeValidators;
 
     bool saveDepthMarketData;
@@ -74,6 +75,7 @@ public slots:
     void subscribeInstruments(const QStringList &instruments, bool updateIni = true);
     QStringList getSubscribeList() const;
     void quit();
+    void setWeekend();  //!< Workaround.
 };
 
 #endif // MARKET_WATCHER_H

@@ -13,7 +13,7 @@ class QuantTraderBundle
     TradeLogger *pLogger = nullptr;
 
 public:
-    QuantTraderBundle(const QuantTraderOptions &options, const QString &source);
+    QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend);
     ~QuantTraderBundle();
 
 };
