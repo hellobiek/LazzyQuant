@@ -3,8 +3,7 @@
 
 #include "config.h"
 #include "message_handler.h"
-#include "market_watcher.h"
-#include "market_watcher_adaptor.h"
+#include "market_watcher_dbus.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,33 +16,17 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription("Receive and save market data, emit signal via D-Bus when market changes");
     parser.addHelpOption();
     parser.addVersionOption();
-
-    parser.addOptions({
-        {{"w", "weekend"}, "Start at weekend (workaround)"},
-        {{"f", "logtofile"}, "Save log to a file"},
-    });
-
+    parser.addOption({{"w", "weekend"}, "Start at weekend (workaround)"});
+    parser.addOption({{"f", "logtofile"}, "Save log to a file"});
     parser.process(a);
+
     bool atWeekend = parser.isSet("weekend");
     bool log2File = parser.isSet("logtofile");
+
     setupMessageHandler(true, log2File, "market_watcher");
-
-    QList<MarketWatcher*> watcherList;
-    for (const auto & config : watcherConfigs) {
-        MarketWatcher *pWatcher = new MarketWatcher(config);
-        if (atWeekend) {
-            pWatcher->setWeekend();
-        }
-        new Market_watcherAdaptor(pWatcher);
-        QDBusConnection dbus = QDBusConnection::sessionBus();
-        dbus.registerObject(config.dbusObject, pWatcher);
-        dbus.registerService(config.dbusService);
-        watcherList.append(pWatcher);
-    }
-
+    MarketWatcherDbus marketWatcherDbus(atWeekend);
     int ret = a.exec();
-
-    qDeleteAll(watcherList);
     restoreMessageHandler();
+
     return ret;
 }

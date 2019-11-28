@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("option_arbitrageur_bundle");
     QCoreApplication::setApplicationVersion(VERSION_STR);
 
-    qMetaTypeId<ParkedOrder>();
-
     QCommandLineParser parser;
     parser.setApplicationDescription("Option arbitrageur bundled with market watcher, tick replayer and trade executer.");
     parser.addHelpOption();
@@ -33,6 +31,7 @@ int main(int argc, char *argv[])
     bool atWeekend = parser.isSet("weekend");
 
     setupMessageHandler(true, options.log2File, "option_arbitrageur_bundle", !options.replayMode);
+    qMetaTypeId<ParkedOrder>();
     OptionArbitrageurBundle bundle(options, atWeekend);
     int ret = a.exec();
     restoreMessageHandler();

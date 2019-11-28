@@ -14,8 +14,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("quant_trader_bundle");
     QCoreApplication::setApplicationVersion(VERSION_STR);
 
-    qMetaTypeId<ParkedOrder>();
-
     QCommandLineParser parser;
     parser.setApplicationDescription("Quant trader bundled with market watcher, tick replayer and trade executer.");
     parser.addHelpOption();
@@ -23,13 +21,14 @@ int main(int argc, char *argv[])
     parser.addOptions(quantTraderOptions);
     parser.addOption({{"c", "source"}, "Market source", "ctp/sinyee"});
     parser.addOption({{"w", "weekend"}, "Start at weekend (workaround)"});
-
     parser.process(a);
+
     QuantTraderOptions options = getQuantTraderOptions(parser);
     QString source = parser.value("source");
     bool atWeekend = parser.isSet("weekend");
 
     setupMessageHandler(true, options.log2File, "quant_trader_bundle", !options.replayMode);
+    qMetaTypeId<ParkedOrder>();
     QuantTraderBundle bundle(options, source, atWeekend);
     int ret = a.exec();
     restoreMessageHandler();

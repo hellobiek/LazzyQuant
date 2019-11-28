@@ -11,10 +11,12 @@ LAZZYQUANT_ROOT = $$PWD/..
 
 SOURCES += \
     main.cpp \
+    trade_executer_dbus.cpp \
     $$LAZZYQUANT_ROOT/common/message_handler.cpp
 
 HEADERS += \
     $$LAZZYQUANT_ROOT/config.h \
+    trade_executer_dbus.h \
     $$LAZZYQUANT_ROOT/common/message_handler.h
 
 INCLUDEPATH += $$LAZZYQUANT_ROOT
