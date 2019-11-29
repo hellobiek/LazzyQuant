@@ -1,3 +1,6 @@
+#ifndef TRADE_EXECUTER_DBUS_H
+#define TRADE_EXECUTER_DBUS_H
+
 #include <QList>
 #include <QString>
 
@@ -18,3 +21,5 @@ public:
     ~TradeExecuterDbus();
 
 };
+
+#endif // TRADE_EXECUTER_DBUS_H

@@ -1,3 +1,6 @@
+#ifndef MARKET_WATCHER_DBUS_H
+#define MARKET_WATCHER_DBUS_H
+
 #include <QList>
 
 class MarketWatcher;
@@ -16,3 +19,5 @@ public:
     ~MarketWatcherDbus();
 
 };
+
+#endif // MARKET_WATCHER_DBUS_H
