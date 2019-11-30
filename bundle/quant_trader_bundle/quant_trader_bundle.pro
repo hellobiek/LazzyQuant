@@ -11,10 +11,12 @@ LAZZYQUANT_ROOT = $$PWD/../..
 
 SOURCES += \
     quant_trader_bundle.cpp \
+    $$LAZZYQUANT_ROOT/tick_replayer/replay_sources.cpp \
     main.cpp
 
 HEADERS += \
     quant_trader_bundle.h \
+    $$LAZZYQUANT_ROOT/tick_replayer/replay_sources.h \
     $$LAZZYQUANT_ROOT/quant_trader/quant_trader_options.h \
     $$LAZZYQUANT_ROOT/quant_trader/quant_trader_manager.h \
     $$LAZZYQUANT_ROOT/config.h

@@ -6,8 +6,8 @@
 #include "db_helper.h"
 #include "common_utility.h"
 #include "market_watcher.h"
-#include "ctp_replayer.h"
-#include "sinyee_replayer.h"
+#include "tick_replayer.h"
+#include "replay_sources.h"
 #include "trade_logger.h"
 #include "quant_trader.h"
 #include "ctp_executer.h"
@@ -33,12 +33,7 @@ QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QS
     }
 
     if (options.replayMode) {
-        TickReplayer *pReplayer = nullptr;
-        if (source.compare("ctp", Qt::CaseInsensitive) == 0) {
-            pReplayer = new CtpReplayer(replayerConfigs[0]);
-        } else {    // if (source.compare("sinyee", Qt::CaseInsensitive) == 0)
-            pReplayer = new SinYeeReplayer(replayerConfigs[0]);
-        }
+        TickReplayer *pReplayer = createReplayer(source, replayerConfigs[0]);
         auto managerReplay = new ReplayManager<TickReplayer, QuantTrader, CtpExecuter>(pReplayer, pTrader, pExecuter);
         if (options.isReplayReady()) {
             managerReplay->setAutoReplayDate(options.replayStartDate, options.replayStopDate, true);
