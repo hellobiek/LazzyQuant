@@ -52,7 +52,7 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
 #define MIN_UNIT    60
 #define HOUR_UNIT   3600
 
-static const QHash<BarCollector::TimeFrame, int> g_time_table = {
+const QHash<BarCollector::TimeFrame, int> g_time_table = {
     {BarCollector::SEC1,    1},
     {BarCollector::SEC2,    2},
     {BarCollector::SEC3,    3},

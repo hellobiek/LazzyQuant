@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include <QString>
-#include <QVariant>
 
 #define EMPTY_VALUE     DBL_MAX
 #define INVALID_HANDLE  -1
@@ -31,6 +30,7 @@ string  IntegerToString(
 }
 
 #ifdef MQL5_PRINT_SUPPORT
+#include <QVariant>
 #include <QDebug>
 inline
 void Print(QVariant arg1,      QVariant arg2 = "", QVariant arg3 = "",
