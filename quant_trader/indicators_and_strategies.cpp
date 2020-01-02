@@ -25,7 +25,7 @@ const QMap<QString, const QMetaObject*> indicatorMetaObjects = {
     {"AwesomeOscillator", &AwesomeOscillator::staticMetaObject},
     {"DivergentBar", &DivergentBar::staticMetaObject},
     {"Fractal", &Fractal::staticMetaObject},
-    {"Segment", &Segment::staticMetaObject},
+    {"Segment", &Zen::Segment::staticMetaObject},
     // Register more indicators here
 };
 

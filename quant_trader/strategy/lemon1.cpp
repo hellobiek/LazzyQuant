@@ -38,7 +38,7 @@ void Lemon1::setParameter(double fastMA, double slowMA, double AFstep, double AF
 
     AddOnTrailingStop::setParameter(AFstep, AFmax, 1, 0);
     ao = iAO(instrumentID, timeFrames);
-    segment = static_cast<Segment*>(
+    segment = static_cast<Zen::Segment*>(
                 pTrader->registerIndicator(
                     instrumentID, timeFrames, "Segment"
                 ));

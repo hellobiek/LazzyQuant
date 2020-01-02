@@ -4,7 +4,9 @@
 #include "addon_trailingstop.h"
 #include "../indicator/mql5_indicator.h"
 
-class Segment;
+namespace Zen {
+    class Segment;
+}
 class Lemon1;
 
 class Class2WiseMan : public EnterSignalNeedConfirm {
@@ -37,7 +39,7 @@ public:
 
 protected:
     MQL5Indicator *ao;
-    Segment *segment;
+    Zen::Segment *segment;
 
     IndicatorBuffer<double> aoBuffer;
     IndicatorBuffer<double> segmentBuffer;

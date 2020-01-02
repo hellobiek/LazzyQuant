@@ -13,6 +13,13 @@ class QStringList;
 bool connectSqlDb(QSettings *pSettings);
 
 /*!
+ * \brief 设置默认的db名称并重新打开数据库连接.
+ * \param dbName db名称.
+ * \return 打开数据库是否成功.
+ */
+bool setDefaultDbName(const QString &dbName);
+
+/*!
  * \brief 检查数据库连接状态, 如果连接已经失效, 断开重连.
  * \return 数据库连接状态, true正常, false不正常.
  */

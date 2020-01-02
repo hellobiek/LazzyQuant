@@ -29,6 +29,19 @@ bool connectSqlDb(QSettings *pSettings)
     return ok;
 }
 
+bool setDefaultDbName(const QString &dbName)
+{
+    QSqlDatabase sqlDB = QSqlDatabase::database();
+    sqlDB.close();
+    sqlDB.setDatabaseName(dbName);
+    bool ok = sqlDB.open();
+    if (!ok) {
+        qCritical().noquote() << sqlDB.lastError();
+        qCritical().noquote() << "Open database failed!";
+    }
+    return ok;
+}
+
 bool checkAndReopenDbIfNotAlive()
 {
     QSqlDatabase sqlDB = QSqlDatabase::database();

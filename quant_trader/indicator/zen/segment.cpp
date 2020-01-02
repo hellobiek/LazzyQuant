@@ -1,9 +1,11 @@
+#include "db_helper.h"
 #include "segment.h"
 
 #include <cfloat>
 #include <QSqlTableModel>
-#include <QSqlQuery>
 #include <QSqlError>
+
+using namespace Zen;
 
 Segment::Segment(QObject *parent) :
     MQL5Indicator(1, parent)
@@ -18,10 +20,9 @@ void Segment::OnInit()
 
 void Segment::setup()
 {
-    QSqlDatabase sqlDB = QSqlDatabase::database();
-    if (!sqlDB.tables().contains(signature, Qt::CaseInsensitive)) {
-        sqlDB.exec("CREATE TABLE `indicator`.`" + signature + "` (`idx` INT NOT NULL,`value` DOUBLE NULL,PRIMARY KEY (`idx`));");
-    }
+    createDbIfNotExist("indicator");
+    createTablesIfNotExist("indicator", {signature}, " (`idx` INT NOT NULL,`value` DOUBLE NULL,PRIMARY KEY (`idx`))");
+    setDefaultDbName("indicator");
     Editable::setup();
 }
 
@@ -65,14 +66,16 @@ int Segment::OnCalculate (const int rates_total,                     // size of 
 
     int rows = model.rowCount();
     if (rows < rates_total) {
-        model.insertRows(rows, rates_total - rows);
+        bool ok = model.insertRows(rows, rates_total - rows);
+        if (!ok)
+            qWarning().noquote() << __FUNCTION__ << "insertRows failed! rows =" << rows << ", rates_total =" << rates_total;
         for (int i = rows; i < rates_total; i++) {
             model.setData(model.index(i, 0), i);
             model.setData(model.index(i, 1), -DBL_MAX);
         }
-        bool ok = model.submitAll();
+        ok = model.submitAll();
         if (!ok)
-            qDebug() << __FUNCTION__ << model.lastError();
+            qWarning().noquote() << __FUNCTION__ << QSqlDatabase().databaseName() << model.lastError().text() << " rows =" << rows << ", rates_total =" << rates_total;
     }
-    return(rates_total);
+    return rates_total;
 }
