@@ -43,6 +43,7 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
                       " `type`        INT NULL,"
                       " PRIMARY KEY (`time`))";
         if (!createTablesIfNotExist("market", tableNames, format)) {
+            qWarning() << "Create market table failed!";
             this->saveBarsToDB = false;
             return;
         }
@@ -187,7 +188,7 @@ void BarCollector::saveBar(int timeFrame, const Bar &bar)
 void BarCollector::flush(bool endOfDay)
 {
     for (auto key : qAsConst(keys)) {
-        if ((key != DAY) || ((key == DAY) && endOfDay)) {
+        if ((key != DAY) || endOfDay) {
             saveEmitReset(key, barMap[key]);
         }
     }

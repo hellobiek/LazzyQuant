@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <QMetaEnum>
+#include <QSet>
 #include <QString>
 #include <QTime>
 
@@ -52,16 +53,16 @@ QStringList getSettingItemList(QSettings *settings, const QString &groupName);
 template<typename EnumType>
 QList<int> enumValueToList(int value)
 {
-    QList<int> valueList;
+    QSet<int> valueSet;
     auto mobj = QMetaEnum::fromType<EnumType>();
     int count = mobj.keyCount();
     for (int i = 0; i < count; i++) {
         int k = mobj.value(i);
         if ((k != 0) && ((value & k) == k)) {
-            valueList.append(k);
+            valueSet.insert(k);
         }
     }
-    return valueList;
+    return valueSet.toList();
 }
 
 static inline quint8 charToDigit(const char ten, const char one)
