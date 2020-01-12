@@ -1,7 +1,8 @@
-#include <QTime>
+#include <QMetaEnum>
 #include <QDebug>
 
 #include "../../bar.h"
+#include "../../bar_collector.h"
 #include "../../indicator/abstract_indicator.h"
 #include "single_time_frame_strategy.h"
 
@@ -10,12 +11,12 @@ SingleTimeFrameStrategy::SingleTimeFrameStrategy(const QString &id, const QStrin
     AbstractStrategy(id, instrumentID, timeFrame),
     bars(nullptr, nullptr)
 {
-    qInfo() << "SingleTimeFrameStrategy ctor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" << timeFrames;
+    qDebug().noquote() << "SingleTimeFrameStrategy ctor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" <<  QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrames);
 }
 
 SingleTimeFrameStrategy::~SingleTimeFrameStrategy()
 {
-    qInfo() << "~SingleTimeFrameStrategy dtor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" << timeFrames;
+    qDebug().noquote() << "~SingleTimeFrameStrategy dtor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrames);
 }
 
 void SingleTimeFrameStrategy::loadStatus()
@@ -77,7 +78,7 @@ void SingleTimeFrameStrategy::checkIfNewBar(int newBarTimeFrame)
         onNewBar();
         trailingStop.update(bars[1].high, bars[1].low);
         if (trailingStop.getEnabled()) {
-            qDebug().noquote() << QTime::fromMSecsSinceStartOfDay(bars[0].time % 86400 * 1000).toString() << trailingStop;
+            qDebug().noquote() << trailingStop;
         }
         if (position.is_initialized()) {
             // Save even no position change

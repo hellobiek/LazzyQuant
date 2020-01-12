@@ -139,8 +139,8 @@ class MQL5Indicator : public IndicatorFunctions, public AbstractIndicator
     Q_OBJECT
 
 public:
-    explicit MQL5Indicator(int indicator_buffers, QObject *parent = 0);
-    ~MQL5Indicator();
+    explicit MQL5Indicator(int indicator_buffers, QObject *parent = nullptr);
+    ~MQL5Indicator() override;
 
     virtual void OnInit() = 0;
 
@@ -238,7 +238,7 @@ class MQL5IndicatorOnSingleDataBuffer : public MQL5Indicator {
     Q_PROPERTY(ENUM_APPLIED_PRICE AppliedPrice MEMBER InpAppliedPrice CONSTANT)
 
 public:
-    explicit MQL5IndicatorOnSingleDataBuffer(int indicator_buffers, ENUM_APPLIED_PRICE appliedPrice, QObject *parent = 0);
+    explicit MQL5IndicatorOnSingleDataBuffer(int indicator_buffers, ENUM_APPLIED_PRICE appliedPrice, QObject *parent = nullptr);
 
 protected:
     const ENUM_APPLIED_PRICE InpAppliedPrice;

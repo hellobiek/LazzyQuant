@@ -336,14 +336,14 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
                     }
                 }
                 if (match) {
-                    qDebug() << "Use exist" << currentInstrumentID << currentTimeFrame << indicator_name;
+                    qDebug().noquote() << "Use exist indicator" << indicator_name << "for" << currentInstrumentID << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
                     return pIndicator;
                 }
             }
         }
     }
 
-    qDebug() << "Create new" << currentInstrumentID << currentTimeFrame << indicator_name;
+    qDebug().noquote() << "Create new indicator" << indicator_name << "for" << currentInstrumentID << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
 
     QVector<QGenericArgument> args;
     args.reserve(10);
