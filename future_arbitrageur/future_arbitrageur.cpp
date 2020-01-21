@@ -1,4 +1,3 @@
-#include "config.h"
 #include "common_utility.h"
 #include "depth_market.h"
 #include "pair_trade.h"
@@ -6,6 +5,7 @@
 #include "future_arbitrageur.h"
 
 #include <QSettings>
+#include <QCoreApplication>
 
 FutureArbitrageur::FutureArbitrageur(QObject *parent) : QObject(parent)
 {
@@ -22,7 +22,7 @@ FutureArbitrageur::~FutureArbitrageur()
 
 void FutureArbitrageur::setupStrategies()
 {
-    auto settings = getSettingsSmart(ORGANIZATION, "future_arbitrageur");
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "future_arbitrageur");
     const auto strategyIDs = settings->childGroups();
 
     QStringList allInstruments;

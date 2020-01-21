@@ -2,14 +2,14 @@
 #include <QSettings>
 #include <QDomDocument>
 #include <QTime>
+#include <QCoreApplication>
 
-#include "config.h"
 #include "market.h"
 #include "common_utility.h"
 
 KtMarket::KtMarket()
 {
-    auto settings = getSettingsSmart(ORGANIZATION, "common");
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "common");
 
     settings->beginGroup("Markets");
     const auto marketsKey = settings->childKeys();

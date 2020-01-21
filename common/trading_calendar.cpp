@@ -1,12 +1,12 @@
-#include "config.h"
 #include "common_utility.h"
 #include "trading_calendar.h"
 
 #include <QSettings>
+#include <QCoreApplication>
 
 TradingCalendar::TradingCalendar()
 {
-    auto settings = getSettingsSmart(ORGANIZATION, "trading_calander");
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "trading_calander");
     settings->beginGroup("NonTradingDays");
     const auto nonTradingDaysStrs = settings->childKeys();
     for (const auto &nonTradingDaysStr : nonTradingDaysStrs) {

@@ -5,6 +5,7 @@
 #include <QPair>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QCoreApplication>
 
 #include "config_struct.h"
 #include "common_utility.h"
@@ -20,7 +21,7 @@ static QDataStream& operator>>(QDataStream &s, CThostFtdcDepthMarketDataField &d
 CtpReplayer::CtpReplayer(const CONFIG_ITEM &config, QObject *parent) :
     TickReplayer(parent)
 {
-    auto settings = getSettingsSmart(config.organization, "ctp_replayer", this);
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "ctp_replayer", this);
     marketDataPath = settings->value("MarketDataPath").toString();
     if (!marketDataPath.endsWith('/')) {
         marketDataPath += '/';

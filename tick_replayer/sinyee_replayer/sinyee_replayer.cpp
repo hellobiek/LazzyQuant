@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QDataStream>
 #include <QPair>
+#include <QCoreApplication>
 
 #include "config_struct.h"
 #include "common_utility.h"
@@ -16,7 +17,7 @@ using namespace std::placeholders;
 SinYeeReplayer::SinYeeReplayer(const CONFIG_ITEM &config, QObject *parent) :
     TickReplayer(parent)
 {
-    auto settings = getSettingsSmart(config.organization, "sinyee_replayer", this);
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "sinyee_replayer", this);
     sinYeeDataPath = settings->value("SinYeeDataPath").toString();
     this->replayList = getSettingItemList(settings.get(), "ReplayList");
 }

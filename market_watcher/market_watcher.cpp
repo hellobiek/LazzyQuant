@@ -23,7 +23,7 @@ MarketWatcher::MarketWatcher(const CONFIG_ITEM &config, QObject *parent) :
     QObject(parent),
     name(config.name)
 {
-    settings = getSettingsSmart(config.organization, config.name, this).release();
+    settings = getSettingsSmart(QCoreApplication::organizationName(), config.name, this).release();
     const auto flowPath = settings->value("FlowPath").toByteArray();
     saveDepthMarketData = settings->value("SaveDepthMarketData").toBool();
     saveDepthMarketDataPath = settings->value("SaveDepthMarketDataPath").toString();

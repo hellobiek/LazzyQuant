@@ -1,6 +1,7 @@
 #include <QSettings>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QCoreApplication>
 
 #include "config.h"
 #include "db_helper.h"
@@ -22,7 +23,7 @@ using std::placeholders::_4;
 
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend)
 {
-    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn").get());
+    connectSqlDb(getSettingsSmart(QCoreApplication::organizationName(), "sqldb_conn").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
 
     CtpExecuter *pExecuter = nullptr;

@@ -80,7 +80,7 @@ const QMap<TThostFtdcParkedOrderStatusType, QString> parkedOrderStatusMap = {
 CtpExecuter::CtpExecuter(const CONFIG_ITEM &config, QObject *parent) :
     QObject(parent)
 {
-    auto settings = getSettingsSmart(config.organization, config.name);
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), config.name);
     QByteArray flowPath = settings->value("FlowPath").toByteArray();
     preventSelfTrade = settings->value("PreventSelfTrade", 1).toBool();
     orderCancelLimit = settings->value("OrderCancelLimit", 300).toInt();
