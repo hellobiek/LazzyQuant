@@ -9,7 +9,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-#include "config.h"
 #include "common_utility.h"
 #include "trading_calendar.h"
 #include "quant_trader.h"
@@ -20,15 +19,15 @@
 #include "indicator/mql5_indicator.h"
 #include "strategy/template/abstract_strategy.h"
 
-QuantTrader::QuantTrader(const CONFIG_ITEM &config, bool saveBarsToDB, QObject *parent) :
+QuantTrader::QuantTrader(const QString &configName, bool saveBarsToDB, QObject *parent) :
     QObject(parent),
     saveBarsToDB(saveBarsToDB)
 {
     qRegisterMetaType<int>("ENUM_MA_METHOD");
     qRegisterMetaType<int>("ENUM_APPLIED_PRICE");
 
-    loadQuantTraderSettings(config);
-    loadTradeStrategySettings(config);
+    loadQuantTraderSettings(configName);
+    loadTradeStrategySettings("trade_strategy");
 }
 
 QuantTrader::~QuantTrader()
@@ -36,13 +35,9 @@ QuantTrader::~QuantTrader()
     qDebug() << "~QuantTrader";
 }
 
-/*!
- * \brief QuantTrader::loadQuantTraderSettings
- * 载入量化交易系统配置.
- */
-void QuantTrader::loadQuantTraderSettings(const CONFIG_ITEM &config)
+void QuantTrader::loadQuantTraderSettings(const QString &configName)
 {
-    auto settings = getSettingsSmart(config.organization, config.name);
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), configName);
 
     settings->beginGroup("HistoryPath");
     kt_export_dir = settings->value("ktexport").toString();
@@ -67,13 +62,9 @@ void QuantTrader::loadQuantTraderSettings(const CONFIG_ITEM &config)
     settings->endGroup();
 }
 
-/*!
- * \brief QuantTrader::loadTradeStrategySettings
- * 载入量化交易策略.
- */
-void QuantTrader::loadTradeStrategySettings(const CONFIG_ITEM &config)
+void QuantTrader::loadTradeStrategySettings(const QString &configName)
 {
-    auto settings = getSettingsSmart(config.organization, "trade_strategy");
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), configName);
     const QStringList groups = settings->childGroups();
     qDebug() << groups.size() << "strategies in all.";
 

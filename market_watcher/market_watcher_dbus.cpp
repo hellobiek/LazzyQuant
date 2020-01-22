@@ -7,7 +7,7 @@ MarketWatcherDbus::MarketWatcherDbus(bool atWeekend)
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     for (const auto &config : watcherConfigs) {
-        auto *pWatcher = new MarketWatcher(config);
+        auto *pWatcher = new MarketWatcher(config.name);
         if (atWeekend) {
             pWatcher->setWeekend();
         }

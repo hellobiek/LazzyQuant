@@ -24,11 +24,11 @@ using std::placeholders::_4;
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend)
 {
     connectSqlDb(getSettingsSmart(QCoreApplication::organizationName(), "sqldb_conn").get());
-    QuantTrader *pTrader = new QuantTrader(traderConfigs[0], options.saveBarsToDB());
+    QuantTrader *pTrader = new QuantTrader(traderConfigs[0].name, options.saveBarsToDB());
 
     CtpExecuter *pExecuter = nullptr;
     if ((!options.replayMode && !options.explicitNoConnectToExecuter) || options.explicitConnectToExecuter) {
-        pExecuter = new CtpExecuter(executerConfigs[0]);
+        pExecuter = new CtpExecuter(executerConfigs[0].name);
         pTrader->cancelAllOrders = std::bind(&CtpExecuter::cancelAllOrders, pExecuter, _1);
         pTrader->setPosition = std::bind(&CtpExecuter::setPosition, pExecuter, _1, _2);
     }
@@ -41,7 +41,7 @@ QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QS
         }
         pManager = managerReplay;
     } else {
-        auto pWatcher = new MarketWatcher(watcherConfigs[0]);
+        auto pWatcher = new MarketWatcher(watcherConfigs[0].name);
         if (atWeekend) {
             pWatcher->setWeekend();
         }

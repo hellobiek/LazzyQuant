@@ -8,7 +8,6 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 
-#include "config_struct.h"
 #include "ctp_executer.h"
 #include "trade_handler.h"
 #include "order.h"
@@ -77,10 +76,10 @@ const QMap<TThostFtdcParkedOrderStatusType, QString> parkedOrderStatusMap = {
     {THOST_FTDC_PAOS_Deleted, "Deleted"},
 };
 
-CtpExecuter::CtpExecuter(const CONFIG_ITEM &config, QObject *parent) :
+CtpExecuter::CtpExecuter(const QString &configName, QObject *parent) :
     QObject(parent)
 {
-    auto settings = getSettingsSmart(QCoreApplication::organizationName(), config.name);
+    auto settings = getSettingsSmart(QCoreApplication::organizationName(), configName);
     QByteArray flowPath = settings->value("FlowPath").toByteArray();
     preventSelfTrade = settings->value("PreventSelfTrade", 1).toBool();
     orderCancelLimit = settings->value("OrderCancelLimit", 300).toInt();

@@ -3,7 +3,6 @@
 
 struct CONFIG_ITEM {
     const char* name;
-    const char* organization;
     const char* dbusObject;
     const char* dbusService;
 };

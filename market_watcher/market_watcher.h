@@ -5,7 +5,6 @@
 #include <QStringList>
 #include <QSet>
 #include <QHash>
-#include <QVector>
 #include <QTime>
 
 #include "time_mapper.h"
@@ -14,7 +13,6 @@ class QSettings;
 class CThostFtdcMdApi;
 class CTickReceiver;
 struct CThostFtdcDepthMarketDataField;
-struct CONFIG_ITEM;
 class MultipleTimer;
 class TimeValidator;
 
@@ -23,7 +21,7 @@ class MarketWatcher : public QObject {
     Q_CLASSINFO("D-Bus Interface", "com.lazzyquant.market_watcher")
 
 public:
-    explicit MarketWatcher(const CONFIG_ITEM &config, QObject *parent = nullptr);
+    explicit MarketWatcher(const QString &configName, QObject *parent = nullptr);
     ~MarketWatcher() override;
 
 protected:

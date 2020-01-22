@@ -18,7 +18,6 @@ class CThostFtdcTraderApi;
 class CTradeHandler;
 class Order;
 class ParkedOrder;
-struct CONFIG_ITEM;
 
 class AbstractQuery {
 public:
@@ -49,8 +48,9 @@ class CtpExecuter : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.lazzyquant.trade_executer")
+
 public:
-    explicit CtpExecuter(const CONFIG_ITEM &config, QObject *parent = nullptr);
+    explicit CtpExecuter(const QString &configName, QObject *parent = nullptr);
     ~CtpExecuter() override;
 
     enum LoginState {

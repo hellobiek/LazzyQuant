@@ -28,11 +28,11 @@ OptionArbitrageurBundle::OptionArbitrageurBundle(const OptionArbitrageurOptions 
         pReplayer = new CtpReplayer(replayerConfigs[0]);
         instruments = pReplayer->getReplayList();
     } else {
-        pWatcher = new MarketWatcher(watcherConfigs[0]);
+        pWatcher = new MarketWatcher(watcherConfigs[0].name);
         if (atWeekend) {
             pWatcher->setWeekend();
         }
-        pExecuter = new CtpExecuter(executerConfigs[0]);
+        pExecuter = new CtpExecuter(executerConfigs[0].name);
         instruments = pExecuter->getCachedInstruments();
     }
     pHelper = new OptionHelperImpl<CtpExecuter>(pExecuter);

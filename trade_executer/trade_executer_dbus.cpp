@@ -8,7 +8,7 @@ TradeExecuterDbus::TradeExecuterDbus(const QString &suffix)
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     for (const auto &config : executerConfigs) {
-        auto *pExecuter = new CtpExecuter(config);
+        auto *pExecuter = new CtpExecuter(config.name);
         new Trade_executerAdaptor(pExecuter);
         dbus.registerObject(config.dbusObject + suffix, pExecuter);
         dbus.registerService(config.dbusService + suffix);

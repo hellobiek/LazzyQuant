@@ -10,7 +10,6 @@
 #include <QDebugStateSaver>
 #include <QTimeZone>
 
-#include "config_struct.h"
 #include "market.h"
 #include "trading_calendar.h"
 #include "common_utility.h"
@@ -19,11 +18,11 @@
 #include "tick_receiver.h"
 #include "time_validator.h"
 
-MarketWatcher::MarketWatcher(const CONFIG_ITEM &config, QObject *parent) :
+MarketWatcher::MarketWatcher(const QString &configName, QObject *parent) :
     QObject(parent),
-    name(config.name)
+    name(configName)
 {
-    settings = getSettingsSmart(QCoreApplication::organizationName(), config.name, this).release();
+    settings = getSettingsSmart(QCoreApplication::organizationName(), configName, this).release();
     const auto flowPath = settings->value("FlowPath").toByteArray();
     saveDepthMarketData = settings->value("SaveDepthMarketData").toBool();
     saveDepthMarketDataPath = settings->value("SaveDepthMarketDataPath").toString();

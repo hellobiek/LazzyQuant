@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QMap>
 
-struct CONFIG_ITEM;
 class Bar;
 class BarCollector;
 class AbstractIndicator;
@@ -35,8 +34,8 @@ protected:
     QString kt_export_dir;
     bool saveBarsToDB;
 
-    void loadQuantTraderSettings(const CONFIG_ITEM &config);
-    void loadTradeStrategySettings(const CONFIG_ITEM &config);
+    void loadQuantTraderSettings(const QString &configName);    //!< 载入交易系统配置.
+    void loadTradeStrategySettings(const QString &configName);  //!< 载入交易策略.
     QList<Bar>* getBars(const QString &instrumentID, int timeFrame);
 
     QString currentInstrumentID;
@@ -44,7 +43,7 @@ protected:
     QString currentTradingDay;
 
 public:
-    explicit QuantTrader(const CONFIG_ITEM &config, bool saveBarsToDB, QObject *parent = nullptr);
+    explicit QuantTrader(const QString &configName, bool saveBarsToDB, QObject *parent = nullptr);
     ~QuantTrader();
 
     std::function<void(const QString&, int)> setPosition = [](auto, auto) -> void {};
