@@ -5,7 +5,6 @@
 #include <QDataStream>
 #include <QDateTime>
 #include <QTimeZone>
-#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -203,13 +202,10 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
 
     // Load Collector Bars
     QList<Bar> collectedBarList;
-    const QString tableName = QString("%1_%2").arg(instrumentID, time_frame_str);
-    QSqlDatabase sqlDB = QSqlDatabase::database();
-    const QStringList tables = sqlDB.isOpen() ? sqlDB.tables() : QStringList();
-    if (tables.contains(tableName, Qt::CaseInsensitive)) {
-        QSqlQuery qry(sqlDB);
-        bool ok = qry.exec("SELECT * from " + QString("market.%1").arg(tableName));
-        qDebug() << "select" << ok;
+    const QString dbTableName = QString("market.%1_%2").arg(instrumentID, time_frame_str);
+    QSqlQuery qry;
+    bool ok = qry.exec("SELECT * from " + dbTableName + " order by time");
+    if (ok) {
         while (qry.next()) {
             Bar bar;
             bar.time = qry.value(0).toLongLong();
@@ -221,6 +217,8 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
             bar.volume = qry.value(6).toLongLong();
             collectedBarList << bar;
         }
+    } else {
+        qWarning().noquote() << "Select from" << dbTableName << "failed!" << qry.lastError().text();
     }
 
     int collectedSize = collectedBarList.size();

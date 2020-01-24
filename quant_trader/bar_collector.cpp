@@ -4,7 +4,6 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -164,10 +163,8 @@ void BarCollector::saveEmitReset(int timeFrame, Bar &bar)
 
 void BarCollector::saveBar(int timeFrame, const Bar &bar)
 {
-    QSqlDatabase sqlDB = QSqlDatabase();
-    QSqlQuery qry(sqlDB);
-    QString tableName = QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame);
-    QString tableOfDB = QString("market.%1_%2").arg(instrument, tableName);
+    QString tableOfDB = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
+    QSqlQuery qry;
     qry.prepare("INSERT INTO " + tableOfDB + " (time, open, high, low, close, tick_volume, volume, type) "
                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     qry.bindValue(0, bar.time);
