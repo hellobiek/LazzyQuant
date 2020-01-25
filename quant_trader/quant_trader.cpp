@@ -282,6 +282,7 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
     if (timeFrame > 0) {
         currentTimeFrame = timeFrame;
     }
+    const QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
 
     const QMetaObject * metaObject = getIndicatorMetaObject(indicator_name);
     if (metaObject == nullptr) {
@@ -325,14 +326,14 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
                     }
                 }
                 if (match) {
-                    qDebug().noquote() << "Use exist indicator" << indicator_name << "for" << currentInstrumentID << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+                    qDebug().noquote() << "Use exist indicator" << indicator_name << "for" << currentInstrumentID << timeFrameStr;
                     return pIndicator;
                 }
             }
         }
     }
 
-    qDebug().noquote() << "Create new indicator" << indicator_name << "for" << currentInstrumentID << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+    qDebug().noquote() << "Create new indicator" << indicator_name << "for" << currentInstrumentID << timeFrameStr;
 
     QVector<QGenericArgument> args;
     args.reserve(10);
@@ -370,7 +371,8 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
                             args.value(6), args.value(7), args.value(8), args.value(9));
 
     if (!obj) {
-        qCritical() << "newInstance returns 0!";
+        qCritical().noquote() << "newInstance returns 0! indicator_name =" << indicator_name
+                              << ", instrumentID =" << instrumentID << ", timeFrame =" << timeFrameStr;
         return nullptr;
     }
 
@@ -380,7 +382,7 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
     pIndicator->setBarList(getBars(currentInstrumentID, currentTimeFrame), collector_map[currentInstrumentID]->getBarPtr(currentTimeFrame));
     pIndicator->update();
 
-    QString signature = currentInstrumentID + "_" + QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame) + "_" + indicator_name;
+    QString signature = currentInstrumentID + "_" + timeFrameStr + "_" + indicator_name;
     if (params.length() > 0) {
         for (const auto &param : qAsConst(params)) {
             signature += "_";
@@ -515,10 +517,6 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
     }
 }
 
-/*!
- * \brief QuantTrader::onMarketPause
- * 盘中休市.
- */
 void QuantTrader::onMarketPause()
 {
     for (auto * collector : qAsConst(collector_map)) {
@@ -526,10 +524,6 @@ void QuantTrader::onMarketPause()
     }
 }
 
-/*!
- * \brief QuantTrader::onMarketClose
- * 收盘.
- */
 void QuantTrader::onMarketClose()
 {
     for (auto * collector : qAsConst(collector_map)) {

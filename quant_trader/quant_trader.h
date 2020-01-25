@@ -62,8 +62,8 @@ public slots:
     void setTradingDay(const QString &tradingDay);
     void onMarketData(const QString &instrumentID, qint64 time, double lastPrice, int volume,
                       double askPrice1, int askVolume1, double bidPrice1, int bidVolume1);
-    void onMarketPause();
-    void onMarketClose();
+    void onMarketPause();   //!< 休盘暂停.
+    void onMarketClose();   //!< 收盘.
 
     // Indicator or strategy has been modified.
     void onModified(const QString &name);
