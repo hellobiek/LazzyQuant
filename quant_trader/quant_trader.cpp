@@ -55,6 +55,9 @@ void QuantTrader::loadQuantTraderSettings(const QString &configName)
         }
         BarCollector *collector = new BarCollector(instrumentID, static_cast<BarCollector::TimeFrames>(timeFrameFlags), saveBarsToDB, this);
         connect(collector, SIGNAL(collectedBar(QString,int,Bar)), this, SLOT(onNewBar(QString,int,Bar)), Qt::DirectConnection);
+        if (isStockLike(instrumentID)) {
+            collector->setStockLike(true);
+        }
         collector_map[instrumentID] = collector;
         qInfo() << instrumentID << ":" << static_cast<BarCollector::TimeFrames>(timeFrameFlags);
     }

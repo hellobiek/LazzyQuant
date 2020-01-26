@@ -25,6 +25,7 @@ QString getCode(const QString &instrumentID);
 bool parseOptionID(const QString &optionID, QString &futureID, OPTION_TYPE &type, int &exercisePrice);
 QString makeOptionID(const QString &futureID, OPTION_TYPE type, int exercisePrice);
 bool isOption(const QString &instrumentID);
+bool isStockLike(const QString &instrumentID);
 
 class QSettings;
 class QObject;

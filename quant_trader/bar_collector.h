@@ -55,12 +55,14 @@ public:
     Bar *getBarPtr(int timeFrame) {
         return &barMap[timeFrame];
     }
+    void setStockLike(bool isStockLike) { this->isStockLike = isStockLike; }
     void setTradingDay(const QString &tradingDay, const QDateTime &eraseFrom);
     bool onMarketData(qint64 currentTime, double lastPrice, int volume);
 
 protected:
     const QString instrument;
     bool saveBarsToDB;
+    bool isStockLike = false;
 
     int lastVolume = 0;
     qint64 tradingDayBase = 0;
@@ -68,6 +70,7 @@ protected:
     QList<int> keys;
     QMap<int, Bar> barMap;
 
+    qint64 getTimeFrameBegin(qint64 currentTime, int timeFrame) const;
     void saveEmitReset(int timeFrame, Bar &bar);
     void saveBar(int timeFrame, const Bar &bar);
 

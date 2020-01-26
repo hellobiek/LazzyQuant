@@ -105,6 +105,19 @@ bool isOption(const QString &instrumentID)
     return instrumentID.length() >= 8;  // FIXME
 }
 
+bool isStockLike(const QString &instrumentID)
+{
+    // FIXME
+    auto len = instrumentID.length();
+    if (len < 5) {
+        return false;
+    }
+    if (instrumentID[0].isUpper() && instrumentID[len - 4].isDigit()) {
+        return true;
+    }
+    return false;
+}
+
 std::unique_ptr<QSettings> getSettingsSmart(const QString &organization, const QString &name, QObject *parent)
 {
     const QString localFileName = QCoreApplication::applicationDirPath() + "/" + name + ".ini";

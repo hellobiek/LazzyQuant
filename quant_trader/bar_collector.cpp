@@ -112,9 +112,8 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
 
     for (auto key : qAsConst(keys)) {
         Bar & bar = barMap[key];
-        auto time_unit = g_time_table[static_cast<TimeFrame>(key)];  // TODO optimize, use time_unit as key
-
-        if ((currentTime / time_unit) != (bar.time / time_unit)) {
+        auto timeFrameBegin = getTimeFrameBegin(currentTime, key);
+        if (timeFrameBegin != bar.time) {
             if (key != DAY) {
                 saveEmitReset(key, bar);
             }
@@ -129,7 +128,7 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
             if (key == DAY) {
                 bar.time = tradingDayBase;
             } else {
-                bar.time = currentTime / time_unit * time_unit;
+                bar.time = timeFrameBegin;
             }
         }
 
@@ -147,6 +146,23 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
     }
     lastVolume = volume;
     return isNewTick;
+}
+
+qint64 BarCollector::getTimeFrameBegin(qint64 currentTime, int timeFrame) const
+{
+    if (isStockLike) {
+        auto hour = currentTime / HOUR_UNIT % 24;
+        if (timeFrame == HOUR1 && hour < 12) {
+            return ((currentTime - 30 * MIN_UNIT) / HOUR_UNIT * HOUR_UNIT) + 30 * MIN_UNIT;
+        }
+        if (timeFrame == HOUR2) {
+            auto currentTimeBase = currentTime / (24 * HOUR_UNIT) * 24 * HOUR_UNIT;
+            return currentTimeBase + (hour < 12 ? (9 * HOUR_UNIT +  30 * MIN_UNIT) : (13 * HOUR_UNIT));
+        }
+    }
+
+    auto time_unit = g_time_table[static_cast<TimeFrame>(timeFrame)];
+    return (currentTime / time_unit * time_unit);
 }
 
 void BarCollector::saveEmitReset(int timeFrame, Bar &bar)
