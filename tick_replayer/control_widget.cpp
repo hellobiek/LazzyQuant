@@ -1,9 +1,16 @@
 #include <QTimer>
 #include <QCoreApplication>
 
+#include "common_utility.h"
 #include "control_widget.h"
 #include "ui_control_widget.h"
 #include "tick_replayer.h"
+
+const QMap<int, QString> readableModelNames = {
+    { TickReplayer::EVERY_TICK, "逐个tick" },
+    { TickReplayer::MIN1_OHLC,  "1分钟OHLC"},
+    { TickReplayer::MIN1_HL,    "1分钟HL"},
+};
 
 ControlWidget::ControlWidget(TickReplayer *replayer, QWidget *parent) :
     QWidget(parent),
@@ -11,6 +18,12 @@ ControlWidget::ControlWidget(TickReplayer *replayer, QWidget *parent) :
     replayer(replayer)
 {
     ui->setupUi(this);
+
+    auto supportedReplayModels = replayer->getSupportedReplayModels();
+    auto replayModelFlagList = enumValueToList<TickReplayer::ReplayModels>(supportedReplayModels);
+    for (auto flag : replayModelFlagList) {
+        ui->periodBox->addItem(readableModelNames[flag], flag);
+    }
 
     timer = new QTimer(this);
     timer->setInterval(2000);
@@ -80,29 +93,7 @@ void ControlWidget::on_playButton_clicked()
         currentDate = 0;
         currentTime = 0;
     }
-    switch(ui->periodBox->currentIndex()) {
-    case 0:
-        unit = 60;
-        break;
-    case 1:
-        unit = 5 * 60;
-        break;
-    case 2:
-        unit = 15 * 60;
-        break;
-    case 3:
-        unit = 30 * 60;
-        break;
-    case 4:
-        unit = 60 * 60;
-        break;
-    case 5:
-        unit = 24 * 60 * 60;
-        break;
-    default:
-        unit = 1;
-        break;
-    }
+    replayer->setReplayModel(ui->periodBox->currentData().toInt());
     ui->periodBox->setEnabled(false);
     forcePause = false;
     forceStop = false;

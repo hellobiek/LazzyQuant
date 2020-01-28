@@ -11,7 +11,17 @@ class TickReplayer : public QObject
 {
     Q_OBJECT
 
+public:
+    enum ReplayModel {
+        EVERY_TICK = 0x01,
+        MIN1_OHLC  = 0x02,
+        MIN1_HL    = 0x04,
+    };
+    Q_DECLARE_FLAGS(ReplayModels, ReplayModel)
+    Q_FLAG(ReplayModels)
+
 protected:
+    ReplayModel replayModel = EVERY_TICK;
     QStringList replayList;
     QList<QPair<QString, CommonTick>> tickPairList;
     int tickCnt = 0;
@@ -20,6 +30,9 @@ protected:
 
 public:
     explicit TickReplayer(QObject *parent = nullptr);
+
+    virtual int getSupportedReplayModels() { return EVERY_TICK; }
+    void setReplayModel(int replayModel) { this->replayModel = static_cast<ReplayModel>(replayModel); }
 
 protected:
     QVector<int> findEndPoints(const QList<int> &oneMinuteBarTimes);    //!< 查找所有可能的交易时间段结束点.

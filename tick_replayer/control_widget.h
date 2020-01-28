@@ -37,7 +37,7 @@ private:
     int endTime;
     int currentDate = 0;    // unix timestamp
     int currentTime = 0;    // unix timestamp
-    int unit = 1;
+    int unit = 60;
     bool forcePause = false;
     bool forceStop = false;
 };

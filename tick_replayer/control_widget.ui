@@ -119,7 +119,7 @@
 
 停止时间
 
-    周期
+    精度
 
     速度</string>
    </property>
@@ -133,36 +133,6 @@
      <height>22</height>
     </rect>
    </property>
-   <item>
-    <property name="text">
-     <string>1分钟</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>5分钟</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>15分钟</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>30分钟</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>60分钟</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>1天</string>
-    </property>
-   </item>
   </widget>
   <widget class="QSlider" name="speedSlider">
    <property name="geometry">
@@ -177,7 +147,7 @@
     <number>1</number>
    </property>
    <property name="maximum">
-    <number>10</number>
+    <number>40</number>
    </property>
    <property name="pageStep">
     <number>1</number>
