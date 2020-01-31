@@ -1,5 +1,5 @@
+#include <algorithm>
 #include <QSet>
-#include <QPair>
 
 #include "tick_replayer.h"
 

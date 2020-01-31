@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QStringList>
+#include <QPair>
 
 #include "common_tick.h"
 
@@ -31,7 +32,7 @@ protected:
 public:
     explicit TickReplayer(QObject *parent = nullptr);
 
-    virtual int getSupportedReplayModels() { return EVERY_TICK; }
+    virtual int getSupportedReplayModels() const { return EVERY_TICK; }
     void setReplayModel(int replayModel) { this->replayModel = static_cast<ReplayModel>(replayModel); }
 
 protected:

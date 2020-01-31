@@ -18,7 +18,7 @@ class SinYeeReplayer : public TickReplayer
 public:
     explicit SinYeeReplayer(const CONFIG_ITEM &config, QObject *parent = nullptr);
 
-    int getSupportedReplayModels() override { return EVERY_TICK | MIN1_OHLC | MIN1_HL; }
+    int getSupportedReplayModels() const override { return EVERY_TICK | MIN1_OHLC | MIN1_HL; }
 
 protected:
     static QString normalize(const QString &instrument, const QString &contractName) {
