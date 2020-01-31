@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include <QDebugStateSaver>
 
+#include "datetime_helper.h"
 #include "bar.h"
 
 Bar::Bar()
@@ -87,7 +88,7 @@ QDataStream &operator<<(QDataStream &s, const Bar &bar)
 QDebug operator<<(QDebug dbg, const Bar &bar)
 {
     QDebugStateSaver saver(dbg);
-    dbg.nospace() << QDateTime::fromSecsSinceEpoch(bar.time, QTimeZone::utc()).toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"))
+    dbg.nospace() << utcTimeToString1(bar.time)
                   << ", open = " << bar.open
                   << ", high = " << bar.high
                   << ", low = " << bar.low

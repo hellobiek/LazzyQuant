@@ -3,6 +3,7 @@
 #include <QTimeZone>
 
 #include "config.h"
+#include "datetime_helper.h"
 #include "db_helper.h"
 #include "common_utility.h"
 #include "trade_logger.h"
@@ -54,7 +55,7 @@ QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
         pTrader->logTrade = std::bind(&TradeLogger::positionChanged, pLogger, _1, _2, _3, _4);
     } else {
         pTrader->logTrade = [](qint64 time, const QString &instrumentID, int newPosition, double price) -> void {
-            qInfo().noquote() << QDateTime::fromSecsSinceEpoch(time, QTimeZone::utc()).toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"))
+            qInfo().noquote() << utcTimeToString1(time)
                               << "New position for" << instrumentID << newPosition << ", price =" << price;
         };
     }

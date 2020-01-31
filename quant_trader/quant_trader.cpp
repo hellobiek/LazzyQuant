@@ -10,6 +10,7 @@
 
 #include "common_utility.h"
 #include "trading_calendar.h"
+#include "datetime_helper.h"
 #include "quant_trader.h"
 #include "bar.h"
 #include "bar_collector.h"
@@ -182,11 +183,11 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
 
     // Insert a new Bar List item in bars_map
     auto &barList = bars_map[instrumentID][timeFrame];
-    QString time_frame_str = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
+    QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
 
     // Load KT Export Data
     // Deprecated
-    const QString kt_export_file_name = kt_export_dir + "/" + time_frame_str + "/" + getKTExportName(instrumentID) + getSuffix(instrumentID);
+    const QString kt_export_file_name = kt_export_dir + "/" + timeFrameStr + "/" + getKTExportName(instrumentID) + getSuffix(instrumentID);
     QFile kt_export_file(kt_export_file_name);
     if (kt_export_file.open(QFile::ReadOnly)) {
         QDataStream ktStream(&kt_export_file);
@@ -205,7 +206,7 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
 
     // Load Collector Bars
     QList<Bar> collectedBarList;
-    const QString dbTableName = QString("market.%1_%2").arg(instrumentID, time_frame_str);
+    const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
     QSqlQuery qry;
     bool ok = qry.exec("SELECT * from " + dbTableName + " order by time");
     if (ok) {
@@ -245,7 +246,13 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
     }
 
     int barListSize = barList.size();
-    qDebug() << instrumentID << time_frame_str << " barListSize =" << barListSize;
+    if (barListSize > 0) {
+        qInfo().noquote() << "Loaded" << barListSize << "history data of" << instrumentID << timeFrameStr
+                          << ", from" << utcTimeToString2(barList.first().time)
+                          << "to" << utcTimeToString2(barList.last().time);
+    } else {
+        qInfo().noquote() << "No history data loaded for" << instrumentID << timeFrameStr;
+    }
 
     if (!collector_map.contains(instrumentID)) {
         qWarning() << "Warning! Missing collector for" << instrumentID << "!";
