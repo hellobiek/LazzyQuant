@@ -1,7 +1,4 @@
 #include <QSettings>
-#include <QDateTime>
-#include <QTimeZone>
-
 #include "config.h"
 #include "datetime_helper.h"
 #include "db_helper.h"

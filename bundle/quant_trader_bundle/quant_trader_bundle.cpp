@@ -1,6 +1,4 @@
 #include <QSettings>
-#include <QDateTime>
-#include <QTimeZone>
 #include <QCoreApplication>
 
 #include "config.h"
