@@ -2,6 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include <algorithm>
+
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
@@ -57,20 +59,9 @@ MarketWatcher::MarketWatcher(const QString &configName, QObject *parent) :
     settings->endGroup();
 
     if (saveDepthMarketData) {
-        // Check the directories for saving market data
-        for (const auto &instrumentID : qAsConst(subscribeSet)) {
-            const QString path_for_this_instrumentID = saveDepthMarketDataPath + "/" + instrumentID;
-            QDir dir(path_for_this_instrumentID);
-            if (!dir.exists()) {
-                bool ret = dir.mkpath(path_for_this_instrumentID);
-                if (!ret) {
-                    qWarning() << "Create directory" << path_for_this_instrumentID << "failed!";
-                }
-            }
-        }
+        std::for_each(subscribeSet.begin(), subscribeSet.end(), std::bind(&MarketWatcher::checkDirectory, this, std::placeholders::_1));
+        setupTimers();
     }
-
-    setupTimers();
 
     pUserApi->Init();
     localTime.start();
@@ -83,6 +74,15 @@ MarketWatcher::~MarketWatcher()
     delete pReceiver;
     delete multiTimer;
     delete settings;
+}
+
+void MarketWatcher::checkDirectory(const QString &instrumentID) const
+{
+    const QString instrumentDir = saveDepthMarketDataPath + "/" + instrumentID;
+    QDir dir(instrumentDir);
+    if (!dir.exists() && !dir.mkpath(instrumentDir)) {
+        qWarning() << "Create directory" << instrumentDir << "failed!";
+    }
 }
 
 void MarketWatcher::setupTimers()
@@ -355,22 +355,13 @@ void MarketWatcher::subscribeInstruments(const QStringList &instruments, bool up
     delete[] subscribe_array;
 
     if (saveDepthMarketData) {
-        for (const QString &instrumentID : instruments) {
-            const QString path_for_this_instrumentID = saveDepthMarketDataPath + "/" + instrumentID;
-            QDir dir(path_for_this_instrumentID);
-            if (!dir.exists()) {
-                bool ret = dir.mkpath(path_for_this_instrumentID);
-                if (!ret) {
-                    qWarning() << "Create directory" << path_for_this_instrumentID << "failed!";
-                }
-            }
-        }
+        std::for_each(instruments.begin(), instruments.end(), std::bind(&MarketWatcher::checkDirectory, this, std::placeholders::_1));
+        setupTimers();
     }
 
     if (loggedIn) {
         setupTimeValidators();
     }
-    setupTimers();
 
     if (updateIni) {
         QStringList enabledSubscribeList = getSettingItemList(settings, "SubscribeList");

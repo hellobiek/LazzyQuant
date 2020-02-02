@@ -47,6 +47,7 @@ protected:
 
     MultipleTimer *multiTimer = nullptr;
     QList<QStringList> instrumentsToProcess;
+    void checkDirectory(const QString &instrumentID) const; //!< 检查并创建用于保存该合约数据的目录是否存在.
     void setupTimers();
     void timesUp(int index);
 
