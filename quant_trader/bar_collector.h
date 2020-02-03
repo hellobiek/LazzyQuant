@@ -56,7 +56,7 @@ public:
         return &barMap[timeFrame];
     }
     void setStockLike(bool isStockLike) { this->isStockLike = isStockLike; }
-    void setTradingDay(const QString &tradingDay, const QDateTime &eraseFrom);
+    void setTradingDay(const QString &tradingDay);
     bool onMarketData(qint64 currentTime, double lastPrice, int volume);
 
 protected:

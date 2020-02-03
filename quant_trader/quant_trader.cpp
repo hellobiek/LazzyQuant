@@ -1,15 +1,11 @@
-#include <algorithm>
 #include <QCoreApplication>
 #include <QFile>
 #include <QSettings>
 #include <QDataStream>
-#include <QDateTime>
-#include <QTimeZone>
 #include <QSqlQuery>
 #include <QSqlError>
 
 #include "common_utility.h"
-#include "trading_calendar.h"
 #include "datetime_helper.h"
 #include "quant_trader.h"
 #include "bar.h"
@@ -442,26 +438,9 @@ void QuantTrader::setTradingDay(const QString &tradingDay)
 {
     qDebug() << "Set Trading Day to" << tradingDay;
 
-    // 计算从哪个时间点开始, 把后面的数据删除.
-    const QDate tradingDate = QDate::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
-    const QDate openDate = TradingCalendar::getInstance()->getOpenDay(tradingDate);
-    QDateTime eraseFrom(((tradingDate == openDate) ? tradingDate.addDays(-1) : openDate), QTime(20, 0), QTimeZone::utc());
-
-    const auto instruments = bars_map.keys();
-    for (const auto &instrumentID : instruments) {
-        auto &tmpMap = bars_map[instrumentID];
-        const auto tfList = tmpMap.keys();
-        for (auto &tf : tfList) {
-            auto &tmpBarList = tmpMap[tf];
-            auto it = std::lower_bound(tmpBarList.begin(), tmpBarList.end(), eraseFrom.toSecsSinceEpoch(),
-                                       [](const Bar &item1, const Bar &item2) -> bool { return item1.time < item2.time; });
-            tmpBarList.erase(it, tmpBarList.end());
-        }
-    }
-
     if (tradingDay != currentTradingDay) {
         for (auto * collector : qAsConst(collector_map)) {
-            collector->setTradingDay(tradingDay, eraseFrom);
+            collector->setTradingDay(tradingDay);
         }
         currentTradingDay = tradingDay;
     }

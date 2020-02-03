@@ -84,7 +84,7 @@ const QHash<BarCollector::TimeFrame, int> g_time_table = {
     {BarCollector::DAY,    24 * HOUR_UNIT},
 };
 
-void BarCollector::setTradingDay(const QString &tradingDay, const QDateTime &eraseFrom)
+void BarCollector::setTradingDay(const QString &tradingDay)
 {
     auto tradingDateTime = QDateTime::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
     tradingDateTime.setTimeZone(QTimeZone::utc());
@@ -92,17 +92,6 @@ void BarCollector::setTradingDay(const QString &tradingDay, const QDateTime &era
     if (tradingDayBase != newTradingDayBase) {
         tradingDayBase = newTradingDayBase;
         lastVolume = 0;
-    }
-
-    if (saveBarsToDB) {
-        for (int key : qAsConst(keys)) {
-            QString tableName = QString("%1_%2").arg(instrument, QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(key));
-            auto sqlStmt = QString("DELETE FROM market.%1 where time > %2").arg(tableName).arg(eraseFrom.toSecsSinceEpoch());
-            QSqlQuery qry(sqlStmt);
-            if (qry.lastError().type() != QSqlError::NoError) {
-                qWarning().noquote() << qry.lastError().text();
-            }
-        }
     }
 }
 
