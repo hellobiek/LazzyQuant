@@ -31,14 +31,6 @@ bool TradingCalendar::isTradingDay(const QDate &date) const
     return !nonTradingDays.contains(date);
 }
 
-bool TradingCalendar::tradesTonight(const QDate &date) const
-{
-    QDate day1 = date.addDays(1);
-    QDate day2 = date.addDays(2);
-    QDate day3 = date.addDays(3);
-    return isTradingDay(date) && (isTradingDay(day1) || (!isTradingDay(day2) && isTradingDay(day3)));
-}
-
 QDate TradingCalendar::getOpenDay(const QDate &date) const
 {
     QDate day1 = date.addDays(-1);

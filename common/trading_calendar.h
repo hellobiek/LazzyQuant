@@ -37,13 +37,6 @@ public:
     bool isTradingDay(const QDate &date = QDate::currentDate()) const;
 
     /*!
-     * \brief 判断某一天是否有夜盘交易.
-     * \param date 交易日日期.
-     * \return 是否有夜盘交易.
-     */
-    bool tradesTonight(const QDate &date = QDate::currentDate()) const;
-
-    /*!
      * \brief 计算某个交易日最早的开盘时间在哪一天.
      * 一般来说, 如果该交易日有夜盘交易, 就在昨天晚上(或上周五晚上)开盘.
      * 否则就在该交易日早上开盘.

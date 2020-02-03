@@ -98,9 +98,10 @@ void MarketWatcher::setupTimers()
     auto keys = endPointsMap.keys();
     std::sort(keys.begin(), keys.end());
     QList<QTime> saveBarTimePoints;
+    instrumentsToProcess.clear();
     for (const auto &timePoint : qAsConst(keys)) {
         instrumentsToProcess.append(endPointsMap[timePoint]);
-        saveBarTimePoints << timePoint.addSecs(60); // Save data 3 minutes after market close
+        saveBarTimePoints << timePoint.addSecs(60); // Save data 1 minute after market close
     }
 
     if (multiTimer != nullptr) {
@@ -132,30 +133,24 @@ void MarketWatcher::timesUp(int index)
     const auto today = QDate::currentDate();
 
     if (!TradingCalendar::getInstance()->isTradingDay(today)) {
-        if (!TradingCalendar::getInstance()->tradesTonight(today.addDays(-1))) {
+        bool isNormalSaturday = TradingCalendar::getInstance()->isTradingDay(today.addDays(-1)) && TradingCalendar::getInstance()->nextTradingDay(today) == today.addDays(2);
+        if (!isNormalSaturday || QTime::currentTime() > QTime(5, 0)) {
             depthMarketDataListMap.clear();
-        } else {
-            if (QTime::currentTime() > QTime(5, 0)) {
-                depthMarketDataListMap.clear();
-            }
+            return;
         }
     }
 
-    for (const auto &instrumentID : qAsConst(subscribeSet)) {
-        if (instrumentsToProcess[index].contains(instrumentID)) {
-            if (saveDepthMarketData) {
-                auto &depthMarketDataList = depthMarketDataListMap[instrumentID];
-                if (!depthMarketDataList.empty()) {
-                    QString fileName = saveDepthMarketDataPath + "/" + instrumentID + "/" + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_hhmmss_zzz")) + ".data";
-                    QFile depthMarketDataFile(fileName);
-                    depthMarketDataFile.open(QFile::WriteOnly);
-                    QDataStream wstream(&depthMarketDataFile);
-                    wstream.setVersion(QDataStream::Qt_5_9);
-                    wstream << depthMarketDataList;
-                    depthMarketDataFile.close();
-                    depthMarketDataList.clear();
-                }
-            }
+    for (const auto &instrumentID : qAsConst(instrumentsToProcess[index])) {
+        auto &depthMarketDataList = depthMarketDataListMap[instrumentID];
+        if (!depthMarketDataList.empty()) {
+            QString fileName = saveDepthMarketDataPath + "/" + instrumentID + "/" + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd_hhmmss_zzz")) + ".data";
+            QFile depthMarketDataFile(fileName);
+            depthMarketDataFile.open(QFile::WriteOnly);
+            QDataStream wstream(&depthMarketDataFile);
+            wstream.setVersion(QDataStream::Qt_5_9);
+            wstream << depthMarketDataList;
+            depthMarketDataFile.close();
+            depthMarketDataList.clear();
         }
     }
 }
