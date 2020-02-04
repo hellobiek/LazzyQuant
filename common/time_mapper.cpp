@@ -1,26 +1,22 @@
 #include "time_mapper.h"
+#include "datetime_helper.h"
 #include "trading_calendar.h"
 
 #include <QString>
 #include <QDateTime>
-#include <QTimeZone>
 
 void TimeMapper::setTradingDay(const QString &tradingDay)
 {
-    auto tradingDateTime = QDateTime::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
-    tradingDateTime.setTimeZone(QTimeZone::utc());
-    auto newTradingDayBase = tradingDateTime.toSecsSinceEpoch();
+    auto newTradingDayBase = dateToUtcTimestamp2(tradingDay);
     if (tradingDayBase != newTradingDayBase) {
         tradingDayBase = newTradingDayBase;
 
-        QDate date = tradingDateTime.date();
+        QDate date = QDate::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
         do {
             date = date.addDays(-1);
         } while (!TradingCalendar::getInstance()->isTradingDay(date));
 
-        QDateTime lastTradingDateTime(date);
-        lastTradingDateTime.setTimeZone(QTimeZone::utc());
-        lastNightBase = lastTradingDateTime.toSecsSinceEpoch();
+        lastNightBase = dateToUtcTimestamp(date);
         morningBase = lastNightBase + 24 * 3600;
     }
 }

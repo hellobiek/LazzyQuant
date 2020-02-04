@@ -2,19 +2,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <algorithm>
-
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
 #include <QDataStream>
 #include <QCoreApplication>
 #include <QDebugStateSaver>
-#include <QTimeZone>
 
 #include "market.h"
 #include "trading_calendar.h"
 #include "common_utility.h"
+#include "datetime_helper.h"
 #include "multiple_timer.h"
 #include "market_watcher.h"
 #include "tick_receiver.h"
@@ -393,5 +391,5 @@ void MarketWatcher::quit()
 void MarketWatcher::setWeekend()
 {
     QDate nextTradingday = TradingCalendar::getInstance()->nextTradingDay(QDate::currentDate());
-    earliestTime = QDateTime(nextTradingday, QTime(8, 0), QTimeZone::utc()).toSecsSinceEpoch();
+    earliestTime = dateToUtcTimestamp(nextTradingday) + 8 * 3600;
 }
