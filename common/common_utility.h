@@ -66,20 +66,6 @@ QList<int> enumValueToList(int value)
     return valueSet.toList();
 }
 
-static inline quint8 charToDigit(const char ten, const char one)
-{
-    return quint8(10 * (ten - '0') + one - '0');
-}
-
-// Convert string with format HH:mm:ss into seconds
-static inline int hhmmssToSec(const char *hhmmss)
-{
-    quint8 hour   = charToDigit(hhmmss[0], hhmmss[1]);
-    quint8 minute = charToDigit(hhmmss[3], hhmmss[4]);
-    quint8 second = charToDigit(hhmmss[6], hhmmss[7]);
-    return hour * 3600 + minute * 60 + second;
-}
-
 
 // 三种类型的订单 (0:普通限价单, 1:Fill and Kill, 2:Fill or Kill)
 #define LIMIT_ORDER   0

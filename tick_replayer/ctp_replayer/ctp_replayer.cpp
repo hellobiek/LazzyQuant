@@ -9,6 +9,7 @@
 
 #include "config_struct.h"
 #include "common_utility.h"
+#include "datetime_helper.h"
 #include "trading_calendar.h"
 #include "ctp_replayer.h"
 
