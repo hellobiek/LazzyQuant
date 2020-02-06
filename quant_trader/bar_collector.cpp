@@ -1,13 +1,12 @@
 #include <QHash>
 #include <QDebug>
 #include <QMetaEnum>
-#include <QDateTime>
-#include <QTimeZone>
 
 #include <QSqlQuery>
 #include <QSqlError>
 
 #include "common_utility.h"
+#include "datetime_helper.h"
 #include "db_helper.h"
 #include "bar_collector.h"
 
@@ -86,9 +85,7 @@ const QHash<BarCollector::TimeFrame, int> g_time_table = {
 
 void BarCollector::setTradingDay(const QString &tradingDay)
 {
-    auto tradingDateTime = QDateTime::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
-    tradingDateTime.setTimeZone(QTimeZone::utc());
-    auto newTradingDayBase = tradingDateTime.toSecsSinceEpoch();
+    auto newTradingDayBase = dateToUtcTimestamp2(tradingDay);
     if (tradingDayBase != newTradingDayBase) {
         tradingDayBase = newTradingDayBase;
         lastVolume = 0;
@@ -103,9 +100,7 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
         Bar & bar = barMap[key];
         auto timeFrameBegin = getTimeFrameBegin(currentTime, key);
         if (timeFrameBegin != bar.time) {
-            if (key != DAY) {
-                saveEmitReset(key, bar);
-            }
+            saveEmitReset(key, bar);
         }
 
         if (!isNewTick) {
@@ -113,12 +108,8 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
         }
 
         if (bar.isEmpty()) {
+            bar.time = timeFrameBegin;
             bar.open = lastPrice;
-            if (key == DAY) {
-                bar.time = tradingDayBase;
-            } else {
-                bar.time = timeFrameBegin;
-            }
         }
 
         if (lastPrice > bar.high) {
@@ -139,6 +130,10 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
 
 qint64 BarCollector::getTimeFrameBegin(qint64 currentTime, int timeFrame) const
 {
+    if (timeFrame == DAY) {
+        return tradingDayBase;
+    }
+
     if (isStockLike) {
         auto hour = currentTime / HOUR_UNIT % 24;
         if (timeFrame == HOUR1 && hour < 12) {
