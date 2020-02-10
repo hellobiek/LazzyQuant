@@ -72,7 +72,7 @@ protected:
 
     qint64 getTimeFrameBegin(qint64 currentTime, int timeFrame) const;
     void saveEmitReset(int timeFrame, Bar &bar);
-    void saveBar(int timeFrame, const Bar &bar);
+    void saveBar(int timeFrame, const Bar &bar) const;
 
 signals:
     void collectedBar(const QString &instrumentID, int timeFrame, const Bar &bar);

@@ -60,6 +60,15 @@ int TradingCalendar::getTradingDays(const QDate &startDate, const QDate &endDate
     return sum;
 }
 
+QDate TradingCalendar::prevTradingDay(const QDate &date) const
+{
+    QDate prevTradingDay = date;
+    do {
+        prevTradingDay = prevTradingDay.addDays(-1);
+    } while (!isTradingDay(prevTradingDay));
+    return prevTradingDay;
+}
+
 QDate TradingCalendar::nextTradingDay(const QDate &date) const
 {
     QDate nextTradingDay = date;

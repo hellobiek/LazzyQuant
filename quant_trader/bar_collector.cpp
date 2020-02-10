@@ -161,7 +161,7 @@ void BarCollector::saveEmitReset(int timeFrame, Bar &bar)
     }
 }
 
-void BarCollector::saveBar(int timeFrame, const Bar &bar)
+void BarCollector::saveBar(int timeFrame, const Bar &bar) const
 {
     QString tableOfDB = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
     QSqlQuery qry;

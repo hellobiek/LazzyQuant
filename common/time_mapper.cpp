@@ -12,11 +12,9 @@ void TimeMapper::setTradingDay(const QString &tradingDay)
         tradingDayBase = newTradingDayBase;
 
         QDate date = QDate::fromString(tradingDay, QStringLiteral("yyyyMMdd"));
-        do {
-            date = date.addDays(-1);
-        } while (!TradingCalendar::getInstance()->isTradingDay(date));
+        QDate prevTradingDay = TradingCalendar::getInstance()->prevTradingDay(date);
 
-        lastNightBase = dateToUtcTimestamp(date);
+        lastNightBase = dateToUtcTimestamp(prevTradingDay);
         morningBase = lastNightBase + 24 * 3600;
     }
 }

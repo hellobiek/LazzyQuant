@@ -55,9 +55,16 @@ public:
     int getTradingDays(const QDate &startDate, const QDate &endDate) const;
 
     /*!
+     * \brief 计算上一交易日日期.
+     * \param date 日期.
+     * \return 上一交易日日期(不含date).
+     */
+    QDate prevTradingDay(const QDate &date) const;
+
+    /*!
      * \brief 计算下一交易日日期.
      * \param date 日期.
-     * \return 下一交易日日期.
+     * \return 下一交易日日期(含date).
      */
     QDate nextTradingDay(const QDate &date) const;
 
