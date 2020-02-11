@@ -14,11 +14,11 @@
 
 ## 开发与测试环境:
 &emsp;&emsp;Visual Studio 2015/2017 (Windows)  
-&emsp;&emsp;GCC 5.3/8.2 (Linux)  
-&emsp;&emsp;Qt 5.12.4 (最低要求5.10)  
+&emsp;&emsp;GCC 7.3/9.2 (Linux)  
+&emsp;&emsp;Qt 5.12.6 (最低要求5.10)  
 &emsp;&emsp;Boost 1.68  
 &emsp;&emsp;D-Bus 1.10.28  
-&emsp;&emsp;MySQL 5.7.26  
+&emsp;&emsp;MySQL 5.7.29  
 
 ## 在Linux下编译的步骤
 git clone https://github.com/zc8424/LazzyQuant.git  
