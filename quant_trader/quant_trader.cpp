@@ -181,25 +181,6 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
     auto &barList = bars_map[instrumentID][timeFrame];
     QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
 
-    // Load KT Export Data
-    // Deprecated
-    const QString kt_export_file_name = kt_export_dir + "/" + timeFrameStr + "/" + getKTExportName(instrumentID) + getSuffix(instrumentID);
-    QFile kt_export_file(kt_export_file_name);
-    if (kt_export_file.open(QFile::ReadOnly)) {
-        QDataStream ktStream(&kt_export_file);
-        ktStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
-        ktStream.setByteOrder(QDataStream::LittleEndian);
-        ktStream.skipRawData(12);
-
-        QList<KTExportBar> ktBarList;
-        ktStream >> ktBarList;
-        qDebug() << kt_export_file_name << ktBarList.size() << "bars";
-        for (const auto &ktbar : qAsConst(ktBarList)) {
-            barList.append(ktbar);
-        }
-        kt_export_file.close();
-    }
-
     // Load Collector Bars
     QList<Bar> collectedBarList;
     const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
@@ -215,30 +196,10 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
             bar.close= qry.value(4).toDouble();
             bar.tick_volume = qry.value(5).toLongLong();
             bar.volume = qry.value(6).toLongLong();
-            collectedBarList << bar;
+            barList << bar;
         }
     } else {
         qWarning().noquote() << "Select from" << dbTableName << "failed!" << qry.lastError().text();
-    }
-
-    int collectedSize = collectedBarList.size();
-    QSet<int> invalidSet;
-    for (int i = 0; i < collectedSize; i ++) {
-        for (int j = i + 1; j < collectedSize; j++) {
-            if (collectedBarList[i].time >= collectedBarList[j].time) {
-                invalidSet.insert(j);
-            }
-        }
-    }
-
-    qint64 ktLastTime = 0;
-    if (!barList.empty()) {
-        ktLastTime = barList.last().time;
-    }
-    for (int i = 0; i < collectedSize; i++) {
-        if (collectedBarList[i].time > ktLastTime && !invalidSet.contains(i)) {
-            barList.append(collectedBarList[i]);
-        }
     }
 
     int barListSize = barList.size();

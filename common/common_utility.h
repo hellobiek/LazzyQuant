@@ -72,22 +72,4 @@ QList<int> enumValueToList(int value)
 #define FAK_ORDER     1
 #define FOK_ORDER     2
 
-
-// 上海期货交易所       线材.
-const QString SQ[] = {"wr"};
-// 上海期货交易所 (夜盘)              铜,   铝,   锌,   铅,   镍,   锡,   金,   银,螺纹钢,热轧卷板,沥青,天然橡胶.
-const QString SY[] = {"cu", "al", "zn", "pb", "ni", "sn", "au", "ag", "rb", "hc", "bu", "ru", "fu", "sc", "nr", "sp", "ss"};
-// 大连商品交易所                                  玉米, 玉米淀粉, 纤维板,  胶合板, 鸡蛋, 线型低密度聚乙烯, 聚氯乙烯, 聚丙烯.
-const QString DL[] = {"fb", "bb", "jd"};
-// 大连商品交易所  (夜盘)          黄大豆1号, 黄大豆2号, 豆粕, 大豆原油, 棕榈油, 冶金焦炭, 焦煤, 铁矿石.
-const QString DY[] = {"a",  "b",  "c",  "cs", "l",  "v",  "pp", "m",  "y",  "p",  "j",  "jm", "i", "rr", "eb", "eg"};
-// 郑州商品交易所.
-const QString ZZ[] = {"jr", "lr", "pm", "ri", "rs", "sf", "sm", "wh", "ap", "cj", "ur"};
-// 郑州商品交易所 (夜盘)
-const QString ZY[] = {"cf", "cy", "fg", "ma", "oi", "rm", "sr", "ta", "zc", "tc"};	// zc原来为tc
-// 中金所.
-const QString ZJ[] = {"ic", "if", "ih", "t",  "tf", "ts"};
-
-QString getSuffix(const QString &instrumentID);
-
 #endif // COMMON_UTILITY_H

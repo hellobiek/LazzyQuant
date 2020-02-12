@@ -10,17 +10,6 @@ Bar::Bar()
     reset();
 }
 
-Bar::Bar(const KTExportBar &ktbar)
-{
-    time = ktbar.m_time;
-    open = ktbar.m_fOpen;
-    high = ktbar.m_fHigh;
-    low = ktbar.m_fLow;
-    close = ktbar.m_fClose;
-    tick_volume = 1;
-    volume = ktbar.m_fVolume;
-}
-
 void Bar::reset()
 {
     time = 0;
@@ -35,22 +24,6 @@ void Bar::reset()
 bool Bar::isEmpty() const
 {
     return tick_volume == 0;
-}
-
-QDataStream &operator>>(QDataStream &s, KTExportBar &bar)
-{
-    s >> bar.m_time;
-    s >> bar.m_fOpen;
-    s >> bar.m_fHigh;
-    s >> bar.m_fLow;
-    s >> bar.m_fClose;
-    s >> bar.m_fVolume;
-    s >> bar.m_fAmount;
-    s >> bar.m_wAdvance;
-    s >> bar.m_wDecline;
-    s >> bar.amount;
-    s >> bar.settle;
-    return s;
 }
 
 QDataStream &operator>>(QDataStream &s, Bar &bar)
