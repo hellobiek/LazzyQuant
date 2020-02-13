@@ -50,9 +50,8 @@ void ControlWidget::setStop(const QDateTime &stopDateTime)
 
 void ControlWidget::onTimer()
 {
-    bool haveData1 = false;
-    bool haveData2 = false;
-    while ((!haveData1) && (!haveData2)) {
+    bool haveData = false;
+    while (!haveData) {
         QCoreApplication::processEvents();
         if (currentTime >= endTime || forceStop) {
             on_stopButton_clicked();
@@ -62,22 +61,18 @@ void ControlWidget::onTimer()
             on_pauseButton_clicked();
             break;
         }
-        int targetTime = (currentTime < startTime) ? startTime : currentTime;
+        qint64 targetTime = (currentTime < startTime) ? startTime : currentTime;
         targetTime += unit;
         targetTime = targetTime / unit * unit;
         targetTime += 30;
 
-        int targetDate = targetTime / (24 * 3600) * (24 * 3600);
-        if (currentDate != targetDate) {
-            haveData1 = replayer->replayTo(targetDate);
+        qint64 targetDate = (targetTime / 3600 + 6) / 24 * (24 * 3600);
+        if (currentDate < targetDate) {
             auto td = QDateTime::fromSecsSinceEpoch(targetDate, Qt::UTC);
-            bool haveData3 = replayer->prepareReplay(td.toString(QStringLiteral("yyyyMMdd")));
-            if (!haveData3) {
-                targetTime = targetDate + 24 * 3600 - 1;
-            }
+            replayer->prepareReplay(td.toString(QStringLiteral("yyyyMMdd")));
             currentDate = targetDate;
         }
-        haveData2 = replayer->replayTo(targetTime);
+        haveData = replayer->replayTo(targetTime);
         currentTime = targetTime;
         ui->currentDateTimeEdit->setDateTime(QDateTime::fromSecsSinceEpoch(currentTime, Qt::UTC));
     }
@@ -103,7 +98,6 @@ void ControlWidget::on_playButton_clicked()
 void ControlWidget::on_pauseButton_clicked()
 {
     timer->stop();
-    ui->periodBox->setEnabled(true);
     forcePause = true;
 }
 

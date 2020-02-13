@@ -117,7 +117,7 @@
    <property name="text">
     <string>开始时间
 
-停止时间
+结束时间
 
     精度
 
@@ -139,7 +139,7 @@
     <rect>
      <x>150</x>
      <y>130</y>
-     <width>181</width>
+     <width>191</width>
      <height>16</height>
     </rect>
    </property>

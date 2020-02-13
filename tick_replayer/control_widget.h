@@ -33,10 +33,10 @@ private:
     Ui::ControlWidget *ui;
     TickReplayer *replayer;
     QTimer *timer;
-    int startTime;
-    int endTime;
-    int currentDate = 0;    // unix timestamp
-    int currentTime = 0;    // unix timestamp
+    qint64 startTime;
+    qint64 endTime;
+    qint64 currentDate = 0;
+    qint64 currentTime = 0;
     int unit = 60;
     bool forcePause = false;
     bool forceStop = false;

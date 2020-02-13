@@ -42,7 +42,7 @@
     </method>
     <method name="replayTo">
       <arg type="b" direction="out"/>
-      <arg name="time" type="i" direction="in"/>
+      <arg name="time" type="x" direction="in"/>
     </method>
   </interface>
 </node>

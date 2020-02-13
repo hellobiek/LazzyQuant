@@ -55,7 +55,7 @@ public slots:
 
     bool prepareReplay(const QString &date);
     bool prepareReplay(const QString &date, const QStringList &instruments);
-    bool replayTo(int time);
+    bool replayTo(qint64 time);
 
 };
 

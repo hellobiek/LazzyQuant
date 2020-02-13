@@ -92,7 +92,7 @@ bool TickReplayer::prepareReplay(const QString &date, const QStringList &instrum
     return tickCnt > 0;
 }
 
-bool TickReplayer::replayTo(int time)
+bool TickReplayer::replayTo(qint64 time)
 {
     bool ret = false;
     if (tickCnt > 0) {
