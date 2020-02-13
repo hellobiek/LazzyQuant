@@ -31,7 +31,6 @@ protected:
     QMap<QString, MQL5Indicator*> displayableMap;
     QMap<QString, AbstractStrategy*> strategyIdMap;
 
-    QString kt_export_dir;
     bool saveBarsToDB;
 
     void loadQuantTraderSettings(const QString &configName);    //!< 载入交易系统配置.

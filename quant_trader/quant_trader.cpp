@@ -1,7 +1,5 @@
 #include <QCoreApplication>
-#include <QFile>
 #include <QSettings>
-#include <QDataStream>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -34,10 +32,6 @@ QuantTrader::~QuantTrader()
 void QuantTrader::loadQuantTraderSettings(const QString &configName)
 {
     auto settings = getSettingsSmart(QCoreApplication::organizationName(), configName);
-
-    settings->beginGroup("HistoryPath");
-    kt_export_dir = settings->value("ktexport").toString();
-    settings->endGroup();
 
     settings->beginGroup("Collector");
     const auto instrumentIDs = settings->childKeys();
@@ -132,32 +126,6 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
         } else if (position.is_initialized() && position_map[instrument].is_initialized()) {
             position_map[instrument] = position_map[instrument].get() + position.get();
         }
-    }
-}
-
-/*!
- * \brief getKTExportName
- * 从合约代码中提取飞狐交易师导出数据的文件名.
- * 比如 cu1703 --> cu03, i1705 --> i05, CF705 --> CF05
- *      SR709 --> SR109, SR809 --> SR009
- *
- * \param instrumentID 合约代码.
- * \return 从飞狐交易师导出的此合约数据的文件名.
- */
-static inline QString getKTExportName(const QString &instrumentID) {
-    const QString code = getCode(instrumentID);
-    QString month = instrumentID.right(2);
-    if (code == "SR" || code == "WH" || code == "bu" || code == "a") {
-        const int len = instrumentID.length();
-        const QString Y = instrumentID.mid(len - 3, 1);
-        const int y = Y.toInt();
-        if (y % 2 == 0) {
-            return code + "0" + month;
-        } else {
-            return code + "1" + month;
-        }
-    } else {
-        return code + month;
     }
 }
 
