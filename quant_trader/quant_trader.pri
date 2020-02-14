@@ -3,6 +3,7 @@ QUANT_TRADER_FOLDER = $$LAZZYQUANT_ROOT/quant_trader
 
 SOURCES *= \
     $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/trading_calendar.cpp \
     $$COMMON_FOLDER/datetime_helper.cpp \
     $$COMMON_FOLDER/db_helper.cpp \
@@ -15,6 +16,7 @@ SOURCES *= \
 
 HEADERS *= \
     $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/trading_calendar.h \
     $$COMMON_FOLDER/datetime_helper.h \
     $$COMMON_FOLDER/db_helper.h \

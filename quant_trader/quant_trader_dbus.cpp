@@ -2,7 +2,7 @@
 #include "config.h"
 #include "datetime_helper.h"
 #include "db_helper.h"
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "trade_logger.h"
 #include "quant_trader.h"
 #include "quant_trader_adaptor.h"

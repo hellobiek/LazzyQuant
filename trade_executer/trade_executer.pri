@@ -3,6 +3,7 @@ TRADE_EXECUTER_FOLDER = $$LAZZYQUANT_ROOT/trade_executer
 
 SOURCES *= \
     $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/settings_helper.cpp \
     $$TRADE_EXECUTER_FOLDER/ctp_executer.cpp \
     $$TRADE_EXECUTER_FOLDER/trade_handler.cpp \
     $$TRADE_EXECUTER_FOLDER/order.cpp \
@@ -11,6 +12,7 @@ SOURCES *= \
 
 HEADERS *= \
     $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/settings_helper.h \
     $$TRADE_EXECUTER_FOLDER/ctp_executer.h \
     $$TRADE_EXECUTER_FOLDER/trade_handler.h \
     $$TRADE_EXECUTER_FOLDER/order.h \

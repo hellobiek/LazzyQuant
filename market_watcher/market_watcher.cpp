@@ -11,7 +11,7 @@
 
 #include "market.h"
 #include "trading_calendar.h"
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "datetime_helper.h"
 #include "multiple_timer.h"
 #include "market_watcher.h"

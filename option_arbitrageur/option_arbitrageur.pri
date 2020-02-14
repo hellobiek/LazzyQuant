@@ -3,6 +3,7 @@ OPTION_ARBITRAGEUR_FOLDER = $$LAZZYQUANT_ROOT/option_arbitrageur
 
 SOURCES *= \
     $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/trading_calendar.cpp \
     $$OPTION_ARBITRAGEUR_FOLDER/option_arbitrageur.cpp \
     $$OPTION_ARBITRAGEUR_FOLDER/option_pricing.cpp \
@@ -15,6 +16,7 @@ SOURCES *= \
 
 HEADERS *= \
     $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/trading_calendar.h \
     $$OPTION_ARBITRAGEUR_FOLDER/option_arbitrageur.h \
     $$OPTION_ARBITRAGEUR_FOLDER/option_pricing.h \

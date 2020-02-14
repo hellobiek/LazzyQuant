@@ -6,6 +6,7 @@
 
 #include "market.h"
 #include "common_utility.h"
+#include "settings_helper.h"
 
 KtMarket::KtMarket()
 {

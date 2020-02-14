@@ -1,5 +1,5 @@
 #include "strategy_status.h"
-#include "common_utility.h"
+#include "settings_helper.h"
 
 #include <QDateTime>
 #include <QSettings>

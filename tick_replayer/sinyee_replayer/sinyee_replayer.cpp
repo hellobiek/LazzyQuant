@@ -6,7 +6,7 @@
 #include <QCoreApplication>
 
 #include "config_struct.h"
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "sinyee_tick.h"
 #include "sinyee_bar.h"
 #include "sinyee_replayer.h"

@@ -5,6 +5,7 @@
 
 #include "common_utility.h"
 #include "datetime_helper.h"
+#include "settings_helper.h"
 #include "quant_trader.h"
 #include "bar.h"
 #include "bar_collector.h"

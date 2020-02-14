@@ -6,6 +6,7 @@ SOURCES *= \
     $$COMMON_FOLDER/common_utility.cpp \
     $$COMMON_FOLDER/datetime_helper.cpp \
     $$COMMON_FOLDER/multiple_timer.cpp \
+    $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/trading_calendar.cpp \
     $$COMMON_FOLDER/time_mapper.cpp \
     $$MARKET_WATCHER_FOLDER/market_watcher.cpp \
@@ -17,6 +18,7 @@ HEADERS *= \
     $$COMMON_FOLDER/common_utility.h \
     $$COMMON_FOLDER/datetime_helper.h \
     $$COMMON_FOLDER/multiple_timer.h \
+    $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/trading_calendar.h \
     $$COMMON_FOLDER/time_mapper.h \
     $$MARKET_WATCHER_FOLDER/market_watcher.h \

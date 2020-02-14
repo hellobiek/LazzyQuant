@@ -4,7 +4,7 @@
 #include "config.h"
 #include "datetime_helper.h"
 #include "db_helper.h"
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "market_watcher.h"
 #include "tick_replayer.h"
 #include "replay_sources.h"

@@ -1,4 +1,4 @@
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "trading_calendar.h"
 
 #include <QSettings>

@@ -1,4 +1,4 @@
-#include "common_utility.h"
+#include "settings_helper.h"
 #include "depth_market.h"
 #include "pair_trade.h"
 #include "butterfly.h"

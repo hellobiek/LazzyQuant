@@ -8,6 +8,7 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 
+#include "settings_helper.h"
 #include "ctp_executer.h"
 #include "trade_handler.h"
 #include "order.h"

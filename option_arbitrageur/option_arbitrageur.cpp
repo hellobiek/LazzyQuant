@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "common_utility.h"
+#include "settings_helper.h"
 #include "option_helper.h"
 #include "option_pricing.h"
 #include "depth_market.h"
