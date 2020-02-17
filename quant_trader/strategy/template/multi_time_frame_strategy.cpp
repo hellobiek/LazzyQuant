@@ -38,21 +38,19 @@ void MultiTimeFrameStrategy::setPosition(int newPosition)
 void MultiTimeFrameStrategy::resetPosition()
 {
     position = 0;
-    trailingStop.disable();
+    trailingStop.setEnabled(false);
     saveStatus();
 }
 
 void MultiTimeFrameStrategy::checkTPSL(double price)
 {
-    if (!position.is_initialized()) {
-        // No position
+    Q_ASSERT((position == 0 && !trailingStop.isEnabled()) ||
+             (position > 0  &&  trailingStop.isEnabled()  &&  trailingStop.getDirection()) ||
+             (position < 0  &&  trailingStop.isEnabled()  && !trailingStop.getDirection()));
+
+    if (position == 0) {
         return;
     }
-
-    int position_value = position.get();
-    Q_ASSERT((position_value == 0 && !trailingStop.getEnabled()) ||
-             (position_value > 0  &&  trailingStop.getEnabled()  &&  trailingStop.getDirection()) ||
-             (position_value < 0  &&  trailingStop.getEnabled()  && !trailingStop.getDirection()));
 
     if (trailingStop.checkStopLoss(price)) {
         resetPosition();
@@ -80,13 +78,11 @@ void MultiTimeFrameStrategy::checkIfNewBar(int newBarTimeFrame)
 
     if (trailingTimeFrame == newBarTimeFrame) {
         trailingStop.update(bars[trailingTimeFrame][1].high, bars[trailingTimeFrame][1].low);
-        if (trailingStop.getEnabled()) {
+        if (trailingStop.isEnabled()) {
             qDebug().noquote() << QTime::fromMSecsSinceStartOfDay(bars[trailingTimeFrame][0].time % 86400 * 1000).toString() << trailingStop;
         }
     }
-    if (position.is_initialized()) {
-        saveStatus();
-    }
+    saveStatus();
 }
 
 void MultiTimeFrameStrategy::onNewTick(qint64 time, double lastPrice)

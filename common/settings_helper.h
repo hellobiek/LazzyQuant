@@ -8,12 +8,19 @@ class QSettings;
 class QObject;
 
 /*!
- * \brief 如果存在本地配置文件, 则使用本地配置文件, 否则使用UserScope配置文件.
- *
- * \param organization 公司或组织名.
+ * \brief 使用本地配置文件构建QSettings对象智能指针.
  * \param name 配置文件名.
  * \param parent QSettings的父对象.
- * \return 配置文件对应的QSettings智能指针.
+ * \return QSettings对象智能指针.
+ */
+std::unique_ptr<QSettings> getSettingsLocal(const QString &name, QObject *parent = nullptr);
+
+/*!
+ * \brief 如果存在本地配置文件, 则使用本地配置文件, 否则使用UserScope配置文件构建QSettings对象智能指针.
+ * \param organization 公司或组织名.
+ * \param name 配置文件名.
+ * \param parent QSettings的父对象指针.
+ * \return QSettings对象智能指针.
  */
 std::unique_ptr<QSettings> getSettingsSmart(const QString &organization, const QString &name, QObject *parent = nullptr);
 

@@ -4,17 +4,19 @@
 #include <cfloat>
 #include <QDebug>
 
+class QSettings;
+
 class TrailingStop
 {
     bool direction;
     double stopLoss;
     double AFstep, AFmax;
-    bool isNewCreate = true;
-    bool isEnabled = true;
+    bool newCreate = true;
+    bool enabled = true;
 
     double AF = 0.0;
-    double highestEver = -DBL_MAX;
-    double lowestEver = DBL_MAX;
+    double highest = -DBL_MAX;
+    double lowest = DBL_MAX;
 
 public:
     TrailingStop(bool direction, double initStop, double AFstep, double AFmax);
@@ -22,16 +24,16 @@ public:
     TrailingStop();
 
     bool getDirection() const { return direction; }
-    bool getEnabled() const { return isEnabled; }
-    void enable() { isEnabled = true; }
-    void disable() { isEnabled = false; }
+    bool isEnabled() const { return enabled; }
+    void setEnabled(bool b) { enabled = b; }
 
     bool checkStopLoss(double price) const;
     void update(double highPrice, double lowPrice);
 
+    void saveToSettings(QSettings *pSettings, const QString &groupName);
+    void loadFromSettings(QSettings *pSettings, const QString &groupName);
+
     friend QDebug operator<<(QDebug dbg, const TrailingStop &stop);
-    friend QDataStream &operator<<(QDataStream &s, const TrailingStop &stop);
-    friend QDataStream &operator>>(QDataStream &s, TrailingStop &stop);
 };
 
 

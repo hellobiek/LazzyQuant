@@ -1,7 +1,6 @@
 #ifndef ABSTRACT_STRATEGY_H
 #define ABSTRACT_STRATEGY_H
 
-#include <boost/optional.hpp>
 #include <QMap>
 #include <QString>
 
@@ -15,14 +14,15 @@ protected:
     QString strategyID;
     QString instrumentID;
     int timeFrames;
-    bool enabled = true;
-
-    boost::optional<int> position;
+    int position = 0;
+    bool enabled = true;    //!< 是否参与计算.
+    bool included = true;   //!< 输出结果是否参与加总.
+    bool limited = false;   //!< 是否被限制开仓.
 
 public:
     AbstractStrategy(const QString &id, const QString &instrumentID, int timeFrames) :
         strategyID(id), instrumentID(instrumentID), timeFrames(timeFrames) {}
-    virtual ~AbstractStrategy() {}
+    virtual ~AbstractStrategy() = default;
 
     virtual void setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>>&) {}
 
@@ -30,7 +30,7 @@ public:
     virtual void saveStatus() = 0;
 
     virtual void resetPosition() = 0;
-    boost::optional<int> getPosition() const {
+    int getPosition() const {
         return position;
     }
 
@@ -43,8 +43,13 @@ public:
 
     QString getId() const  { return strategyID; }
     QString getInstrument() const { return instrumentID; }
-    bool isEnabled() const  { return enabled; }
-    void setEnabled(bool state) { enabled = state; }
+
+    bool isEnabled()  const { return enabled; }
+    bool isIncluded() const { return included; }
+    bool isLimited()  const { return limited; }
+    void setEnabled(bool b)  { enabled = b; saveStatus(); }
+    void setIncluded(bool b) { included = b; saveStatus(); }
+    void setLimited(bool b)  { limited = b; saveStatus(); }
 
 };
 

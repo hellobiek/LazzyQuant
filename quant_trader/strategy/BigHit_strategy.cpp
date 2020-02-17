@@ -91,12 +91,10 @@ void BigHitStrategy::onNewTick(qint64 time, double lastPrice)
             setPosition(-1);
         }
     } else {
-        if (position.is_initialized()) {
-            if (position.value() > 0 && bigHit < 0) {
-                setPosition(0);
-            } else if (position.value() < 0 && bigHit > 0){
-                setPosition(0);
-            }
+        if (position > 0 && bigHit < 0) {
+            setPosition(0);
+        } else if (position < 0 && bigHit > 0){
+            setPosition(0);
         }
     }
     recentPrices.enqueue(qMakePair(time, lastPrice));

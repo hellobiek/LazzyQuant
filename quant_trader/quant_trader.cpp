@@ -121,23 +121,12 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
             editableMap.insert(group, editable);
         }
 
-        auto position = strategy->getPosition();
-        if (!position_map.contains(instrument)) {
-            position_map.insert(instrument, position);
-        } else if (position.is_initialized() && position_map[instrument].is_initialized()) {
-            position_map[instrument] = position_map[instrument].get() + position.get();
+        if (strategy->isEnabled() && strategy->isIncluded()) {
+            positionMap[instrument] += strategy->getPosition();
         }
     }
 }
 
-/*!
- * \brief QuantTrader::getBars
- * 获取历史K线数据, 包括从飞狐交易师导出的数据和BarCollector保存到数据库的K线数据.
- *
- * \param instrumentID 合约代码.
- * \param timeFrame 时间框架(枚举)
- * \return 指向包含此合约历史K线数据的QList<Bar>指针.
- */
 QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
 {
     if (bars_map.contains(instrumentID)) {
@@ -150,8 +139,7 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
     auto &barList = bars_map[instrumentID][timeFrame];
     QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
 
-    // Load Collector Bars
-    QList<Bar> collectedBarList;
+    // Load History Bars
     const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
     QSqlQuery qry;
     bool ok = qry.exec("SELECT * from " + dbTableName + " order by time");
@@ -402,37 +390,23 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
     bool isNewTick = collector && collector->onMarketData(time, lastPrice, volume);
 
     const auto strategyList = strategy_map.values(instrumentID);
-    boost::optional<int> new_position_sum;
+    int newPositionSum = 0;
     for (auto *strategy : strategyList) {
         if (isNewTick) {    // 有新的成交.
             if (strategy->isEnabled()) {
                 strategy->onNewTick(time, lastPrice);
             }
         }
-        auto position = strategy->getPosition();
-        if (position.is_initialized()) {
-            if (new_position_sum.is_initialized()) {
-                new_position_sum = new_position_sum.get() + position.get();
-            } else {
-                new_position_sum = position;
-            }
+        if (strategy->isEnabled() && strategy->isIncluded()) {
+            newPositionSum += strategy->getPosition();
         }
     }
 
-    if (new_position_sum.is_initialized()) {
-        if (position_map.contains(instrumentID) && position_map[instrumentID].is_initialized()) {
-            if (position_map[instrumentID].get() != new_position_sum.get()) {
-                position_map[instrumentID] = new_position_sum;
-                cancelAllOrders(instrumentID);
-                setPosition(instrumentID, new_position_sum.get());
-                logTrade(time, instrumentID, new_position_sum.get(), lastPrice);
-            }
-        } else {
-            position_map[instrumentID] = new_position_sum;
-            cancelAllOrders(instrumentID);
-            setPosition(instrumentID, new_position_sum.get());
-            logTrade(time, instrumentID, new_position_sum.get(), lastPrice);
-        }
+    if (positionMap.value(instrumentID) != newPositionSum) {
+        positionMap[instrumentID] = newPositionSum;
+        cancelAllOrders(instrumentID);
+        setPosition(instrumentID, newPositionSum);
+        logTrade(time, instrumentID, newPositionSum, lastPrice);
     }
 }
 
@@ -467,12 +441,7 @@ QStringList QuantTrader::getEditableList() const
 
 int QuantTrader::getPositionByInstrumentId(const QString &instrument) const
 {
-    auto p = position_map.value(instrument);
-    if (p.is_initialized()) {
-        return p.value();
-    } else {
-        return -INT_MAX;
-    }
+    return positionMap.value(instrument);
 }
 
 int QuantTrader::getPositionByStrategyId(const QString &id) const
@@ -480,10 +449,7 @@ int QuantTrader::getPositionByStrategyId(const QString &id) const
     int ret = -INT_MAX;
     auto pStrategy = strategyIdMap.value(id);
     if (pStrategy) {
-        auto p = pStrategy->getPosition();
-        if (p.is_initialized()) {
-            ret = p.value();
-        }
+        ret = pStrategy->getPosition();
     }
     return ret;
 }
@@ -517,11 +483,39 @@ bool QuantTrader::getStrategyEnabled(const QString &id) const
     return pStrategy && pStrategy->isEnabled();
 }
 
-void QuantTrader::setStrategyEnabled(const QString &id, bool state)
+void QuantTrader::setStrategyEnabled(const QString &id, bool b)
 {
     auto pStrategy = strategyIdMap.value(id);
     if (pStrategy) {
-        pStrategy->setEnabled(state);
+        pStrategy->setEnabled(b);
+    }
+}
+
+bool QuantTrader::getStrategyIncluded(const QString &id) const
+{
+    auto pStrategy = strategyIdMap.value(id);
+    return pStrategy && pStrategy->isIncluded();
+}
+
+void QuantTrader::setStrategyIncluded(const QString &id, bool b)
+{
+    auto pStrategy = strategyIdMap.value(id);
+    if (pStrategy) {
+        pStrategy->setIncluded(b);
+    }
+}
+
+bool QuantTrader::getStrategyLimited(const QString &id) const
+{
+    auto pStrategy = strategyIdMap.value(id);
+    return pStrategy && pStrategy->isLimited();
+}
+
+void QuantTrader::setStrategyLimited(const QString &id, bool b)
+{
+    auto pStrategy = strategyIdMap.value(id);
+    if (pStrategy) {
+        pStrategy->setLimited(b);
     }
 }
 

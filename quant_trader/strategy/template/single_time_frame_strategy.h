@@ -5,6 +5,8 @@
 #include "abstract_strategy.h"
 #include "trailing_stop.h"
 
+class QSettings;
+
 class SingleTimeFrameStrategy : public IndicatorFunctions, public AbstractStrategy
 {
     Q_OBJECT
@@ -15,6 +17,7 @@ protected:
     _ListProxy<Bar> bars;
 
     TrailingStop trailingStop;
+    QSettings *pSettings;
 
     void setPosition(int newPosition);
     void resetPosition();
@@ -24,8 +27,8 @@ protected:
     virtual void onNewBar() = 0;
 
 public:
-    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = 0);
-    ~SingleTimeFrameStrategy();
+    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
+    ~SingleTimeFrameStrategy() override;
 
     // Should call setBarList after setParameter
     void setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>> &listAndLast) override;

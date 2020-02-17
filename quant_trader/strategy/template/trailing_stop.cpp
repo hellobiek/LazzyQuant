@@ -1,4 +1,4 @@
-#include <QDataStream>
+#include <QSettings>
 #include <QDebugStateSaver>
 
 #include "trailing_stop.h"
@@ -17,12 +17,12 @@ TrailingStop::TrailingStop(bool direction, double initStop) :
 }
 
 TrailingStop::TrailingStop() :
-    isEnabled(false)
+    enabled(false)
 {
 }
 
 bool TrailingStop::checkStopLoss(double price) const {
-    if (isEnabled) {
+    if (enabled) {
         return (direction && price < stopLoss) || (!direction && price > stopLoss);
     } else {
         return false;
@@ -30,38 +30,68 @@ bool TrailingStop::checkStopLoss(double price) const {
 }
 
 void TrailingStop::update(double highPrice, double lowPrice) {
-    if (!isEnabled) {
+    if (!enabled) {
         return;
     }
 
-    if (isNewCreate) {
+    if (newCreate) {
         // First time, only record the high/low price, don't update AF and SL
         if (direction) {
-            highestEver = highPrice;
+            highest = highPrice;
         } else {
-            lowestEver = lowPrice;
+            lowest = lowPrice;
         }
-        isNewCreate = false;
+        newCreate = false;
         return;
     }
 
     if (direction) {
-        if (highPrice > highestEver) {
-            highestEver = highPrice;
+        if (highPrice > highest) {
+            highest = highPrice;
             if (AF < AFmax) {
                 AF += AFstep;
             }
         }
-        stopLoss = stopLoss + (highestEver - stopLoss) * AF;
+        stopLoss = stopLoss + (highest - stopLoss) * AF;
     } else {
-        if (lowPrice < lowestEver) {
-            lowestEver = lowPrice;
+        if (lowPrice < lowest) {
+            lowest = lowPrice;
             if (AF < AFmax) {
                 AF += AFstep;
             }
         }
-        stopLoss = stopLoss - (stopLoss - lowestEver) * AF;
+        stopLoss = stopLoss - (stopLoss - lowest) * AF;
     }
+}
+
+void TrailingStop::saveToSettings(QSettings *pSettings, const QString &groupName)
+{
+    pSettings->beginGroup(groupName);
+    pSettings->setValue("Direction", direction);
+    pSettings->setValue("StopLoss", stopLoss);
+    pSettings->setValue("AFstep", AFstep);
+    pSettings->setValue("AFmax", AFmax);
+    pSettings->setValue("NewCreate", newCreate);
+    pSettings->setValue("Enabled", enabled);
+    pSettings->setValue("AF", AF);
+    pSettings->setValue("Highest", highest);
+    pSettings->setValue("Lowest", lowest);
+    pSettings->endGroup();
+}
+
+void TrailingStop::loadFromSettings(QSettings *pSettings, const QString &groupName)
+{
+    pSettings->beginGroup(groupName);
+    direction = pSettings->value("Direction").toBool();
+    stopLoss  = pSettings->value("StopLoss").toDouble();
+    AFstep    = pSettings->value("AFstep").toDouble();
+    AFmax     = pSettings->value("AFmax").toDouble();
+    newCreate = pSettings->value("NewCreate").toBool();
+    enabled   = pSettings->value("Enabled").toBool();
+    AF        = pSettings->value("AF").toDouble();
+    highest   = pSettings->value("Highest").toDouble();
+    lowest    = pSettings->value("Lowest").toDouble();
+    pSettings->endGroup();
 }
 
 QDebug operator<<(QDebug dbg, const TrailingStop &stop)
@@ -71,38 +101,10 @@ QDebug operator<<(QDebug dbg, const TrailingStop &stop)
                   << ", stopLoss="    << stop.stopLoss
                   << ", AFstep="      << stop.AFstep
                   << ", AFmax="       << stop.AFmax
-                  << ", NewCreate="   << stop.isNewCreate
-                  << ", Enabled="     << stop.isEnabled
+                  << ", NewCreate="   << stop.newCreate
+                  << ", Enabled="     << stop.enabled
                   << ", AF="          << stop.AF
-                  << (stop.direction ? ", highestEver=" : ", lowestEver=")
-                  << (stop.direction ? stop.highestEver : stop.lowestEver);
+                  << (stop.direction ? ", highest=" : ", lowest=")
+                  << (stop.direction ? stop.highest : stop.lowest);
     return dbg;
-}
-
-QDataStream &operator<<(QDataStream &s, const TrailingStop &stop)
-{
-    s << stop.direction;
-    s << stop.stopLoss;
-    s << stop.AFstep;
-    s << stop.AFmax;
-    s << stop.isNewCreate;
-    s << stop.isEnabled;
-    s << stop.AF;
-    s << stop.highestEver;
-    s << stop.lowestEver;
-    return s;
-}
-
-QDataStream &operator>>(QDataStream &s, TrailingStop &stop)
-{
-    s >> stop.direction;
-    s >> stop.stopLoss;
-    s >> stop.AFstep;
-    s >> stop.AFmax;
-    s >> stop.isNewCreate;
-    s >> stop.isEnabled;
-    s >> stop.AF;
-    s >> stop.highestEver;
-    s >> stop.lowestEver;
-    return s;
 }

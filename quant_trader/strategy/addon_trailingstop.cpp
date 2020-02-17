@@ -93,7 +93,7 @@ void AddOnTrailingStop::onNewTick(qint64 time, double lastPrice)
         targetVolIdx = 0;
         while (!addonSignals.empty())
             delete addonSignals.takeFirst();
-        trailingStop.disable();
+        trailingStop.setEnabled(false);
         highestAddon = -DBL_MAX;
         lowestAddon = DBL_MAX;
     }

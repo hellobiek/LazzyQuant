@@ -1,6 +1,8 @@
+#include <QSettings>
 #include <QMetaEnum>
 #include <QDebug>
 
+#include "settings_helper.h"
 #include "../../bar.h"
 #include "../../bar_collector.h"
 #include "../../indicator/abstract_indicator.h"
@@ -12,6 +14,8 @@ SingleTimeFrameStrategy::SingleTimeFrameStrategy(const QString &id, const QStrin
     bars(nullptr, nullptr)
 {
     qDebug().noquote() << "SingleTimeFrameStrategy ctor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" <<  QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrames);
+
+    pSettings = getSettingsLocal(strategyID, this).release();
 }
 
 SingleTimeFrameStrategy::~SingleTimeFrameStrategy()
@@ -21,14 +25,28 @@ SingleTimeFrameStrategy::~SingleTimeFrameStrategy()
 
 void SingleTimeFrameStrategy::loadStatus()
 {
-    // TODO
-    qInfo() << "Loaded status:" << strategyID;
+    if (!pSettings->childGroups().isEmpty()) {
+        enabled  = pSettings->value("Enabled").toBool();
+        included = pSettings->value("Included").toBool();
+        limited  = pSettings->value("Limited").toBool();
+        position = pSettings->value("Position").toInt();
+
+        trailingStop.saveToSettings(pSettings, "TrailingStop");
+
+        qInfo().noquote() << "Loaded status:" << strategyID;
+    }
 }
 
 void SingleTimeFrameStrategy::saveStatus()
 {
-    // TODO
-    qInfo() << "Saved status:" << strategyID;
+    pSettings->setValue("Enabled",  enabled);
+    pSettings->setValue("Included", included);
+    pSettings->setValue("Limited",  limited);
+    pSettings->setValue("Position", position);
+
+    trailingStop.saveToSettings(pSettings, "TrailingStop");
+
+    qInfo().noquote() << "Saved status:" << strategyID;
 }
 
 void SingleTimeFrameStrategy::setPosition(int newPosition)
@@ -40,21 +58,19 @@ void SingleTimeFrameStrategy::setPosition(int newPosition)
 void SingleTimeFrameStrategy::resetPosition()
 {
     position = 0;
-    trailingStop.disable();
+    trailingStop.setEnabled(false);
     saveStatus();
 }
 
 void SingleTimeFrameStrategy::checkTPSL(double price)
 {
-    if (!position.is_initialized()) {
-        // No position
+    Q_ASSERT((position == 0 && !trailingStop.isEnabled()) ||
+             (position > 0  &&  trailingStop.isEnabled()  &&  trailingStop.getDirection()) ||
+             (position < 0  &&  trailingStop.isEnabled()  && !trailingStop.getDirection()));
+
+    if (position == 0) {
         return;
     }
-
-    int position_value = position.get();
-    Q_ASSERT((position_value == 0 && !trailingStop.getEnabled()) ||
-             (position_value > 0  &&  trailingStop.getEnabled()  &&  trailingStop.getDirection()) ||
-             (position_value < 0  &&  trailingStop.getEnabled()  && !trailingStop.getDirection()));
 
     if (trailingStop.checkStopLoss(price)) {
         resetPosition();
@@ -77,13 +93,10 @@ void SingleTimeFrameStrategy::checkIfNewBar(int newBarTimeFrame)
         }
         onNewBar();
         trailingStop.update(bars[1].high, bars[1].low);
-        if (trailingStop.getEnabled()) {
+        if (trailingStop.isEnabled()) {
             qDebug().noquote() << trailingStop;
         }
-        if (position.is_initialized()) {
-            // Save even no position change
-            saveStatus();
-        }
+        saveStatus();
     }
 }
 

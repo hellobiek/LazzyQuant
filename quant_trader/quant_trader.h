@@ -2,7 +2,6 @@
 #define QUANT_TRADER_H
 
 #include <functional>
-#include <boost/optional.hpp>
 #include <QObject>
 #include <QMap>
 
@@ -24,7 +23,7 @@ protected:
     QMap<QString, QMap<int, QList<Bar>>> bars_map;
     QMap<QString, QMultiMap<int, AbstractIndicator*>> indicatorMap;
     QMultiMap<QString, AbstractStrategy*> strategy_map;
-    QMap<QString, boost::optional<int>> position_map;
+    QMap<QString, int> positionMap;
 
     // QString key is indicator signature (Usually name + parameters) or strategy ID
     QMap<QString, Editable*> editableMap;
@@ -35,10 +34,17 @@ protected:
 
     void loadQuantTraderSettings(const QString &configName);    //!< 载入交易系统配置.
     void loadTradeStrategySettings(const QString &configName);  //!< 载入交易策略.
+
+    /*!
+     * \brief 从数据库读取历史K线数据(并缓存).
+     * \param instrumentID 合约代码.
+     * \param timeFrame 时间级别.
+     * \return 指向包含此合约历史K线数据的QList<Bar>指针.
+     */
     QList<Bar>* getBars(const QString &instrumentID, int timeFrame);
 
     QString currentInstrumentID;
-    int currentTimeFrame;
+    int currentTimeFrame = 0;
     QString currentTradingDay;
 
 public:
@@ -73,8 +79,13 @@ public slots:
     int getPositionByStrategyId(const QString &id) const;
     QString getInstrumentByStrategyId(const QString &id) const;
     QStringList getStrategyId(const QString &instrument = QString()) const;
+
     bool getStrategyEnabled(const QString &id) const;
-    void setStrategyEnabled(const QString &id, bool state);
+    void setStrategyEnabled(const QString &id, bool b);
+    bool getStrategyIncluded(const QString &id) const;
+    void setStrategyIncluded(const QString &id, bool b);
+    bool getStrategyLimited(const QString &id) const;
+    void setStrategyLimited(const QString &id, bool b);
 
     void quit();
 };
