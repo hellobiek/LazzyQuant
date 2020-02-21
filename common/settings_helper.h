@@ -25,6 +25,14 @@ std::unique_ptr<QSettings> getSettingsLocal(const QString &name, QObject *parent
 std::unique_ptr<QSettings> getSettingsSmart(const QString &organization, const QString &name, QObject *parent = nullptr);
 
 /*!
+ * \brief 重载版本, 使用QCoreApplication的organizationName属性作为公司或组织名.
+ * \param name 配置文件名.
+ * \param parent QSettings的父对象指针.
+ * \return QSettings对象智能指针.
+ */
+std::unique_ptr<QSettings> getSettingsSmart(const QString &name, QObject *parent = nullptr);
+
+/*!
  * \brief 获取该小节的所有启用的配置项名.
  * xxx=1表示启用该配置.
  * xxx=0表示不启用.

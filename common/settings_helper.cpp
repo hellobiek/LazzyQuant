@@ -20,6 +20,11 @@ std::unique_ptr<QSettings> getSettingsSmart(const QString &organization, const Q
     return std::make_unique<QSettings>(QSettings::IniFormat, QSettings::UserScope, organization, name, parent);
 }
 
+std::unique_ptr<QSettings> getSettingsSmart(const QString &name, QObject *parent)
+{
+    return getSettingsSmart(QCoreApplication::organizationName(), name, parent);
+}
+
 QStringList getSettingItemList(QSettings *settings, const QString &groupName)
 {
     QStringList itemList;

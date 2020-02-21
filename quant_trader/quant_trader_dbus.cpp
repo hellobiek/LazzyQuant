@@ -23,7 +23,7 @@ using namespace com::lazzyquant;
 
 QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
 {
-    connectSqlDb(getSettingsSmart(ORGANIZATION, "sqldb_conn").get());
+    connectSqlDb(getSettingsSmart("sqldb_conn").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0].name, options.saveBarsToDB());
 
     trade_executer *pExecuter = nullptr;

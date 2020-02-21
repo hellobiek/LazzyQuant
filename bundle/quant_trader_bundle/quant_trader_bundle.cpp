@@ -1,5 +1,4 @@
 #include <QSettings>
-#include <QCoreApplication>
 
 #include "config.h"
 #include "datetime_helper.h"
@@ -22,7 +21,7 @@ using std::placeholders::_4;
 
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend)
 {
-    connectSqlDb(getSettingsSmart(QCoreApplication::organizationName(), "sqldb_conn").get());
+    connectSqlDb(getSettingsSmart("sqldb_conn").get());
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0].name, options.saveBarsToDB());
 
     CtpExecuter *pExecuter = nullptr;

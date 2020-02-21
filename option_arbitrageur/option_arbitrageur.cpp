@@ -44,7 +44,7 @@ OptionArbitrageur::~OptionArbitrageur()
 
 void OptionArbitrageur::loadOptionArbitrageurSettings()
 {
-    auto settings = getSettingsSmart(ORGANIZATION, "option_arbitrageur");
+    auto settings = getSettingsSmart("option_arbitrageur");
     riskFreeInterestRate = settings->value("RiskFreeInterestRate", 0.05).toDouble();
     qInfo() << "Risk-free interest rate =" << riskFreeInterestRate;
 
