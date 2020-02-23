@@ -4,47 +4,6 @@
 #include "abstract_indicator.h"
 #include "indicator_functions.h"
 
-enum ENUM_INDEXBUFFER_TYPE {
-    INDICATOR_DATA,
-    INDICATOR_COLOR_INDEX,
-    INDICATOR_CALCULATIONS,
-};
-
-enum ENUM_PLOT_PROPERTY_INTEGER {
-    PLOT_ARROW,
-    PLOT_ARROW_SHIFT,
-    PLOT_DRAW_BEGIN,
-    PLOT_DRAW_TYPE,
-    PLOT_SHOW_DATA,
-    PLOT_SHIFT,
-    PLOT_LINE_STYLE,
-    PLOT_LINE_WIDTH,
-    PLOT_COLOR_INDEXES,
-    PLOT_LINE_COLOR,
-};
-
-enum ENUM_CUSTOMIND_PROPERTY_INTEGER {
-    INDICATOR_DIGITS,
-    INDICATOR_HEIGHT,
-    INDICATOR_LEVELS,
-    INDICATOR_LEVELCOLOR,
-    INDICATOR_LEVELSTYLE,
-    INDICATOR_LEVELWIDTH,
-};
-
-enum ENUM_PLOT_PROPERTY_STRING {
-    PLOT_LABEL,
-};
-
-enum ENUM_CUSTOMIND_PROPERTY_STRING {
-    INDICATOR_SHORTNAME,
-    INDICATOR_LEVELTEXT,
-};
-
-enum ENUM_PLOT_PROPERTY_DOUBLE {
-    PLOT_EMPTY_VALUE,
-};
-
 template<typename... Params> bool IndicatorSetDouble (Params...) { return true; }
 template<typename... Params> bool IndicatorSetInteger(Params...) { return true; }
 template<typename... Params> bool IndicatorSetString (Params...) { return true; }
