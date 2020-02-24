@@ -22,6 +22,7 @@ HEADERS *= \
     $$QUANT_TRADER_FOLDER/bar.h \
     $$QUANT_TRADER_FOLDER/bar_collector.h \
     $$QUANT_TRADER_FOLDER/quant_trader.h \
+    $$QUANT_TRADER_FOLDER/argument_helper.h \
     $$QUANT_TRADER_FOLDER/mql5_enums.h \
     $$QUANT_TRADER_FOLDER/mql5_compatible.h \
     $$QUANT_TRADER_FOLDER/mql5_moving_averages.h \

@@ -14,6 +14,25 @@
 #include "indicator/mql5_indicator.h"
 #include "strategy/template/abstract_strategy.h"
 
+const QMetaObject *getAndCheckIndicatorMetaObject(const QString &indicatorName)
+{
+    const QMetaObject * metaObject = getIndicatorMetaObject(indicatorName);
+    if (!metaObject) {
+        qCritical() << "Indicator" << indicatorName << "not exist!";
+    }
+    return metaObject;
+}
+
+int getParameterNumber(const QMetaObject *metaObject)
+{
+    int parameterNumber = 0;
+    int infoIdx = metaObject->indexOfClassInfo("parameter_number");
+    if (infoIdx >= 0) {
+        parameterNumber = QByteArray(metaObject->classInfo(infoIdx).value()).toInt();
+    }
+    return parameterNumber;
+}
+
 QuantTrader::QuantTrader(const QString &configName, bool saveBarsToDB, QObject *parent) :
     QObject(parent),
     saveBarsToDB(saveBarsToDB)
@@ -175,30 +194,7 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
     return &barList;
 }
 
-static QVariant getParam(const QByteArray &typeName, va_list &ap)
-{
-    QVariant ret;
-    int typeId = QMetaType::type(typeName);
-    switch (typeId) {
-    case QMetaType::Int:
-    {
-        int value = va_arg(ap, int);
-        ret.setValue(value);
-    }
-        break;
-    case QMetaType::Double:
-    {
-        double value = va_arg(ap, double);
-        ret.setValue(value);
-    }
-        break;
-    default:
-        break;
-    }
-    return ret;
-}
-
-AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, int timeFrame, QString indicator_name, ...)
+void QuantTrader::updateDefaultInstrumentTimeFrame(const QString &instrumentID, int timeFrame)
 {
     if (!instrumentID.isEmpty()) {
         currentInstrumentID = instrumentID;
@@ -206,126 +202,74 @@ AbstractIndicator* QuantTrader::registerIndicator(const QString &instrumentID, i
     if (timeFrame > 0) {
         currentTimeFrame = timeFrame;
     }
-    const QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+}
 
-    const QMetaObject * metaObject = getIndicatorMetaObject(indicator_name);
-    if (metaObject == nullptr) {
-        qCritical() << "Indicator" << indicator_name << "not exist!";
+AbstractIndicator *QuantTrader::searchIndicator(const QMetaObject *metaObject, const QVariantList &params, int parameterNumber) const
+{
+    qDebug().noquote() << "parameterNumber =" << parameterNumber;
+    qDebug().noquote() << params;
+    if (params.length() != parameterNumber) {
+        qCritical().noquote() << "params.length() != parameterNumber";
         return nullptr;
     }
 
-    const int class_info_count = metaObject->classInfoCount();
-    int parameter_number = 0;
-    for (int i = 0; i < class_info_count; i++) {
-        QMetaClassInfo classInfo = metaObject->classInfo(i);
-        if (QString(classInfo.name()).compare("parameter_number", Qt::CaseInsensitive) == 0) {
-            parameter_number = QString(classInfo.value()).toInt();
-            qDebug() << parameter_number;
-        }
-    }
-
-    va_list ap;
-    va_start(ap, indicator_name);
-
     auto names = metaObject->constructor(0).parameterNames();
-    auto types = metaObject->constructor(0).parameterTypes();
-    QList<QVariant> params;
-    for (int i = 0; i < parameter_number; i++) {
-        params.append(getParam(types[i], ap));
-    }
-    va_end(ap);
-
-    qDebug() << params;
-
     if (indicatorMap.contains(currentInstrumentID)) {
         const auto pIndicators = indicatorMap[currentInstrumentID].values(currentTimeFrame);
         for (AbstractIndicator *pIndicator : pIndicators) {
-            QObject *obj = dynamic_cast<QObject*>(pIndicator);
-            if (indicator_name == obj->metaObject()->className()) {
+            auto *obj = dynamic_cast<QObject*>(pIndicator);
+            if (metaObject == obj->metaObject()) {
                 bool match = true;
-                for (int i = 0; i < parameter_number; i++) {
+                for (int i = 0; i < parameterNumber; i++) {
                     QVariant value = obj->property(names[i]);
                     if (params[i] != value) {
                         match = false;
                     }
                 }
                 if (match) {
-                    qDebug().noquote() << "Use exist indicator" << indicator_name << "for" << currentInstrumentID << timeFrameStr;
+                    const QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+                    qInfo().noquote() << "Found exist indicator" << metaObject->className() << "for" << currentInstrumentID << timeFrameStr;
                     return pIndicator;
                 }
             }
         }
     }
 
-    qDebug().noquote() << "Create new indicator" << indicator_name << "for" << currentInstrumentID << timeFrameStr;
+    return nullptr;
+}
 
-    QVector<QGenericArgument> args;
-    args.reserve(10);
-
-    int int_param[10];
-    int int_idx = 0;
-    double double_param[10];
-    int double_idx = 0;
-
-#define Q_ENUM_ARG(type, data) QArgument<int >(type, data)
-
-    for (int i = 0; i < parameter_number; i++) {
-        int typeId = params[i].userType();
-        switch (typeId) {
-        case QMetaType::Int:
-            int_param[int_idx] = params[i].toInt();
-            args.append(Q_ENUM_ARG(types[i].constData(), int_param[int_idx]));
-            int_idx ++;
-            break;
-        case QMetaType::Double:
-            double_param[double_idx] = params[i].toDouble();
-            args.append(Q_ARG(double, double_param[double_idx]));
-            double_idx ++;
-            break;
-        default:
-            args.append(QGenericArgument());
-            break;
-        }
+void QuantTrader::setupIndicator(AbstractIndicator *pIndicator, const QString &indicatorName, const QVariantList &params)
+{
+    if (!pIndicator) {
+        const QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+        qCritical().noquote() << "pIndicator is 0! indicatorName =" << indicatorName
+                              << ", instrumentID =" << currentInstrumentID << ", timeFrame =" << timeFrameStr;
+        return;
     }
-    args.append(Q_ARG(QObject*, this));
-
-    QObject * obj =
-    metaObject->newInstance(args.value(0), args.value(1), args.value(2),
-                            args.value(3), args.value(4), args.value(5),
-                            args.value(6), args.value(7), args.value(8), args.value(9));
-
-    if (!obj) {
-        qCritical().noquote() << "newInstance returns 0! indicator_name =" << indicator_name
-                              << ", instrumentID =" << instrumentID << ", timeFrame =" << timeFrameStr;
-        return nullptr;
-    }
-
-    auto *pIndicator = dynamic_cast<AbstractIndicator*>(obj);
 
     indicatorMap[currentInstrumentID].insert(currentTimeFrame, pIndicator);
     pIndicator->setBarList(getBars(currentInstrumentID, currentTimeFrame), collector_map[currentInstrumentID]->getBarPtr(currentTimeFrame));
     pIndicator->update();
 
-    QString signature = currentInstrumentID + "_" + timeFrameStr + "_" + indicator_name;
+    const QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(currentTimeFrame);
+    QString signature = currentInstrumentID + "_" + timeFrameStr + "_" + indicatorName;
     if (params.length() > 0) {
         for (const auto &param : qAsConst(params)) {
             signature += "_";
             signature += param.toString();
         }
     }
-    auto *editable = dynamic_cast<Editable*>(obj);
+    auto *editable = dynamic_cast<Editable*>(pIndicator);
     if (editable) {
         editable->signature = signature.toLower();
         editable->setup();
         editableMap.insert(editable->signature, editable);
     }
 
-    auto *displayable = dynamic_cast<MQL5Indicator*>(obj);
+    auto *displayable = dynamic_cast<MQL5Indicator*>(pIndicator);
     if (displayable) {
         displayableMap.insert(signature.toLower(), displayable);
     }
-
-    return pIndicator;
 }
 
 /*!

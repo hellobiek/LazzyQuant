@@ -4,6 +4,9 @@
 #include <functional>
 #include <QObject>
 #include <QMap>
+#include <QVariantList>
+
+#include "argument_helper.h"
 
 class Bar;
 class BarCollector;
@@ -11,6 +14,9 @@ class AbstractIndicator;
 class AbstractStrategy;
 class Editable;
 class MQL5Indicator;
+
+const QMetaObject *getAndCheckIndicatorMetaObject(const QString &indicatorName);
+int getParameterNumber(const QMetaObject *metaObject);
 
 class QuantTrader : public QObject
 {
@@ -55,7 +61,42 @@ public:
     std::function<void(const QString&)> cancelAllOrders = [](auto) -> void {};
     std::function<void(qint64, const QString&, int, double)> logTrade = [](auto, auto, auto, auto) -> void {};
 
-    AbstractIndicator* registerIndicator(const QString &instrumentID, int timeFrame, QString indicator_name, ...);
+    /*!
+     * \brief 注册指标, 如果已经存在相同合约代码, 相同时间级别, 相同参数的指标, 就直接返回该指标, 否则返回新创建的指标.
+     * \param instrumentID 合约代码.
+     * \param timeFrame 时间级别.
+     * \param indicatorName 指标名.
+     * \param args 指标参数.
+     * \return AbstractIndicator指针.
+     */
+    template<class... Args>
+    AbstractIndicator* registerIndicator(const QString &instrumentID, int timeFrame, const QString &indicatorName, const Args&... args)
+    {
+        updateDefaultInstrumentTimeFrame(instrumentID, timeFrame);
+
+        const QMetaObject * metaObject = getAndCheckIndicatorMetaObject(indicatorName);
+        if (!metaObject) {
+            return nullptr;
+        }
+
+        int parameterNumber = getParameterNumber(metaObject);
+        QVariantList params = {makeVariant(args)...};
+
+        auto pIndicator = searchIndicator(metaObject, params, parameterNumber);
+        if (pIndicator) {
+            return pIndicator;
+        }
+
+        auto obj = createNewInstance(metaObject, this, args...);
+        pIndicator = dynamic_cast<AbstractIndicator*>(obj);
+        setupIndicator(pIndicator, indicatorName, params);
+        return pIndicator;
+    }
+
+private:
+    void updateDefaultInstrumentTimeFrame(const QString &instrumentID, int timeFrame);  //!< 使用传入的参数更新默认合约代码及时间级别.
+    AbstractIndicator *searchIndicator(const QMetaObject *metaObject, const QVariantList &params, int parameterNumber) const;
+    void setupIndicator(AbstractIndicator *pIndicator, const QString &indicatorName, const QVariantList &params);
 
 private slots:
     void onNewBar(const QString &instrumentID, int timeFrame, const Bar &bar);
