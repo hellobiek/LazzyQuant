@@ -1,7 +1,7 @@
 #include <QTimer>
 #include <QCoreApplication>
 
-#include "common_utility.h"
+#include "enum_helper.h"
 #include "control_widget.h"
 #include "ui_control_widget.h"
 #include "tick_replayer.h"

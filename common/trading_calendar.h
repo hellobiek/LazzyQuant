@@ -9,7 +9,7 @@
  */
 class TradingCalendar final
 {
-    QSet<QDate> nonTradingDays; // Mon ~ Fri but market close
+    QSet<QDate> nonTradingDays; //!< 不是周末但不开市的日期.
 
     /*!
      * \brief 构造全局TradingCalendar对象, 并从配置文件中读取配置参数.

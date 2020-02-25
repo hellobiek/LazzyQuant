@@ -1,8 +1,6 @@
 #ifndef COMMON_UTILITY_H
 #define COMMON_UTILITY_H
 
-#include <QMetaEnum>
-#include <QSet>
 #include <QString>
 #include <QTime>
 
@@ -24,21 +22,6 @@ bool parseOptionID(const QString &optionID, QString &futureID, OPTION_TYPE &type
 QString makeOptionID(const QString &futureID, OPTION_TYPE type, int exercisePrice);
 bool isOption(const QString &instrumentID);
 bool isStockLike(const QString &instrumentID);
-
-template<typename EnumType>
-QList<int> enumValueToList(int value)
-{
-    QSet<int> valueSet;
-    auto mobj = QMetaEnum::fromType<EnumType>();
-    int count = mobj.keyCount();
-    for (int i = 0; i < count; i++) {
-        int k = mobj.value(i);
-        if ((k != 0) && ((value & k) == k)) {
-            valueSet.insert(k);
-        }
-    }
-    return valueSet.toList();
-}
 
 
 // 三种类型的订单 (0:普通限价单, 1:Fill and Kill, 2:Fill or Kill)

@@ -15,6 +15,7 @@ SOURCES *= \
 
 HEADERS *= \
     $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/enum_helper.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/datetime_helper.h \
     $$COMMON_FOLDER/db_helper.h \

@@ -41,13 +41,13 @@ qint64 dateToUtcTimestamp1(const QString &date);
 qint64 dateToUtcTimestamp2(const QString &date);
 
 
-static inline quint8 charToDigit(const char ten, const char one)
+inline quint8 charToDigit(const char ten, const char one)
 {
     return quint8(10 * (ten - '0') + one - '0');
 }
 
 //!< Convert string with format HH:mm:ss into seconds
-static inline int hhmmssToSec(const char *hhmmss)
+inline int hhmmssToSec(const char *hhmmss)
 {
     quint8 hour   = charToDigit(hhmmss[0], hhmmss[1]);
     quint8 minute = charToDigit(hhmmss[3], hhmmss[4]);

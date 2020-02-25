@@ -2,15 +2,13 @@
 #include "trading_calendar.h"
 
 #include <QSettings>
-#include <QCoreApplication>
 
 TradingCalendar::TradingCalendar()
 {
-    auto settings = getSettingsSmart(QCoreApplication::organizationName(), "trading_calander");
+    auto settings = getSettingsSmart("trading_calander");
     settings->beginGroup("NonTradingDays");
     const auto nonTradingDaysStrs = settings->childKeys();
     for (const auto &nonTradingDaysStr : nonTradingDaysStrs) {
-        // TODO use bit definition to seperate different market
         nonTradingDays.insert(QDate::fromString(nonTradingDaysStr, QStringLiteral("yyyyMMdd")));
     }
     settings->endGroup();

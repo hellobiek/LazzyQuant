@@ -5,7 +5,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-#include "common_utility.h"
+#include "enum_helper.h"
 #include "datetime_helper.h"
 #include "db_helper.h"
 #include "bar_collector.h"

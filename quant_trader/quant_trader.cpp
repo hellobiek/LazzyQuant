@@ -1,9 +1,11 @@
 #include <QCoreApplication>
 #include <QSettings>
+#include <QMetaClassInfo>
 #include <QSqlQuery>
 #include <QSqlError>
 
 #include "common_utility.h"
+#include "enum_helper.h"
 #include "datetime_helper.h"
 #include "settings_helper.h"
 #include "quant_trader.h"

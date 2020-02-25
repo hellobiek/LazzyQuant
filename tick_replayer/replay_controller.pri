@@ -8,6 +8,7 @@ SOURCES *= \
     $$REPLAY_CONTROLLER_FOLDER/control_widget.cpp
 
 HEADERS *= \
+    $$COMMON_FOLDER/enum_helper.h \
     $$REPLAY_CONTROLLER_FOLDER/replay_controller.h \
     $$REPLAY_CONTROLLER_FOLDER/control_widget.h
 
