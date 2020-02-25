@@ -3,7 +3,7 @@
 #include <QDebug>
 
 #include "settings_helper.h"
-#include "../../bar.h"
+#include "standard_bar.h"
 #include "../../bar_collector.h"
 #include "../../indicator/abstract_indicator.h"
 #include "single_time_frame_strategy.h"
@@ -77,11 +77,11 @@ void SingleTimeFrameStrategy::checkTPSL(double price)
     }
 }
 
-void SingleTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>> &listAndLast)
+void SingleTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast)
 {
     this->barList = listAndLast[timeFrames].first;
     this->lastBar = listAndLast[timeFrames].second;
-    bars = _ListProxy<Bar>(this->barList, this->lastBar);
+    bars = _ListProxy<StandardBar>(this->barList, this->lastBar);
     bars.setAsSeries(true);
 }
 

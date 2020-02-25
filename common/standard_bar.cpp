@@ -3,14 +3,14 @@
 #include <QDebugStateSaver>
 
 #include "datetime_helper.h"
-#include "bar.h"
+#include "standard_bar.h"
 
-Bar::Bar()
+StandardBar::StandardBar()
 {
     reset();
 }
 
-void Bar::reset()
+void StandardBar::reset()
 {
     time = 0;
     open = -1.5;
@@ -21,12 +21,12 @@ void Bar::reset()
     volume = 0;
 }
 
-bool Bar::isEmpty() const
+bool StandardBar::isEmpty() const
 {
     return tick_volume == 0;
 }
 
-QDataStream &operator>>(QDataStream &s, Bar &bar)
+QDataStream &operator>>(QDataStream &s, StandardBar &bar)
 {
     s >> bar.time;
     s >> bar.open;
@@ -38,7 +38,7 @@ QDataStream &operator>>(QDataStream &s, Bar &bar)
     return s;
 }
 
-QDataStream &operator<<(QDataStream &s, const Bar &bar)
+QDataStream &operator<<(QDataStream &s, const StandardBar &bar)
 {
     s << bar.time;
     s << bar.open;
@@ -50,7 +50,7 @@ QDataStream &operator<<(QDataStream &s, const Bar &bar)
     return s;
 }
 
-QDebug operator<<(QDebug dbg, const Bar &bar)
+QDebug operator<<(QDebug dbg, const StandardBar &bar)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << utcTimeToString1(bar.time)

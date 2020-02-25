@@ -10,7 +10,7 @@ AbstractIndicator::~AbstractIndicator()
     //
 }
 
-void AbstractIndicator::setBarList(QList<Bar> *list, Bar *last)
+void AbstractIndicator::setBarList(QList<StandardBar> *list, StandardBar *last)
 {
     barList = list;
     lastBar = last;

@@ -1,7 +1,7 @@
 #include <QMetaEnum>
 #include <QDebug>
 
-#include "../bar.h"
+#include "standard_bar.h"
 #include "../indicator/mql5_indicator.h"
 #include "DblMaPsar_strategy.h"
 

@@ -1,5 +1,5 @@
 #include "mql5_indicator.h"
-#include "../bar.h"
+#include "standard_bar.h"
 
 static double price_open(double open, double high, double low, double close)
 {
@@ -59,19 +59,19 @@ MQL5Indicator::~MQL5Indicator()
     }
 }
 
-void MQL5Indicator::setBarList(QList<Bar> *list, Bar *last)
+void MQL5Indicator::setBarList(QList<StandardBar> *list, StandardBar *last)
 {
     AbstractIndicator::setBarList(list, last);
 
     OnInit();
 
-    time = new RemapListMember<Bar, qint64>(list, &Bar::time, last);
-    open = new RemapListMember<Bar, double>(list, &Bar::open, last);
-    high = new RemapListMember<Bar, double>(list, &Bar::high, last);
-    low = new RemapListMember<Bar, double>(list, &Bar::low, last);
-    close = new RemapListMember<Bar, double>(list, &Bar::close, last);
-    tick_volume = new RemapListMember<Bar, qint64>(list, &Bar::tick_volume, last);
-    volume = new RemapListMember<Bar, qint64>(list, &Bar::volume, last);
+    time = new RemapListMember<StandardBar, qint64>(list, &StandardBar::time, last);
+    open = new RemapListMember<StandardBar, double>(list, &StandardBar::open, last);
+    high = new RemapListMember<StandardBar, double>(list, &StandardBar::high, last);
+    low = new RemapListMember<StandardBar, double>(list, &StandardBar::low, last);
+    close = new RemapListMember<StandardBar, double>(list, &StandardBar::close, last);
+    tick_volume = new RemapListMember<StandardBar, qint64>(list, &StandardBar::tick_volume, last);
+    volume = new RemapListMember<StandardBar, qint64>(list, &StandardBar::volume, last);
 
     // spread is not implemented yet, don't use them in indicators
     spread = nullptr;

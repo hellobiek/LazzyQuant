@@ -64,7 +64,7 @@ void TrailingStop::update(double highPrice, double lowPrice) {
     }
 }
 
-void TrailingStop::saveToSettings(QSettings *pSettings, const QString &groupName)
+void TrailingStop::saveToSettings(QSettings *pSettings, const QString &groupName) const
 {
     pSettings->beginGroup(groupName);
     pSettings->setValue("Direction", direction);

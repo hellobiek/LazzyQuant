@@ -17,7 +17,7 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
 {
     keys = enumValueToList<TimeFrames>(timeFrameFlags);
     for (auto key : qAsConst(keys)) {
-        barMap.insert(key, Bar());
+        barMap.insert(key, StandardBar());
     }
 
     if (saveBarsToDB) {
@@ -97,7 +97,7 @@ bool BarCollector::onMarketData(qint64 currentTime, double lastPrice, int volume
     const bool isNewTick = (volume != lastVolume);
 
     for (auto key : qAsConst(keys)) {
-        Bar & bar = barMap[key];
+        StandardBar & bar = barMap[key];
         auto timeFrameBegin = getTimeFrameBegin(currentTime, key);
         if (timeFrameBegin != bar.time) {
             saveEmitReset(key, bar);
@@ -149,7 +149,7 @@ qint64 BarCollector::getTimeFrameBegin(qint64 currentTime, int timeFrame) const
     return (currentTime / time_unit * time_unit);
 }
 
-void BarCollector::saveEmitReset(int timeFrame, Bar &bar)
+void BarCollector::saveEmitReset(int timeFrame, StandardBar &bar)
 {
     if (!bar.isEmpty()) {
         if (saveBarsToDB) {
@@ -161,7 +161,7 @@ void BarCollector::saveEmitReset(int timeFrame, Bar &bar)
     }
 }
 
-void BarCollector::saveBar(int timeFrame, const Bar &bar) const
+void BarCollector::saveBar(int timeFrame, const StandardBar &bar) const
 {
     QString tableOfDB = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
     QSqlQuery qry;

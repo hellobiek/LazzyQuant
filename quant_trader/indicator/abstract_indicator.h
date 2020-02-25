@@ -2,19 +2,19 @@
 #define ABSTRACT_INDICATOR_H
 
 template <typename T> class QList;
-class Bar;
+class StandardBar;
 
 class AbstractIndicator
 {
 protected:
-    QList<Bar> *barList;
-    Bar *lastBar;
+    QList<StandardBar> *barList;
+    StandardBar *lastBar;
 
 public:
     explicit AbstractIndicator();
     virtual ~AbstractIndicator();
 
-    virtual void setBarList(QList<Bar> *list, Bar *last);
+    virtual void setBarList(QList<StandardBar> *list, StandardBar *last);
     virtual void update() = 0;
 };
 

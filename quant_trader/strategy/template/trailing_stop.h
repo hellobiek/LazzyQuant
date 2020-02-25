@@ -30,7 +30,7 @@ public:
     bool checkStopLoss(double price) const;
     void update(double highPrice, double lowPrice);
 
-    void saveToSettings(QSettings *pSettings, const QString &groupName);
+    void saveToSettings(QSettings *pSettings, const QString &groupName) const;
     void loadFromSettings(QSettings *pSettings, const QString &groupName);
 
     friend QDebug operator<<(QDebug dbg, const TrailingStop &stop);

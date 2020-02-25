@@ -12,9 +12,9 @@ class SingleTimeFrameStrategy : public IndicatorFunctions, public AbstractStrate
     Q_OBJECT
 
 protected:
-    QList<Bar>* barList;
-    Bar* lastBar;
-    _ListProxy<Bar> bars;
+    QList<StandardBar>* barList;
+    StandardBar* lastBar;
+    _ListProxy<StandardBar> bars;
 
     TrailingStop trailingStop;
     QSettings *pSettings;
@@ -31,7 +31,7 @@ public:
     ~SingleTimeFrameStrategy() override;
 
     // Should call setBarList after setParameter
-    void setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>> &listAndLast) override;
+    void setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast) override;
 
     void checkIfNewBar(int newBarTimeFrame) override;
     void onNewTick(qint64 time, double lastPrice) override;

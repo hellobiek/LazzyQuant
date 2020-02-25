@@ -11,7 +11,7 @@ class MultiTimeFrameStrategy : public IndicatorFunctions, public AbstractStrateg
 
 protected:
     // TimeFrame     kLine
-    QMap<int, _ListProxy<Bar>> bars;
+    QMap<int, _ListProxy<StandardBar>> bars;
 
     TrailingStop trailingStop;
     int trailingTimeFrame;
@@ -28,7 +28,7 @@ public:
     ~MultiTimeFrameStrategy();
 
     // Should call setBarList after setParameter
-    virtual void setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>> &listAndLast);
+    virtual void setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast);
 
     void checkIfNewBar(int newBarTimeFrame) override;
     void onNewTick(qint64 time, double lastPrice) override;

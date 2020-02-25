@@ -1,7 +1,7 @@
 #include <QTime>
 #include <QDebug>
 
-#include "../../bar.h"
+#include "standard_bar.h"
 #include "../../indicator/abstract_indicator.h"
 #include "multi_time_frame_strategy.h"
 
@@ -57,13 +57,13 @@ void MultiTimeFrameStrategy::checkTPSL(double price)
     }
 }
 
-void MultiTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>> &listAndLast)
+void MultiTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast)
 {
     const auto keys = listAndLast.keys();
     for (auto key : keys) {
-        QList<Bar>* barList = listAndLast[key].first;
-        Bar* lastBar = listAndLast[key].second;
-        bars.insert(key, _ListProxy<Bar>(barList, lastBar, true));
+        QList<StandardBar>* barList = listAndLast[key].first;
+        StandardBar* lastBar = listAndLast[key].second;
+        bars.insert(key, _ListProxy<StandardBar>(barList, lastBar, true));
     }
 }
 

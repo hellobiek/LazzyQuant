@@ -8,7 +8,7 @@
 
 #include "argument_helper.h"
 
-class Bar;
+class StandardBar;
 class BarCollector;
 class AbstractIndicator;
 class AbstractStrategy;
@@ -26,7 +26,7 @@ class QuantTrader : public QObject
 protected:
     // Following QString keys are instumentIDs
     QMap<QString, BarCollector*> collector_map;
-    QMap<QString, QMap<int, QList<Bar>>> bars_map;
+    QMap<QString, QMap<int, QList<StandardBar>>> bars_map;
     QMap<QString, QMultiMap<int, AbstractIndicator*>> indicatorMap;
     QMultiMap<QString, AbstractStrategy*> strategy_map;
     QMap<QString, int> positionMap;
@@ -45,9 +45,9 @@ protected:
      * \brief 从数据库读取历史K线数据(并缓存).
      * \param instrumentID 合约代码.
      * \param timeFrame 时间级别.
-     * \return 指向包含此合约历史K线数据的QList<Bar>指针.
+     * \return 指向包含此合约历史K线数据的QList<StandardBar>指针.
      */
-    QList<Bar>* getBars(const QString &instrumentID, int timeFrame);
+    QList<StandardBar>* getBars(const QString &instrumentID, int timeFrame);
 
     QString currentInstrumentID;
     int currentTimeFrame = 0;
@@ -99,7 +99,7 @@ private:
     void setupIndicator(AbstractIndicator *pIndicator, const QString &indicatorName, const QVariantList &params);
 
 private slots:
-    void onNewBar(const QString &instrumentID, int timeFrame, const Bar &bar);
+    void onNewBar(const QString &instrumentID, int timeFrame, const StandardBar &bar);
 
 signals:
     void newBarFormed(const QString &instrumentID, const QString &timeFrame);

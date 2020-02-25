@@ -129,7 +129,7 @@ protected:
     _TimeSeries<qint64> *volume;
     _TimeSeries<int> *spread;
 
-    void setBarList(QList<Bar> *list, Bar *last) override;
+    void setBarList(QList<StandardBar> *list, StandardBar *last) override;
     void update() override;
 
     virtual void preCalculate();

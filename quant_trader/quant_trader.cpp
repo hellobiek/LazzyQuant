@@ -9,7 +9,7 @@
 #include "datetime_helper.h"
 #include "settings_helper.h"
 #include "quant_trader.h"
-#include "bar.h"
+#include "standard_bar.h"
 #include "bar_collector.h"
 #include "editable.h"
 #include "indicators_and_strategies.h"
@@ -67,7 +67,7 @@ void QuantTrader::loadQuantTraderSettings(const QString &configName)
             continue;
         }
         BarCollector *collector = new BarCollector(instrumentID, static_cast<BarCollector::TimeFrames>(timeFrameFlags), saveBarsToDB, this);
-        connect(collector, SIGNAL(collectedBar(QString,int,Bar)), this, SLOT(onNewBar(QString,int,Bar)), Qt::DirectConnection);
+        connect(collector, SIGNAL(collectedBar(QString,int,StandardBar)), this, SLOT(onNewBar(QString,int,StandardBar)), Qt::DirectConnection);
         if (isStockLike(instrumentID)) {
             collector->setStockLike(true);
         }
@@ -128,7 +128,7 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
         }
 
         strategy->setParameter(param1, param2, param3, param4, param5, param6, param7, param8, param9);
-        QMap<int, QPair<QList<Bar>*, Bar*>> multiTimeFrameBars;
+        QMap<int, QPair<QList<StandardBar>*, StandardBar*>> multiTimeFrameBars;
         for (int timeFrame : enumValueToList<BarCollector::TimeFrames>(timeFrameFlags)) {
             multiTimeFrameBars.insert(timeFrame, qMakePair(getBars(instrument, timeFrame), collector_map[instrument]->getBarPtr(timeFrame)));
         }
@@ -148,7 +148,7 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
     }
 }
 
-QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
+QList<StandardBar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
 {
     if (bars_map.contains(instrumentID)) {
         if (bars_map[instrumentID].contains(timeFrame)) {
@@ -166,7 +166,7 @@ QList<Bar>* QuantTrader::getBars(const QString &instrumentID, int timeFrame)
     bool ok = qry.exec("SELECT * from " + dbTableName + " order by time");
     if (ok) {
         while (qry.next()) {
-            Bar bar;
+            StandardBar bar;
             bar.time = qry.value(0).toLongLong();
             bar.open = qry.value(1).toDouble();
             bar.high = qry.value(2).toDouble();
@@ -282,7 +282,7 @@ void QuantTrader::setupIndicator(AbstractIndicator *pIndicator, const QString &i
  * \param timeFrame 时间框架(枚举)
  * \param bar 新的K线数据.
  */
-void QuantTrader::onNewBar(const QString &instrumentID, int timeFrame, const Bar &bar)
+void QuantTrader::onNewBar(const QString &instrumentID, int timeFrame, const StandardBar &bar)
 {
     bars_map[instrumentID][timeFrame].append(bar);
     const auto strategyList = strategy_map.values(instrumentID);

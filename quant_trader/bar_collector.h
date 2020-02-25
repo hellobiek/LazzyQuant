@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 
-#include "bar.h"
+#include "standard_bar.h"
 
 class BarCollector : public QObject
 {
@@ -52,7 +52,7 @@ public:
 
     explicit BarCollector(const QString &instrumentID, int timeFrameFlags, bool saveBarsToDB, QObject *parent = nullptr);
 
-    Bar *getBarPtr(int timeFrame) {
+    StandardBar *getBarPtr(int timeFrame) {
         return &barMap[timeFrame];
     }
     void setStockLike(bool isStockLike) { this->isStockLike = isStockLike; }
@@ -68,14 +68,14 @@ protected:
     qint64 tradingDayBase = 0;
 
     QList<int> keys;
-    QMap<int, Bar> barMap;
+    QMap<int, StandardBar> barMap;
 
     qint64 getTimeFrameBegin(qint64 currentTime, int timeFrame) const;
-    void saveEmitReset(int timeFrame, Bar &bar);
-    void saveBar(int timeFrame, const Bar &bar) const;
+    void saveEmitReset(int timeFrame, StandardBar &bar);
+    void saveBar(int timeFrame, const StandardBar &bar) const;
 
 signals:
-    void collectedBar(const QString &instrumentID, int timeFrame, const Bar &bar);
+    void collectedBar(const QString &instrumentID, int timeFrame, const StandardBar &bar);
 
 public slots:
     void flush(bool endOfDay);

@@ -7,7 +7,7 @@ SOURCES *= \
     $$COMMON_FOLDER/datetime_helper.cpp \
     $$COMMON_FOLDER/db_helper.cpp \
     $$COMMON_FOLDER/trade_logger.cpp \
-    $$QUANT_TRADER_FOLDER/bar.cpp \
+    $$COMMON_FOLDER/standard_bar.cpp \
     $$QUANT_TRADER_FOLDER/bar_collector.cpp \
     $$QUANT_TRADER_FOLDER/quant_trader.cpp \
     $$QUANT_TRADER_FOLDER/editable.cpp \
@@ -20,7 +20,7 @@ HEADERS *= \
     $$COMMON_FOLDER/datetime_helper.h \
     $$COMMON_FOLDER/db_helper.h \
     $$COMMON_FOLDER/trade_logger.h \
-    $$QUANT_TRADER_FOLDER/bar.h \
+    $$COMMON_FOLDER/standard_bar.h \
     $$QUANT_TRADER_FOLDER/bar_collector.h \
     $$QUANT_TRADER_FOLDER/quant_trader.h \
     $$QUANT_TRADER_FOLDER/argument_helper.h \

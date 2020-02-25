@@ -4,7 +4,7 @@
 #include <QMap>
 #include <QString>
 
-#include "../../bar.h"
+#include "standard_bar.h"
 
 class QVariant;
 
@@ -24,7 +24,7 @@ public:
         strategyID(id), instrumentID(instrumentID), timeFrames(timeFrames) {}
     virtual ~AbstractStrategy() = default;
 
-    virtual void setBarList(const QMap<int, QPair<QList<Bar>*, Bar*>>&) {}
+    virtual void setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>>&) {}
 
     virtual void loadStatus() = 0;
     virtual void saveStatus() = 0;
@@ -43,6 +43,7 @@ public:
 
     QString getId() const  { return strategyID; }
     QString getInstrument() const { return instrumentID; }
+    int getTimeFrames() const { return timeFrames; }
 
     bool isEnabled()  const { return enabled; }
     bool isIncluded() const { return included; }
