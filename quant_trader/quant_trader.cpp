@@ -1,8 +1,6 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QMetaClassInfo>
-#include <QSqlQuery>
-#include <QSqlError>
 
 #include "common_utility.h"
 #include "enum_helper.h"
@@ -10,6 +8,7 @@
 #include "settings_helper.h"
 #include "quant_trader.h"
 #include "standard_bar.h"
+#include "standard_bar_persistence.h"
 #include "bar_collector.h"
 #include "editable.h"
 #include "indicators_and_strategies.h"
@@ -130,9 +129,8 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
         strategy->setParameter(param1, param2, param3, param4, param5, param6, param7, param8, param9);
         QMap<int, QPair<QList<StandardBar>*, StandardBar*>> multiTimeFrameBars;
         for (int timeFrame : enumValueToList<BarCollector::TimeFrames>(timeFrameFlags)) {
-            multiTimeFrameBars.insert(timeFrame, qMakePair(getBars(instrument, timeFrame), collector_map[instrument]->getBarPtr(timeFrame)));
+            strategy->setBarList(timeFrame, getBars(instrument, timeFrame), collector_map[instrument]->getBarPtr(timeFrame));
         }
-        strategy->setBarList(multiTimeFrameBars);
         strategy->loadStatus();
         strategy_map.insert(instrument, strategy);
         strategyIdMap.insert(group, strategy);
@@ -162,23 +160,7 @@ QList<StandardBar>* QuantTrader::getBars(const QString &instrumentID, int timeFr
 
     // Load History Bars
     const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
-    QSqlQuery qry;
-    bool ok = qry.exec("SELECT * from " + dbTableName + " order by time");
-    if (ok) {
-        while (qry.next()) {
-            StandardBar bar;
-            bar.time = qry.value(0).toLongLong();
-            bar.open = qry.value(1).toDouble();
-            bar.high = qry.value(2).toDouble();
-            bar.low  = qry.value(3).toDouble();
-            bar.close= qry.value(4).toDouble();
-            bar.tick_volume = qry.value(5).toLongLong();
-            bar.volume = qry.value(6).toLongLong();
-            barList << bar;
-        }
-    } else {
-        qWarning().noquote() << "Select from" << dbTableName << "failed!" << qry.lastError().text();
-    }
+    barList = loadBarsFromDb(dbTableName);
 
     int barListSize = barList.size();
     if (barListSize > 0) {

@@ -1,7 +1,7 @@
 #ifndef ABSTRACT_STRATEGY_H
 #define ABSTRACT_STRATEGY_H
 
-#include <QMap>
+#include <QList>
 #include <QString>
 
 #include "standard_bar.h"
@@ -24,7 +24,7 @@ public:
         strategyID(id), instrumentID(instrumentID), timeFrames(timeFrames) {}
     virtual ~AbstractStrategy() = default;
 
-    virtual void setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>>&) {}
+    virtual void setBarList(int, QList<StandardBar> *, StandardBar *) {}
 
     virtual void loadStatus() = 0;
     virtual void saveStatus() = 0;

@@ -8,6 +8,7 @@ SOURCES *= \
     $$COMMON_FOLDER/db_helper.cpp \
     $$COMMON_FOLDER/trade_logger.cpp \
     $$COMMON_FOLDER/standard_bar.cpp \
+    $$COMMON_FOLDER/standard_bar_persistence.cpp \
     $$QUANT_TRADER_FOLDER/bar_collector.cpp \
     $$QUANT_TRADER_FOLDER/quant_trader.cpp \
     $$QUANT_TRADER_FOLDER/editable.cpp \
@@ -21,6 +22,7 @@ HEADERS *= \
     $$COMMON_FOLDER/db_helper.h \
     $$COMMON_FOLDER/trade_logger.h \
     $$COMMON_FOLDER/standard_bar.h \
+    $$COMMON_FOLDER/standard_bar_persistence.h \
     $$QUANT_TRADER_FOLDER/bar_collector.h \
     $$QUANT_TRADER_FOLDER/quant_trader.h \
     $$QUANT_TRADER_FOLDER/argument_helper.h \

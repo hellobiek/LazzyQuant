@@ -2,12 +2,10 @@
 #include <QDebug>
 #include <QMetaEnum>
 
-#include <QSqlQuery>
-#include <QSqlError>
-
 #include "enum_helper.h"
 #include "datetime_helper.h"
 #include "db_helper.h"
+#include "standard_bar_persistence.h"
 #include "bar_collector.h"
 
 BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool saveBarsToDB, QObject *parent) :
@@ -31,19 +29,9 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
             QString tableName = QString("%1_%2").arg(instrumentID, QMetaEnum::fromType<TimeFrames>().valueToKey(key));
             tableNames << tableName;
         }
-        auto format = "(`time`        BIGINT NOT NULL,"
-                      " `open`        DOUBLE NULL,"
-                      " `high`        DOUBLE NULL,"
-                      " `low`         DOUBLE NULL,"
-                      " `close`       DOUBLE NULL,"
-                      " `tick_volume` BIGINT NULL,"
-                      " `volume`      BIGINT NULL,"
-                      " `type`        INT NULL,"
-                      " PRIMARY KEY (`time`))";
-        if (!createTablesIfNotExist("market", tableNames, format)) {
+        if (!createTablesIfNotExist("market", tableNames, barTableFormat)) {
             qWarning() << "Create market table failed!";
             this->saveBarsToDB = false;
-            return;
         }
     }
 }
@@ -153,32 +141,12 @@ void BarCollector::saveEmitReset(int timeFrame, StandardBar &bar)
 {
     if (!bar.isEmpty()) {
         if (saveBarsToDB) {
-            saveBar(timeFrame, bar);
+            QString dbTableName = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
+            saveBarToDb(dbTableName, bar, 1);
         }
         emit collectedBar(instrument, timeFrame, bar);
         qInfo().noquote() << instrument << bar;
         bar.reset();
-    }
-}
-
-void BarCollector::saveBar(int timeFrame, const StandardBar &bar) const
-{
-    QString tableOfDB = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
-    QSqlQuery qry;
-    qry.prepare("INSERT INTO " + tableOfDB + " (time, open, high, low, close, tick_volume, volume, type) "
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    qry.bindValue(0, bar.time);
-    qry.bindValue(1, bar.open);
-    qry.bindValue(2, bar.high);
-    qry.bindValue(3, bar.low);
-    qry.bindValue(4, bar.close);
-    qry.bindValue(5, bar.tick_volume);
-    qry.bindValue(6, bar.volume);
-    qry.bindValue(7, 1);
-    bool ok = qry.exec();
-    if (!ok) {
-        qCritical().noquote() << qry.lastError();
-        qCritical().noquote() << "Insert bar into" << tableOfDB << "failed!";
     }
 }
 

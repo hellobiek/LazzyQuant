@@ -77,10 +77,11 @@ void SingleTimeFrameStrategy::checkTPSL(double price)
     }
 }
 
-void SingleTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast)
+void SingleTimeFrameStrategy::setBarList(int timeFrame, QList<StandardBar> *barList, StandardBar *lastBar)
 {
-    this->barList = listAndLast[timeFrames].first;
-    this->lastBar = listAndLast[timeFrames].second;
+    Q_UNUSED(timeFrame)
+    this->barList = barList;
+    this->lastBar = lastBar;
     bars = _ListProxy<StandardBar>(this->barList, this->lastBar);
     bars.setAsSeries(true);
 }

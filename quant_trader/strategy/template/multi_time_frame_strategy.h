@@ -24,11 +24,11 @@ protected:
     virtual void onNewBar(int timeFrame) = 0;
 
 public:
-    explicit MultiTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrames, QObject *parent = 0);
-    ~MultiTimeFrameStrategy();
+    explicit MultiTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrames, QObject *parent = nullptr);
+    ~MultiTimeFrameStrategy() override;
 
-    // Should call setBarList after setParameter
-    virtual void setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast);
+    //!< Should be called after setParameter
+    void setBarList(int timeFrame, QList<StandardBar> *barList, StandardBar *lastBar) override;
 
     void checkIfNewBar(int newBarTimeFrame) override;
     void onNewTick(qint64 time, double lastPrice) override;

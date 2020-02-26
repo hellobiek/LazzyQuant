@@ -57,14 +57,9 @@ void MultiTimeFrameStrategy::checkTPSL(double price)
     }
 }
 
-void MultiTimeFrameStrategy::setBarList(const QMap<int, QPair<QList<StandardBar>*, StandardBar*>> &listAndLast)
+void MultiTimeFrameStrategy::setBarList(int timeFrame, QList<StandardBar> *barList, StandardBar *lastBar)
 {
-    const auto keys = listAndLast.keys();
-    for (auto key : keys) {
-        QList<StandardBar>* barList = listAndLast[key].first;
-        StandardBar* lastBar = listAndLast[key].second;
-        bars.insert(key, _ListProxy<StandardBar>(barList, lastBar, true));
-    }
+    bars.insert(timeFrame, _ListProxy<StandardBar>(barList, lastBar, true));
 }
 
 void MultiTimeFrameStrategy::checkIfNewBar(int newBarTimeFrame)
