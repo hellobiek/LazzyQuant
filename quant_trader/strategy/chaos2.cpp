@@ -22,13 +22,13 @@ bool WiseMan3::confirm(double price) const
 
 void AOSignal::update(double aoValue)
 {
-    if (aoValue < lowestAO && aoValue < 0.0f) {
+    if (aoValue < lowestAO && aoValue < 0.0) {
         lowestAO = aoValue;
         highestAO = -DBL_MAX;
         allowLong = true;
         allowShort = false;
     }
-    if (aoValue > highestAO && aoValue > 0.0f) {
+    if (aoValue > highestAO && aoValue > 0.0) {
         lowestAO = DBL_MAX;
         highestAO = aoValue;
         allowLong = false;

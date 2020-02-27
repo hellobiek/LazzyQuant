@@ -127,7 +127,6 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
         }
 
         strategy->setParameter(param1, param2, param3, param4, param5, param6, param7, param8, param9);
-        QMap<int, QPair<QList<StandardBar>*, StandardBar*>> multiTimeFrameBars;
         for (int timeFrame : enumValueToList<BarCollector::TimeFrames>(timeFrameFlags)) {
             strategy->setBarList(timeFrame, getBars(instrument, timeFrame), collector_map[instrument]->getBarPtr(timeFrame));
         }

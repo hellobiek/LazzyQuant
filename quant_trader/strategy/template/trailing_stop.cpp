@@ -12,7 +12,7 @@ TrailingStop::TrailingStop(bool direction, double initStop, double AFstep, doubl
 }
 
 TrailingStop::TrailingStop(bool direction, double initStop) :
-    TrailingStop(direction, initStop, 0.02f, 0.19999f)
+    TrailingStop(direction, initStop, 0.02, 0.19999)
 {
 }
 
