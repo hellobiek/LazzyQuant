@@ -1,7 +1,6 @@
 #ifndef OPTION_PRICING_H
 #define OPTION_PRICING_H
 
-#include "common_utility.h"
 #include "option_index.h"
 
 #include <QPair>

@@ -1,7 +1,7 @@
 #include <cfloat>
 #include <QSettings>
 
-#include "common_utility.h"
+#include "instrument_helper.h"
 #include "settings_helper.h"
 #include "option_helper.h"
 #include "option_pricing.h"

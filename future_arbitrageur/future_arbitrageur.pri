@@ -2,7 +2,7 @@ COMMON_FOLDER = $$LAZZYQUANT_ROOT/common
 FUTURE_ARBITRAGEUR_FOLDER = $$LAZZYQUANT_ROOT/future_arbitrageur
 
 SOURCES *= \
-    $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/instrument_helper.cpp \
     $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/strategy_status.cpp \
     $$FUTURE_ARBITRAGEUR_FOLDER/future_arbitrageur.cpp \
@@ -12,7 +12,7 @@ SOURCES *= \
     $$FUTURE_ARBITRAGEUR_FOLDER/butterfly.cpp
 
 HEADERS *= \
-    $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/instrument_helper.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/strategy_status.h \
     $$FUTURE_ARBITRAGEUR_FOLDER/future_arbitrageur.h \

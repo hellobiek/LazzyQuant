@@ -4,7 +4,7 @@
 #include <QDate>
 #include <QObject>
 
-#include "common_utility.h"
+#include "instrument_helper.h"
 
 class DepthMarket;
 
@@ -30,9 +30,7 @@ QDate OptionHelperImpl<T>::getEndDate(const QString &underlying)
 {
     if (pExecuter && pExecuter->getStatus() == "Ready") {
         QString dateStr = pExecuter->getExpireDate(underlying);
-        if (dateStr != INVALID_DATE_STRING) {
-            return QDate::fromString(dateStr, QStringLiteral("yyyyMMdd"));
-        }
+        return QDate::fromString(dateStr, QStringLiteral("yyyyMMdd"));
     }
     return ::getExpireDate(underlying);
 }

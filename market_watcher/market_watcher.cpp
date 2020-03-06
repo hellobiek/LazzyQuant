@@ -9,7 +9,7 @@
 #include <QCoreApplication>
 #include <QDebugStateSaver>
 
-#include "market.h"
+#include "market_info.h"
 #include "trading_calendar.h"
 #include "settings_helper.h"
 #include "datetime_helper.h"

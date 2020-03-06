@@ -4,7 +4,6 @@ COMMON_FOLDER = $$LAZZYQUANT_ROOT/common
 CTP_REPLAYER_FOLDER = $$LAZZYQUANT_ROOT/tick_replayer/ctp_replayer
 
 SOURCES *= \
-    $$COMMON_FOLDER/common_utility.cpp \
     $$COMMON_FOLDER/datetime_helper.cpp \
     $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/trading_calendar.cpp \
@@ -12,7 +11,6 @@ SOURCES *= \
     $$CTP_REPLAYER_FOLDER/ctp_replayer.cpp
 
 HEADERS *= \
-    $$COMMON_FOLDER/common_utility.h \
     $$COMMON_FOLDER/datetime_helper.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/trading_calendar.h \

@@ -1,7 +1,7 @@
 #ifndef OPTION_INDEX_H
 #define OPTION_INDEX_H
 
-#include "common_utility.h"
+#include "instrument_helper.h"
 
 #include <QMultiMap>
 

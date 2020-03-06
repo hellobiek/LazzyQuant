@@ -2,7 +2,7 @@ COMMON_FOLDER = $$LAZZYQUANT_ROOT/common
 TRADE_EXECUTER_FOLDER = $$LAZZYQUANT_ROOT/trade_executer
 
 SOURCES *= \
-    $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/instrument_helper.cpp \
     $$COMMON_FOLDER/settings_helper.cpp \
     $$TRADE_EXECUTER_FOLDER/ctp_executer.cpp \
     $$TRADE_EXECUTER_FOLDER/trade_handler.cpp \
@@ -11,7 +11,7 @@ SOURCES *= \
     $$TRADE_EXECUTER_FOLDER/ctp_parked_order.cpp
 
 HEADERS *= \
-    $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/instrument_helper.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$TRADE_EXECUTER_FOLDER/ctp_executer.h \
     $$TRADE_EXECUTER_FOLDER/trade_handler.h \

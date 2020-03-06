@@ -2,7 +2,7 @@
 #include <QSettings>
 #include <QMetaClassInfo>
 
-#include "common_utility.h"
+#include "market_info.h"
 #include "enum_helper.h"
 #include "datetime_helper.h"
 #include "settings_helper.h"

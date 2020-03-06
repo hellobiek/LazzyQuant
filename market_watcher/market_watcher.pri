@@ -2,9 +2,9 @@ COMMON_FOLDER = $$LAZZYQUANT_ROOT/common
 MARKET_WATCHER_FOLDER = $$LAZZYQUANT_ROOT/market_watcher
 
 SOURCES *= \
-    $$COMMON_FOLDER/market.cpp \
-    $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/market_info.cpp \
     $$COMMON_FOLDER/datetime_helper.cpp \
+    $$COMMON_FOLDER/instrument_helper.cpp \
     $$COMMON_FOLDER/multiple_timer.cpp \
     $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/trading_calendar.cpp \
@@ -14,9 +14,9 @@ SOURCES *= \
     $$MARKET_WATCHER_FOLDER/time_validator.cpp
 
 HEADERS *= \
-    $$COMMON_FOLDER/market.h \
-    $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/market_info.h \
     $$COMMON_FOLDER/datetime_helper.h \
+    $$COMMON_FOLDER/instrument_helper.h \
     $$COMMON_FOLDER/multiple_timer.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/trading_calendar.h \

@@ -2,7 +2,8 @@ COMMON_FOLDER = $$LAZZYQUANT_ROOT/common
 QUANT_TRADER_FOLDER = $$LAZZYQUANT_ROOT/quant_trader
 
 SOURCES *= \
-    $$COMMON_FOLDER/common_utility.cpp \
+    $$COMMON_FOLDER/market_info.cpp \
+    $$COMMON_FOLDER/instrument_helper.cpp \
     $$COMMON_FOLDER/settings_helper.cpp \
     $$COMMON_FOLDER/datetime_helper.cpp \
     $$COMMON_FOLDER/db_helper.cpp \
@@ -15,7 +16,8 @@ SOURCES *= \
     $$QUANT_TRADER_FOLDER/indicators_and_strategies.cpp
 
 HEADERS *= \
-    $$COMMON_FOLDER/common_utility.h \
+    $$COMMON_FOLDER/market_info.h \
+    $$COMMON_FOLDER/instrument_helper.h \
     $$COMMON_FOLDER/enum_helper.h \
     $$COMMON_FOLDER/settings_helper.h \
     $$COMMON_FOLDER/datetime_helper.h \

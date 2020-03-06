@@ -8,7 +8,13 @@
 #include <QQueue>
 #include <QPair>
 
-#include "common_utility.h"
+#include "instrument_helper.h"
+
+#define INVALID_DATE_STRING QStringLiteral("00000000")
+
+#define LIMIT_ORDER   0
+#define FAK_ORDER     1
+#define FOK_ORDER     2
 
 struct CThostFtdcInstrumentMarginRateField;
 struct CThostFtdcInstrumentCommissionRateField;
