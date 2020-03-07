@@ -5,8 +5,20 @@
 
 #include "tick_replayer_adaptor.h"
 
+#include <QDateTime>
 #include <QTimeZone>
 #include <QCommandLineParser>
+
+QDateTime getReplayDateTime(const QCommandLineParser &parser, const QString &option)
+{
+    QDateTime dateTime;
+    if (parser.isSet(option)) {
+        QString replayStartDateTime = parser.value(option);
+        dateTime = QDateTime::fromString(replayStartDateTime, "yyyyMMddHHmmss");
+        dateTime.setTimeZone(QTimeZone::utc());
+    }
+    return dateTime;
+}
 
 ReplayController::ReplayController(TickReplayer *replayer)
 {
@@ -40,15 +52,4 @@ void ReplayController::setupDbus(const CONFIG_ITEM &config)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerObject(config.dbusObject, replayerObj);
     dbus.registerService(config.dbusService);
-}
-
-QDateTime ReplayController::getReplayDateTime(const QCommandLineParser &parser, const QString &option)
-{
-    QDateTime dateTime;
-    if (parser.isSet(option)) {
-        QString replayStartDateTime = parser.value(option);
-        dateTime = QDateTime::fromString(replayStartDateTime, "yyyyMMddHHmmss");
-        dateTime.setTimeZone(QTimeZone::utc());
-    }
-    return dateTime;
 }

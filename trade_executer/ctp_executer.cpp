@@ -1632,10 +1632,7 @@ double CtpExecuter::getUpperLimit(const QString &instrument)
     qInfo() << __FUNCTION__ << instrument;
     CHECK_MARKET_CACHE_READY_RET(-DBL_MAX)
 
-    if (upperLowerLimitCache.contains(instrument)) {
-        return upperLowerLimitCache.value(instrument).first;
-    } 
-    return -DBL_MAX;
+    return upperLowerLimitCache.value(instrument, {-DBL_MAX, DBL_MAX}).first;
 }
 
 /*!
@@ -1650,10 +1647,7 @@ double CtpExecuter::getLowerLimit(const QString &instrument)
     qInfo() << __FUNCTION__ << instrument;
     CHECK_MARKET_CACHE_READY_RET(DBL_MAX)
 
-    if (upperLowerLimitCache.contains(instrument)) {
-        return upperLowerLimitCache.value(instrument).second;
-    } 
-    return DBL_MAX;
+    return upperLowerLimitCache.value(instrument, {-DBL_MAX, DBL_MAX}).second;
 }
 
 /*!

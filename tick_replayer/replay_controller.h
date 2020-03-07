@@ -2,7 +2,6 @@
 #define REPLAY_CONTROLLER_H
 
 #include <QList>
-#include <QDateTime>
 #include <QCommandLineOption>
 
 class QCommandLineParser;
@@ -21,9 +20,6 @@ public:
 
     void setupReplayRange(const QCommandLineParser &parser);
     void setupDbus(const CONFIG_ITEM &config);
-
-private:
-    QDateTime getReplayDateTime(const QCommandLineParser &parser, const QString &option);
 
 };
 
