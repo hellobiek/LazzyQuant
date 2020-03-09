@@ -3,23 +3,22 @@
 
 #include <QVector>
 
-class QTime;
-
 /*!
  * \brief 检查行情时间是否有效.
  */
 class TimeValidator
 {
-    qint64 openTime;
-    qint64 closeTime;
-    QVector<int> endTimes;
+    QVector<qint64> adjustedTimestamps;
+    QVector<qint64> endTimestamps;
     qint64 latestTime = 0;
     int latestMsec = 0;
+    int lastIdx = 0;
+    int timestampSize = 0;
 
 public:
-    explicit TimeValidator(qint64 openTime, qint64 closeTime, const QList<QTime> &endPoints);
+    explicit TimeValidator(const QVector<qint64> &timestamps);
 
-    qint64 validate(int time, int msec, qint64 mappedTime);
+    qint64 validate(qint64 mappedTime, int msec);
 };
 
 #endif // TIME_VALIDATOR_H

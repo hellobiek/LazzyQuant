@@ -1,24 +1,27 @@
 #include "time_validator.h"
 
-#include <QTime>
-
-TimeValidator::TimeValidator(qint64 openTime, qint64 closeTime, const QList<QTime> &endPoints)
-    : openTime(openTime), closeTime(closeTime)
+TimeValidator::TimeValidator(const QVector<qint64> &timestamps)
 {
-    for (QTime endPoint : endPoints) {
-        endTimes << endPoint.msecsSinceStartOfDay() / 1000;
+    timestampSize = timestamps.size();
+    Q_ASSERT(timestampSize % 2 == 0);
+    for (int i = 0; i < timestampSize; i++) {
+        if (i % 2 == 0) {
+            adjustedTimestamps.append(timestamps.at(i) - 1);
+        } else {
+            adjustedTimestamps.append(timestamps.at(i));
+            endTimestamps.append(timestamps.at(i));
+        }
     }
 }
 
-qint64 TimeValidator::validate(int time, int msec, qint64 mappedTime)
+qint64 TimeValidator::validate(qint64 mappedTime, int msec)
 {
-    if (mappedTime > closeTime) {
-        return 0;
+    for (; lastIdx < timestampSize; lastIdx ++) {
+        if (adjustedTimestamps.at(lastIdx) >= mappedTime) {
+            break;
+        }
     }
-
-    if (latestTime == 0) {
-        latestTime = mappedTime;
-        latestMsec = msec;
+    if (lastIdx % 2 == 0) {
         return 0;
     }
 
@@ -30,15 +33,11 @@ qint64 TimeValidator::validate(int time, int msec, qint64 mappedTime)
         return 0;
     }
 
-    if (mappedTime < openTime) {
-        return 0;
-    }
-
     latestTime = mappedTime;
     latestMsec = msec;
 
-    if (endTimes.contains(time)) {
-        return mappedTime - 1;
+    if (endTimestamps.contains(mappedTime)) {
+        return mappedTime - 1;  //!< Workaround
     }
     return mappedTime;
 }

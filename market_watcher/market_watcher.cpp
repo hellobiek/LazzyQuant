@@ -242,7 +242,7 @@ void MarketWatcher::setupTimeValidators()
     timeValidators.clear();
     for (const auto &instrumentID : qAsConst(subscribeSet)) {
         const auto tradingTimeRanges = getTradingTimeRanges(instrumentID);
-        QList<qint64> times;
+        QVector<qint64> times;
         for (const auto &tradingTimeRange : tradingTimeRanges) {
             auto rangeStart = mapTime(tradingTimeRange.first.msecsSinceStartOfDay() / 1000);
             if (rangeStart >= earliestTime) {
@@ -254,8 +254,7 @@ void MarketWatcher::setupTimeValidators()
             continue;
         }
         std::sort(times.begin(), times.end());
-        const auto endPoints = getEndPoints(instrumentID);
-        TimeValidator *pValidator = new TimeValidator(times.first(), times.last(), endPoints);
+        TimeValidator *pValidator = new TimeValidator(times);
         timeValidators.insert(instrumentID, pValidator);
     }
 }
@@ -276,7 +275,7 @@ void MarketWatcher::processDepthMarketData(const CThostFtdcDepthMarketDataField 
     qint64 mappedTime = 0;
     auto pValidator = timeValidators.value(instrumentID);
     if (pValidator) {
-        mappedTime = pValidator->validate(time, depthMarketDataField.UpdateMillisec, mapTime(time));
+        mappedTime = pValidator->validate(mapTime(time), depthMarketDataField.UpdateMillisec);
     }
 
     if (mappedTime > 0) {
