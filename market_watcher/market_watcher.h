@@ -9,7 +9,6 @@
 
 #include "time_mapper.h"
 
-class QSettings;
 class CThostFtdcMdApi;
 class CTickReceiver;
 struct CThostFtdcDepthMarketDataField;
@@ -29,7 +28,6 @@ protected:
     TimeMapper mapTime;
 
     const QString name;
-    QSettings *settings;
 
     int nRequestID = 0;
     CThostFtdcMdApi *pUserApi;

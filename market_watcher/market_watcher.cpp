@@ -22,7 +22,7 @@ MarketWatcher::MarketWatcher(const QString &configName, QObject *parent) :
     QObject(parent),
     name(configName)
 {
-    settings = getSettingsSmart(QCoreApplication::organizationName(), configName, this).release();
+    auto settings = getSettingsSmart(configName).get();
     const auto flowPath = settings->value("FlowPath").toByteArray();
     saveDepthMarketData = settings->value("SaveDepthMarketData").toBool();
     saveDepthMarketDataPath = settings->value("SaveDepthMarketDataPath").toString();
@@ -71,7 +71,6 @@ MarketWatcher::~MarketWatcher()
     pUserApi->Release();
     delete pReceiver;
     delete multiTimer;
-    delete settings;
 }
 
 void MarketWatcher::checkDirectory(const QString &instrumentID) const
@@ -356,12 +355,10 @@ void MarketWatcher::subscribeInstruments(const QStringList &instruments, bool up
     }
 
     if (updateIni) {
-        QStringList enabledSubscribeList = getSettingItemList(settings, "SubscribeList");
+        auto settings = getSettingsSmart(name);
         settings->beginGroup("SubscribeList");
-        for (const auto &instrument : instruments) {
-            if (!enabledSubscribeList.contains(instrument)) {
-                settings->setValue(instrument, "1");
-            }
+        for (const auto &instrumentId : instruments) {
+            settings->setValue(instrumentId, 1);
         }
         settings->endGroup();
     }
