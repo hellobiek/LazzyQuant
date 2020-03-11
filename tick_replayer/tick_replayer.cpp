@@ -1,10 +1,52 @@
-#include <algorithm>
-#include <QSet>
-
 #include "tick_replayer.h"
+
+#include <QSet>
+#include <QTimer>
+#include <QDateTime>
 
 TickReplayer::TickReplayer(QObject *parent) : QObject(parent)
 {
+    timer = new QTimer(this);
+    timer->setInterval(1000);
+    timer->setSingleShot(false);
+    timer->setTimerType(Qt::PreciseTimer);
+    connect(timer, &QTimer::timeout, this, &TickReplayer::onTimer);
+}
+
+void TickReplayer::setReplayRange(qint64 beginTime, qint64 endTime) {
+    this->beginTime = beginTime;
+    this->endTime = endTime;
+}
+
+void TickReplayer::setReplaySpeed(int speed)
+{
+    timer->setInterval(1000 / speed);
+}
+
+void TickReplayer::onTimer()
+{
+    bool haveData = false;
+    while (!haveData) {
+        if (currentTime >= endTime) {
+            stop();
+            break;
+        }
+        qint64 targetTime = qMax(currentTime, beginTime);
+        int unit = 60;
+        targetTime += unit;
+        targetTime = targetTime / unit * unit;
+        targetTime += 30;
+
+        qint64 targetDate = (targetTime / 3600 + 6) / 24 * (24 * 3600);
+        if (currentDate < targetDate) {
+            auto td = QDateTime::fromSecsSinceEpoch(targetDate, Qt::UTC);
+            prepareReplay(td.toString(QStringLiteral("yyyyMMdd")));
+            currentDate = targetDate;
+        }
+        haveData = replayTo(targetTime);
+        currentTime = targetTime;
+        emit currentTimeChanged(currentTime);
+    }
 }
 
 void TickReplayer::sortTickPairList()
@@ -119,4 +161,30 @@ bool TickReplayer::replayTo(qint64 time)
         }
     }
     return ret;
+}
+
+void TickReplayer::start()
+{
+    currentDate = 0;
+    currentTime = 0;
+    timer->start();
+    emit started();
+}
+
+void TickReplayer::pause()
+{
+    timer->stop();
+    emit paused();
+}
+
+void TickReplayer::resume()
+{
+    timer->start();
+    emit resumed();
+}
+
+void TickReplayer::stop()
+{
+    timer->stop();
+    emit stopped();
 }

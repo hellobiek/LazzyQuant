@@ -1,6 +1,3 @@
-#include <QTimer>
-#include <QCoreApplication>
-
 #include "enum_helper.h"
 #include "control_widget.h"
 #include "ui_control_widget.h"
@@ -12,24 +9,22 @@ const QMap<int, QString> readableModelNames = {
     { TickReplayer::MIN1_HL,    "1分钟HL"},
 };
 
-ControlWidget::ControlWidget(TickReplayer *replayer, QWidget *parent) :
+ControlWidget::ControlWidget(TickReplayer *pReplayer, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ControlWidget),
-    replayer(replayer)
+    pReplayer(pReplayer)
 {
     ui->setupUi(this);
 
-    auto supportedReplayModels = replayer->getSupportedReplayModels();
+    auto supportedReplayModels = pReplayer->getSupportedReplayModels();
     auto replayModelFlagList = enumValueToList<TickReplayer::ReplayModels>(supportedReplayModels);
     for (auto flag : replayModelFlagList) {
         ui->periodBox->addItem(readableModelNames[flag], flag);
     }
 
-    timer = new QTimer(this);
-    timer->setInterval(2000);
-    timer->setSingleShot(false);
-    timer->setTimerType(Qt::PreciseTimer);
-    connect(timer, &QTimer::timeout, this, &ControlWidget::onTimer);
+    connect(pReplayer, &TickReplayer::started, this, &ControlWidget::disableEdit);
+    connect(pReplayer, &TickReplayer::stopped, this, &ControlWidget::enableEdit);
+    connect(pReplayer, &TickReplayer::currentTimeChanged, this, &ControlWidget::updateCurrentTime);
 }
 
 ControlWidget::~ControlWidget()
@@ -48,69 +43,50 @@ void ControlWidget::setStop(const QDateTime &stopDateTime)
     ui->stopDateTimeEdit->setDateTime(stopDateTime);
 }
 
-void ControlWidget::onTimer()
+void ControlWidget::enableEdit()
 {
-    bool haveData = false;
-    while (!haveData) {
-        QCoreApplication::processEvents();
-        if (currentTime >= endTime || forceStop) {
-            on_stopButton_clicked();
-            break;
-        }
-        if (forcePause) {
-            on_pauseButton_clicked();
-            break;
-        }
-        qint64 targetTime = (currentTime < startTime) ? startTime : currentTime;
-        targetTime += unit;
-        targetTime = targetTime / unit * unit;
-        targetTime += 30;
+    ui->startDateTimeEdit->setEnabled(true);
+    ui->stopDateTimeEdit->setEnabled(true);
+    ui->periodBox->setEnabled(true);
+}
 
-        qint64 targetDate = (targetTime / 3600 + 6) / 24 * (24 * 3600);
-        if (currentDate < targetDate) {
-            auto td = QDateTime::fromSecsSinceEpoch(targetDate, Qt::UTC);
-            replayer->prepareReplay(td.toString(QStringLiteral("yyyyMMdd")));
-            currentDate = targetDate;
-        }
-        haveData = replayer->replayTo(targetTime);
-        currentTime = targetTime;
-        ui->currentDateTimeEdit->setDateTime(QDateTime::fromSecsSinceEpoch(currentTime, Qt::UTC));
-    }
+void ControlWidget::disableEdit()
+{
+    ui->startDateTimeEdit->setEnabled(false);
+    ui->stopDateTimeEdit->setEnabled(false);
+    ui->periodBox->setEnabled(false);
+}
+
+void ControlWidget::updateCurrentTime(qint64 timestamp)
+{
+    ui->currentDateTimeEdit->setDateTime(QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
 }
 
 void ControlWidget::on_playButton_clicked()
 {
     if (ui->startDateTimeEdit->isEnabled()) {
-        startTime = ui->startDateTimeEdit->dateTime().toSecsSinceEpoch();
-        endTime = ui->stopDateTimeEdit->dateTime().toSecsSinceEpoch();
-        ui->startDateTimeEdit->setEnabled(false);
-        ui->stopDateTimeEdit->setEnabled(false);
-        currentDate = 0;
-        currentTime = 0;
+        auto beginTime = ui->startDateTimeEdit->dateTime().toSecsSinceEpoch();
+        auto endTime = ui->stopDateTimeEdit->dateTime().toSecsSinceEpoch();
+        pReplayer->setReplayRange(beginTime, endTime);
+        pReplayer->setReplayModel(ui->periodBox->currentData().toInt());
+        pReplayer->setReplaySpeed(ui->speedSlider->value());
+        pReplayer->start();
+    } else {
+        pReplayer->resume();
     }
-    replayer->setReplayModel(ui->periodBox->currentData().toInt());
-    ui->periodBox->setEnabled(false);
-    forcePause = false;
-    forceStop = false;
-    timer->start();
 }
 
 void ControlWidget::on_pauseButton_clicked()
 {
-    timer->stop();
-    forcePause = true;
+    pReplayer->pause();
 }
 
 void ControlWidget::on_stopButton_clicked()
 {
-    timer->stop();
-    ui->startDateTimeEdit->setEnabled(true);
-    ui->stopDateTimeEdit->setEnabled(true);
-    ui->periodBox->setEnabled(true);
-    forceStop = true;
+    pReplayer->stop();
 }
 
 void ControlWidget::on_speedSlider_valueChanged(int value)
 {
-    timer->setInterval(2000 / value);
+    pReplayer->setReplaySpeed(value);
 }

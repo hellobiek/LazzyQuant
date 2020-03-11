@@ -17,6 +17,17 @@
       <arg name="bidPrice1" type="d" direction="out"/>
       <arg name="bidVolume1" type="i" direction="out"/>
     </signal>
+    <signal name="started">
+    </signal>
+    <signal name="paused">
+    </signal>
+    <signal name="resumed">
+    </signal>
+    <signal name="stopped">
+    </signal>
+    <signal name="currentTimeChanged">
+      <arg name="timestamp" type="x" direction="out"/>
+    </signal>
     <method name="getReplayList">
       <arg type="as" direction="out"/>
     </method>
@@ -43,6 +54,14 @@
     <method name="replayTo">
       <arg type="b" direction="out"/>
       <arg name="time" type="x" direction="in"/>
+    </method>
+    <method name="start">
+    </method>
+    <method name="pause">
+    </method>
+    <method name="resume">
+    </method>
+    <method name="stop">
     </method>
   </interface>
 </node>

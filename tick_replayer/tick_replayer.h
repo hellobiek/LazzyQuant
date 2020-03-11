@@ -8,6 +8,8 @@
 
 #include "common_tick.h"
 
+class QTimer;
+
 class TickReplayer : public QObject
 {
     Q_OBJECT
@@ -29,13 +31,23 @@ protected:
     int replayIdx = 0;
     QString replayDate;
 
+    // For replay control
+    QTimer *timer;
+    qint64 beginTime = 0;
+    qint64 endTime = 0;
+    qint64 currentDate = 0;
+    qint64 currentTime = 0;
+
 public:
     explicit TickReplayer(QObject *parent = nullptr);
 
     virtual int getSupportedReplayModels() const { return EVERY_TICK; }
     void setReplayModel(int replayModel) { this->replayModel = static_cast<ReplayModel>(replayModel); }
+    void setReplayRange(qint64 beginTime, qint64 endTime);
+    void setReplaySpeed(int speed); //!< 设置复盘速度, 单位:分钟 / 每秒.
 
 protected:
+    void onTimer();
     QVector<int> findEndPoints(const QList<int> &oneMinuteBarTimes);    //!< 查找所有可能的交易时间段结束点.
 
     virtual void appendTicksToList(const QString &date, const QString &instrument) = 0;
@@ -46,6 +58,11 @@ signals:
     void endOfReplay(const QString &tradingDay);
     void newMarketData(const QString &instrumentID, qint64 time, double lastPrice, int volume,
                        double askPrice1, int askVolume1, double bidPrice1, int bidVolume1);
+    void started();
+    void paused();
+    void resumed();
+    void stopped();
+    void currentTimeChanged(qint64 timestamp);
 
 public slots:
     QStringList getReplayList() const { return replayList; }
@@ -57,6 +74,10 @@ public slots:
     bool prepareReplay(const QString &date, const QStringList &instruments);
     bool replayTo(qint64 time);
 
+    void start();   //!< 开始复盘(速度可调)
+    void pause();
+    void resume();
+    void stop();
 };
 
 #endif // TICK_REPLAYER_H
