@@ -22,7 +22,7 @@ MarketWatcher::MarketWatcher(const QString &configName, QObject *parent) :
     QObject(parent),
     name(configName)
 {
-    auto settings = getSettingsSmart(configName).get();
+    auto settings = getSettingsSmart(configName);
     const auto flowPath = settings->value("FlowPath").toByteArray();
     saveDepthMarketData = settings->value("SaveDepthMarketData").toBool();
     saveDepthMarketDataPath = settings->value("SaveDepthMarketDataPath").toString();
@@ -35,7 +35,7 @@ MarketWatcher::MarketWatcher(const QString &configName, QObject *parent) :
         }
     }
 
-    subscribeSet = getSettingItemList(settings, "SubscribeList").toSet();
+    subscribeSet = getSettingItemList(settings.get(), "SubscribeList").toSet();
 
     settings->beginGroup("AccountInfo");
     brokerID = settings->value("BrokerID").toByteArray();
