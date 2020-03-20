@@ -6,7 +6,7 @@
 #include <QString>
 
 #define EMPTY_VALUE     DBL_MAX
-#define INVALID_HANDLE  -1
+#define INVALID_HANDLE  (-1)
 
 typedef QString string;
 
@@ -82,28 +82,10 @@ typedef int ENUM_TIMEFRAMES;
 #define PERIOD_W1       BarCollector::WEEK
 #define PERIOD_MN1      BarCollector::MONTH
 
-inline
-double MathMin(double x, double y)
-{
-#ifdef _MSC_VER
-    return qMin(x, y);
-#else
-    return fmin(x, y);
-#endif
-}
-
-inline
-double MathMax(double x, double y)
-{
-#ifdef _MSC_VER
-    return qMax(x, y);
-#else
-    return fmax(x, y);
-#endif
-}
-
-#define MathPow(x, y) pow(x, y)
-#define MathSqrt(x) sqrt(x)
+inline double MathMax(double x, double y) { return fmax(x, y); }
+inline double MathMin(double x, double y) { return fmin(x, y); }
+inline double MathPow(double x, double y) { return pow(x, y); }
+inline double MathSqrt(double x) { return sqrt(x); }
 
 template<typename T>
 class _TimeSeries {
