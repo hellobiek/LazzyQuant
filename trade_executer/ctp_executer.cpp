@@ -93,6 +93,7 @@ CtpExecuter::CtpExecuter(const QString &configName, QObject *parent) :
     userProductInfo = settings->value("UserProductInfo").toByteArray();
     useAuthenticate = settings->value("UseAuthenticate").toBool();
     authenticateCode = settings->value("AuthenticateCode").toByteArray();
+    appId = settings->value("AppID").toByteArray();
     settings->endGroup();
 
     pUserApi = CThostFtdcTraderApi::CreateFtdcTraderApi(flowPath.constData());
@@ -693,6 +694,7 @@ int CtpExecuter::authenticate()
     strcpy(reqAuthenticate.UserID, userID);
     strcpy(reqAuthenticate.UserProductInfo, userProductInfo);
     strcpy(reqAuthenticate.AuthCode, authenticateCode);
+    strcpy(reqAuthenticate.AppID, appId);
 
     int ret = pUserApi->ReqAuthenticate(&reqAuthenticate, nRequestID++);
     Q_UNUSED(ret)

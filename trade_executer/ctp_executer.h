@@ -88,6 +88,7 @@ protected:
     QByteArray userProductInfo;
     bool useAuthenticate;
     QByteArray authenticateCode;
+    QByteArray appId;
 
     QMap<QString, int> ydLongPositions;
     QMap<QString, int> ydShortPositions;
