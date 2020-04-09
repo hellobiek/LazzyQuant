@@ -39,6 +39,7 @@ protected:
     W *pWatcher;
     T *pTrader;
     E *pExecuter;
+    MultipleTimer *loginTimer = nullptr;
     MultipleTimer *marketOpenTimer = nullptr;
     MultipleTimer *marketCloseTimer = nullptr;
 
@@ -67,6 +68,7 @@ RealManager<W, T, E>::RealManager(W *pWatcher, T *pTrader, E *pExecuter) :
 template<class W, class T, class E>
 RealManager<W, T, E>::~RealManager()
 {
+    delete loginTimer;
     delete marketOpenTimer ;
     delete marketCloseTimer;
 }
@@ -84,6 +86,11 @@ void RealManager<W, T, E>::init()
         }
     };
     QMetaObject::invokeMethod(pTrader, checkPrepare, Qt::QueuedConnection);
+
+    if (pExecuter) {
+        loginTimer = new MultipleTimer({{8, 44}, {20, 44}});
+        QObject::connect(loginTimer, SIGNAL(timesUp(int)), pExecuter, SLOT(setLogin()));
+    }
 
     marketOpenTimer = new MultipleTimer({{8, 45}, {20, 45}});
     QObject::connect(marketOpenTimer, &MultipleTimer::timesUp, checkPrepare);
