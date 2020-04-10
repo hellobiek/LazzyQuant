@@ -121,30 +121,27 @@ void MainWindow::on_comboBoxId1_currentTextChanged(const QString &arg1)
     if (!instrument1.isEmpty()) {
         strategyId1 = arg1;
         ui->labelInstrument1->setText(instrument1);
-        bool isStrategyEnabled = pTrader->getStrategyEnabled(strategyId1);
-        ui->pushButtonEnable1->setDisabled(isStrategyEnabled);
-        ui->pushButtonDisable1->setEnabled(isStrategyEnabled);
+        bool isEnabled = pTrader->getStrategyEnabled(strategyId1);
+        bool isLimited = pTrader->getStrategyLimited(strategyId1);
+        ui->pushButtonEnable1->setChecked(isEnabled);
+        ui->pushButtonDisable1->setChecked(isLimited);
         updateStrategy1Position();
     } else {
         strategyId1 = QString();
         ui->labelInstrument1->setText(QString());
-        ui->pushButtonEnable1->setDisabled(true);
-        ui->pushButtonDisable1->setEnabled(true);
+        ui->pushButtonEnable1->setChecked(false);
+        ui->pushButtonDisable1->setChecked(false);
     }
 }
 
 void MainWindow::on_pushButtonEnable1_clicked()
 {
-    pTrader->setStrategyEnabled(strategyId1, true);
-    ui->pushButtonEnable1->setDisabled(true);
-    ui->pushButtonDisable1->setEnabled(true);
+    pTrader->setStrategyEnabled(strategyId1, ui->pushButtonEnable1->isChecked());
 }
 
 void MainWindow::on_pushButtonDisable1_clicked()
 {
-    pTrader->setStrategyEnabled(strategyId1, false);
-    ui->pushButtonEnable1->setDisabled(false);
-    ui->pushButtonDisable1->setEnabled(false);
+    pTrader->setStrategyLimited(strategyId1, ui->pushButtonDisable1->isChecked());
 }
 
 void MainWindow::on_comboBoxId2_currentTextChanged(const QString &arg1)
@@ -153,28 +150,25 @@ void MainWindow::on_comboBoxId2_currentTextChanged(const QString &arg1)
     if (!instrument2.isEmpty()) {
         strategyId2 = arg1;
         ui->labelInstrument2->setText(instrument2);
-        bool isStrategyEnabled = pTrader->getStrategyEnabled(strategyId2);
-        ui->pushButtonEnable2->setDisabled(isStrategyEnabled);
-        ui->pushButtonDisable2->setEnabled(isStrategyEnabled);
+        bool isEnabled = pTrader->getStrategyEnabled(strategyId2);
+        bool isLimited = pTrader->getStrategyLimited(strategyId2);
+        ui->pushButtonEnable2->setChecked(isEnabled);
+        ui->pushButtonDisable2->setChecked(isLimited);
         updateStrategy2Position();
     } else {
         strategyId2 = QString();
         ui->labelInstrument2->setText(QString());
-        ui->pushButtonEnable2->setDisabled(true);
-        ui->pushButtonDisable2->setEnabled(true);
+        ui->pushButtonEnable2->setChecked(false);
+        ui->pushButtonDisable2->setChecked(false);
     }
 }
 
 void MainWindow::on_pushButtonEnable2_clicked()
 {
-    pTrader->setStrategyEnabled(strategyId2, true);
-    ui->pushButtonEnable2->setDisabled(true);
-    ui->pushButtonDisable2->setEnabled(true);
+    pTrader->setStrategyEnabled(strategyId2, ui->pushButtonEnable2->isChecked());
 }
 
 void MainWindow::on_pushButtonDisable2_clicked()
 {
-    pTrader->setStrategyEnabled(strategyId2, false);
-    ui->pushButtonEnable2->setDisabled(false);
-    ui->pushButtonDisable2->setEnabled(false);
+    pTrader->setStrategyLimited(strategyId2, ui->pushButtonDisable2->isChecked());
 }

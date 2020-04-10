@@ -263,7 +263,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>策略状态监视</string>
+     <string>策略状态 1</string>
     </property>
     <widget class="QComboBox" name="comboBoxId1">
      <property name="geometry">
@@ -328,9 +328,6 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonEnable1">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -342,11 +339,11 @@
      <property name="text">
       <string>启用</string>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButtonDisable1">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -356,7 +353,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>停用</string>
+      <string>限制</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLCDNumber" name="lcdNumberPosition1">
@@ -395,7 +395,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>策略状态监视</string>
+     <string>策略状态 2</string>
     </property>
     <widget class="QComboBox" name="comboBoxId2">
      <property name="geometry">
@@ -460,9 +460,6 @@
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonEnable2">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -474,11 +471,11 @@
      <property name="text">
       <string>启用</string>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButtonDisable2">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -488,7 +485,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>停用</string>
+      <string>限制</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLCDNumber" name="lcdNumberPosition2">
