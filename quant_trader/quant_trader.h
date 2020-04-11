@@ -105,7 +105,20 @@ signals:
     void newBarFormed(const QString &instrumentID, const QString &timeFrame);
 
 public slots:
-    void setTradingDay(const QString &tradingDay);
+    void setTradingDay(const QString &tradingDay);  //!< 设定交易日期(格式yyyyMMdd).
+    /*!
+     * \brief 处理市场数据, 更新该合约K线,
+     * 如果有新的成交则计算相关策略, 并统计该合约所有策略给出的仓位之和,
+     * 如果与当前仓位不同则发送给交易执行模块下单.
+     * \param instrumentID 合约代码.
+     * \param time         Unix时间戳.
+     * \param lastPrice    最新成交价.
+     * \param volume       成交量.
+     * \param askPrice1    卖一价.
+     * \param askVolume1   卖一量.
+     * \param bidPrice1    买一价.
+     * \param bidVolume1   买一量.
+     */
     void onMarketData(const QString &instrumentID, qint64 time, double lastPrice, int volume,
                       double askPrice1, int askVolume1, double bidPrice1, int bidVolume1);
     void onMarketPause();   //!< 休盘暂停.

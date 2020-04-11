@@ -273,12 +273,6 @@ void QuantTrader::onNewBar(const QString &instrumentID, int timeFrame, const Sta
     emit newBarFormed(instrumentID, QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame));
 }
 
-/*!
- * \brief QuantTrader::setTradingDay
- * 设定交易日期.
- *
- * \param tradingDay 交易日(yyyyMMdd)
- */
 void QuantTrader::setTradingDay(const QString &tradingDay)
 {
     qDebug() << "Set Trading Day to" << tradingDay;
@@ -291,20 +285,6 @@ void QuantTrader::setTradingDay(const QString &tradingDay)
     }
 }
 
-/*!
- * \brief QuantTrader::onMarketData
- * 处理市场数据, 如果有新的成交则计算相关策略.
- * 统计相关策略给出的仓位, 如果与旧数值不同则发送给执行模块.
- *
- * \param instrumentID 合约代码.
- * \param time         Unix时间戳.
- * \param lastPrice    最新成交价.
- * \param volume       成交量.
- * \param askPrice1    卖一价.
- * \param askVolume1   卖一量.
- * \param bidPrice1    买一价.
- * \param bidVolume1   买一量.
- */
 void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double lastPrice, int volume,
                                double askPrice1, int askVolume1, double bidPrice1, int bidVolume1)
 {
@@ -319,13 +299,13 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
     const auto strategyList = strategy_map.values(instrumentID);
     int newPositionSum = 0;
     for (auto *strategy : strategyList) {
-        if (isNewTick) {    // 有新的成交.
-            if (strategy->isEnabled()) {
+        if (strategy->isEnabled()) {
+            if (isNewTick) {    // 有新的成交.
                 strategy->onNewTick(time, lastPrice);
             }
-        }
-        if (strategy->isEnabled() && strategy->isIncluded()) {
-            newPositionSum += strategy->getPosition();
+            if (strategy->isIncluded()) {
+                newPositionSum += strategy->getPosition();
+            }
         }
     }
 
