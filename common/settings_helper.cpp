@@ -7,17 +7,27 @@
 std::unique_ptr<QSettings> getSettingsLocal(const QString &name, QObject *parent)
 {
     const QString localFileName = QCoreApplication::applicationDirPath() + "/" + name + ".ini";
-    return std::make_unique<QSettings>(localFileName, QSettings::IniFormat, parent);
+    auto settings = new QSettings(localFileName, QSettings::IniFormat, parent);
+    if (qEnvironmentVariableIsSet(INI_CODEC_VAR_NAME)) {
+        settings->setIniCodec(qgetenv(INI_CODEC_VAR_NAME));
+    }
+    return std::unique_ptr<QSettings>(settings);
 }
 
 std::unique_ptr<QSettings> getSettingsSmart(const QString &organization, const QString &name, QObject *parent)
 {
     const QString localFileName = QCoreApplication::applicationDirPath() + "/" + name + ".ini";
     QFile localFile(localFileName);
+    QSettings *settings;
     if (localFile.exists()) {
-        return std::make_unique<QSettings>(localFileName, QSettings::IniFormat, parent);
+        settings = new QSettings(localFileName, QSettings::IniFormat, parent);
+    } else {
+        settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, organization, name, parent);
     }
-    return std::make_unique<QSettings>(QSettings::IniFormat, QSettings::UserScope, organization, name, parent);
+    if (qEnvironmentVariableIsSet(INI_CODEC_VAR_NAME)) {
+        settings->setIniCodec(qgetenv(INI_CODEC_VAR_NAME));
+    }
+    return std::unique_ptr<QSettings>(settings);
 }
 
 std::unique_ptr<QSettings> getSettingsSmart(const QString &name, QObject *parent)

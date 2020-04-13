@@ -4,6 +4,8 @@
 #include <memory>
 #include <QStringList>
 
+#define INI_CODEC_VAR_NAME  "INI_CODEC"
+
 class QSettings;
 class QObject;
 
