@@ -62,6 +62,30 @@ void SingleTimeFrameStrategy::resetPosition()
     saveStatus();
 }
 
+double SingleTimeFrameStrategy::highestSince(int i) const
+{
+    double highest = lastBar->high;
+    auto barListSize = barList->size();
+    for (int j = i; j < barListSize; j++) {
+        if (highest < barList->at(i).high) {
+            highest = barList->at(i).high;
+        }
+    }
+    return highest;
+}
+
+double SingleTimeFrameStrategy::lowestSince(int i) const
+{
+    double lowest = lastBar->low;
+    auto barListSize = barList->size();
+    for (int j = i; j < barListSize; j++) {
+        if (lowest > barList->at(i).low) {
+            lowest = barList->at(i).low;
+        }
+    }
+    return lowest;
+}
+
 void SingleTimeFrameStrategy::checkTPSL(double price)
 {
     Q_ASSERT((position == 0 && !trailingStop.isEnabled()) ||

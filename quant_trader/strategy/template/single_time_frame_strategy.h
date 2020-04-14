@@ -19,10 +19,15 @@ protected:
     TrailingStop trailingStop;
     QSettings *pSettings;
 
-    void setPosition(int newPosition);
-    void resetPosition();
     void loadStatus() override;
     void saveStatus() override;
+
+    void setPosition(int newPosition);
+    void resetPosition() override;
+
+    double highestSince(int i) const;
+    double lowestSince(int i) const;
+
     virtual void checkTPSL(double price);
     virtual void onNewBar() = 0;
 
