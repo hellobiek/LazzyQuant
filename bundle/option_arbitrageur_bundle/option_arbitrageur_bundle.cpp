@@ -4,6 +4,7 @@
 #include "market_watcher.h"
 #include "ctp_replayer.h"
 #include "ctp_executer.h"
+#include "ctp_executer_states.h"
 #include "option_helper.h"
 #include "option_arbitrageur.h"
 #include "option_arbitrageur_manager.h"
@@ -33,6 +34,7 @@ OptionArbitrageurBundle::OptionArbitrageurBundle(const OptionArbitrageurOptions 
             pWatcher->setWeekend();
         }
         pExecuter = new CtpExecuter(executerConfigs[0].name);
+        setupUpdateStateMachine(pExecuter);
         instruments = pExecuter->getCachedInstruments();
     }
     pHelper = new OptionHelperImpl<CtpExecuter>(pExecuter);

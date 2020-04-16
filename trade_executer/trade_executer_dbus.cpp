@@ -1,5 +1,6 @@
 #include "config.h"
 #include "ctp_executer.h"
+#include "ctp_executer_states.h"
 #include "trade_executer_dbus.h"
 #include "trade_executer_adaptor.h"
 
@@ -9,6 +10,7 @@ TradeExecuterDbus::TradeExecuterDbus(const QString &suffix)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     for (const auto &config : executerConfigs) {
         auto *pExecuter = new CtpExecuter(config.name);
+        setupUpdateStateMachine(pExecuter);
         new Trade_executerAdaptor(pExecuter);
         dbus.registerObject(config.dbusObject + suffix, pExecuter);
         dbus.registerService(config.dbusService + suffix);

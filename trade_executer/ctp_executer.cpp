@@ -142,7 +142,8 @@ void CtpExecuter::customEvent(QEvent *event)
         auto *fevent = static_cast<FrontDisconnectedEvent*>(event);
         qInfo().nospace().noquote() << "Front Disconnected! nReason = 0x" << QString::number(fevent->getReason(), 16);
         loginState = LOGGED_OUT;
-        userCacheReady = false;
+        instrumentDataCache.clear();
+        upperLowerLimitCache.clear();
         emit frontDisconnected(fevent->getReason());
     }
         break;
@@ -165,16 +166,8 @@ void CtpExecuter::customEvent(QEvent *event)
         if (uevent->errorID == 0) {
             qInfo() << "UserLogin OK! FrontID =" << uevent->rspUserLogin.FrontID << ", SessionID =" << uevent->rspUserLogin.SessionID;
             loginState = LOGGED_IN;
+            emit loggedIn();
             loginStateMachine();
-            if (loginState == LOGGED_IN) {
-                settlementInfoConfirm();
-                QTimer::singleShot(1000, this, SLOT(updateOrderMap()));
-                QTimer::singleShot(2000, this, SLOT(qryPositionDetail()));
-                if (!marketCacheReady) {
-                    QTimer::singleShot(5000, this, &CtpExecuter::updateInstrumentDataCache);
-                }
-                emit loggedIn();
-            }
         } else {
             qWarning() << "UserLogin failed! Error ID =" << uevent->errorID;
             loginState = LOGGED_OUT;
@@ -185,6 +178,9 @@ void CtpExecuter::customEvent(QEvent *event)
     {
         auto *uevent = static_cast<UserLogoutEvent*>(event);
         loginState = LOGGED_OUT;
+        instrumentDataCache.clear();
+        upperLowerLimitCache.clear();
+        emit loggedOut();
         if (uevent->errorID == 0) {
             qInfo() << "UserLogout OK!";
             loginStateMachine();
@@ -209,6 +205,17 @@ void CtpExecuter::customEvent(QEvent *event)
                 msg += QTextCodec::codecForName("GBK")->toUnicode(item.Content);
             }
             qDebug() << msg;
+        }
+    }
+        break;
+    case RSP_SETTLEMENT_CONFIRM:
+    {
+        auto *scevent = static_cast<SettlementInfoConfirmEvent*>(event);
+        if (scevent->errorID == 0) {
+            qInfo().noquote()<< "Settlement info confirmed at" << scevent->settlementInfoConfirm.ConfirmDate << scevent->settlementInfoConfirm.ConfirmTime;
+            emit settlementInfoConfirmed();
+        } else {
+            qWarning().noquote() << "RSP_SETTLEMENT_CONFIRM errorID =" << (scevent->errorID);
         }
     }
         break;
@@ -252,9 +259,7 @@ void CtpExecuter::customEvent(QEvent *event)
         }
         combineInstruments = instrumentsWithAnd;
         qInfo() << "Updated" << qievent->instrumentList.size() << "instruments!";
-        if (!upperLowerLimitCache.empty()) {
-            marketCacheReady = true;    // TODO
-        }
+        emit instrumentUpdated();
     }
         break;
     case RSP_DEPTH_MARKET_DATA:
@@ -265,9 +270,7 @@ void CtpExecuter::customEvent(QEvent *event)
             upperLowerLimitCache[instrument] = qMakePair(item.UpperLimitPrice, item.LowerLimitPrice);
         }
         qInfo() << "Updated" << devent->depthMarketDataList.size() << "depth market data!";
-        if (!instrumentDataCache.empty()) {
-            marketCacheReady = true;    // TODO
-        }
+        emit depthMarketUpdated();
     }
         break;
     case RSP_ORDER_INSERT:
@@ -427,6 +430,7 @@ void CtpExecuter::customEvent(QEvent *event)
             qDebug().noquote() << item.OrderRef << item.FrontID << item.SessionID << item.InstrumentID <<
                                   QTextCodec::codecForName("GBK")->toUnicode(item.StatusMsg) << item.ExchangeID << item.OrderSysID;
         }
+        emit orderUpdated();
     }
         break;
     case RSP_QRY_TRADE:
@@ -512,7 +516,7 @@ void CtpExecuter::customEvent(QEvent *event)
                 }
             }
         }
-        userCacheReady = true;
+        emit positionUpdated();
     }
         break;
     case RSP_QRY_MAX_ORDER_VOL:
@@ -1495,10 +1499,7 @@ void CtpExecuter::onMarketClose()
 {
     qInfo() << __FUNCTION__;
     setLogout();
-    userCacheReady = false; // Option might become future
-    marketCacheReady = false;
     orderCancelCountMap.clear();
-    // TODO clear user cache, clear market cache
 }
 
 /*!
@@ -1546,23 +1547,6 @@ void CtpExecuter::updateAccountInfo()
     CHECK_LOGIN_STATE()
 
     qryTradingAccount();
-}
-
-/*!
- * \brief CtpExecuter::updateInstrumentDataCache
- * 请求查询合约基本信息和当前市价信息.
- * 返回结果将被存入缓存, 供盘中快速查询.
- */
-void CtpExecuter::updateInstrumentDataCache()
-{
-    qInfo() << __FUNCTION__;
-    CHECK_LOGIN_STATE()
-
-    marketCacheReady = false;
-    instrumentDataCache.clear();
-    qryInstrument();
-    upperLowerLimitCache.clear();
-    qryDepthMarketData();
 }
 
 /*!

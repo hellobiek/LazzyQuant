@@ -8,6 +8,18 @@
     </signal>
     <signal name="loggedIn">
     </signal>
+    <signal name="loggedOut">
+    </signal>
+    <signal name="settlementInfoConfirmed">
+    </signal>
+    <signal name="orderUpdated">
+    </signal>
+    <signal name="positionUpdated">
+    </signal>
+    <signal name="instrumentUpdated">
+    </signal>
+    <signal name="depthMarketUpdated">
+    </signal>
     <signal name="tradingAccountQryRsp">
       <arg name="brokerID" type="s" direction="out"/>
       <arg name="accountID" type="s" direction="out"/>
@@ -53,8 +65,6 @@
     </method>
     <method name="getAvailable">
       <arg type="d" direction="out"/>
-    </method>
-    <method name="updateInstrumentDataCache">
     </method>
     <method name="getCachedInstruments">
       <arg type="as" direction="out"/>

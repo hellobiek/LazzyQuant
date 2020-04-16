@@ -54,6 +54,8 @@ class CtpExecuter : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.lazzyquant.trade_executer")
+    Q_PROPERTY(bool userCacheReady MEMBER userCacheReady)
+    Q_PROPERTY(bool marketCacheReady MEMBER marketCacheReady)
 
 public:
     explicit CtpExecuter(const QString &configName, QObject *parent = nullptr);
@@ -154,6 +156,12 @@ signals:
     void frontConnected();
     void frontDisconnected(int nReason);
     void loggedIn();
+    void loggedOut();
+    void settlementInfoConfirmed();
+    void orderUpdated();
+    void positionUpdated();
+    void instrumentUpdated();
+    void depthMarketUpdated();
     void tradingAccountQryRsp(const QString &brokerID, const QString &accountID, double balance, double available);
     void instrumentStatusChanged(const QString &exchangeID, const QString &instrument, const QString &enterTime, bool isContinous, bool isClosed);
     void parkedOrderQryRsp(const QList<ParkedOrder> &parkedOrderList);
@@ -172,7 +180,6 @@ public slots:
     void updateAccountInfo();
     double getAvailable() const { return available; }
 
-    void updateInstrumentDataCache();
     QStringList getCachedInstruments(const QString &idPrefix = QString()) const;
     QString getExchangeID(const QString &instrument);
     QString getExpireDate(const QString &instrument);

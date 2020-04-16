@@ -10,6 +10,7 @@
 #include "trade_logger.h"
 #include "quant_trader.h"
 #include "ctp_executer.h"
+#include "ctp_executer_states.h"
 #include "quant_trader_options.h"
 #include "quant_trader_manager.h"
 #include "quant_trader_bundle.h"
@@ -27,6 +28,7 @@ QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QS
     CtpExecuter *pExecuter = nullptr;
     if ((!options.replayMode && !options.explicitNoConnectToExecuter) || options.explicitConnectToExecuter) {
         pExecuter = new CtpExecuter(executerConfigs[0].name);
+        setupUpdateStateMachine(pExecuter);
         pTrader->cancelAllOrders = std::bind(&CtpExecuter::cancelAllOrders, pExecuter, _1);
         pTrader->setPosition = std::bind(&CtpExecuter::setPosition, pExecuter, _1, _2);
     }
