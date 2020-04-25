@@ -15,6 +15,11 @@
 #include "strategy/chaos2.h"
 #include "strategy/lemon1.h"
 
+#ifdef Q_OS_WIN
+#include "indicator/zen/semi_automatic_stroke.h"
+#include "strategy/lime2.h"
+#include "strategy/orange3.h"
+#endif
 
 const QMap<QString, const QMetaObject*> indicatorMetaObjects = {
     {"MA", &MA::staticMetaObject},
@@ -26,6 +31,9 @@ const QMap<QString, const QMetaObject*> indicatorMetaObjects = {
     {"DivergentBar", &DivergentBar::staticMetaObject},
     {"Fractal", &Fractal::staticMetaObject},
     {"Segment", &Zen::Segment::staticMetaObject},
+#ifdef Q_OS_WIN
+    {"SemiAutomaticStroke", &Zen::SemiAutomaticStroke::staticMetaObject},
+#endif
     // Register more indicators here
 };
 
@@ -34,6 +42,10 @@ const QMap<QString, const QMetaObject*> strategyMetaObjects = {
     {"BigHitStrategy", &BigHitStrategy::staticMetaObject},
     {"Chaos2", &Chaos2::staticMetaObject},
     {"Lemon1", &Lemon1::staticMetaObject},
+#ifdef Q_OS_WIN
+    {"Lime2", &Lime2::staticMetaObject},
+    {"Orange3", &Orange3::staticMetaObject},
+#endif
     // Register more strategies here
 };
 

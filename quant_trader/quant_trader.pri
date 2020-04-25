@@ -40,3 +40,26 @@ INCLUDEPATH *= \
 
 include($$QUANT_TRADER_FOLDER/indicator/indicator.pri)
 include($$QUANT_TRADER_FOLDER/strategy/strategy.pri)
+
+win32 {
+    QUANT_TRADER_STRATEGY_FOLDER = $$LAZZYQUANT_ROOT/quant_trader/strategy
+    ZEN_LIB_CORE_FOLDER = $$LAZZYQUANT_ROOT/../zenlib/zencore
+
+    SOURCES *= \
+        $$ZEN_LIB_CORE_FOLDER/fractal_finder.cpp \
+        $$ZEN_LIB_CORE_FOLDER/stroke_decomposer.cpp \
+        $$QUANT_TRADER_FOLDER/indicator/zen/semi_automatic_stroke.cpp \
+        $$QUANT_TRADER_STRATEGY_FOLDER/lime2.cpp \
+        $$QUANT_TRADER_STRATEGY_FOLDER/orange3.cpp
+
+    HEADERS *= \
+        $$ZEN_LIB_CORE_FOLDER/zen_elements.h \
+        $$ZEN_LIB_CORE_FOLDER/fractal_finder.h \
+        $$ZEN_LIB_CORE_FOLDER/stroke_decomposer.h \
+        $$QUANT_TRADER_FOLDER/indicator/zen/semi_automatic_stroke.h \
+        $$QUANT_TRADER_STRATEGY_FOLDER/lime2.h \
+        $$QUANT_TRADER_STRATEGY_FOLDER/orange3.h
+
+    INCLUDEPATH *= \
+        $$ZEN_LIB_CORE_FOLDER
+}
