@@ -16,6 +16,9 @@ public:
 
     virtual void setBarList(QList<StandardBar> *list, StandardBar *last);
     virtual void update() = 0;
+
+    double highestSince(int i) const;
+    double lowestSince(int i) const;
 };
 
 #endif // ABSTRACT_INDICATOR_H

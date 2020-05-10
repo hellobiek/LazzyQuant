@@ -10,6 +10,8 @@
 typedef QList<StandardBar>::const_iterator ForwardIt;
 int timestampToIndex(ForwardIt first, ForwardIt last, qint64 timestamp);
 
+class Citrus;
+
 namespace Zen {
     class SemiAutomaticStroke : public MQL5Indicator
     {
@@ -45,6 +47,8 @@ namespace Zen {
                          const _TimeSeries<qint64>& volume,         // Real Volume
                          const _TimeSeries<int>& spread             // Spread
                          ) override;
+
+        friend class ::Citrus;
     };
 }
 

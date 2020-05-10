@@ -19,6 +19,9 @@
 #include "indicator/zen/semi_automatic_stroke.h"
 #include "strategy/lime2.h"
 #include "strategy/orange3.h"
+#include "strategy/pomelo.h"
+#include "strategy/mandarin.h"
+#include "strategy/tangerine.h"
 #endif
 
 const QMap<QString, const QMetaObject*> indicatorMetaObjects = {
@@ -45,6 +48,9 @@ const QMap<QString, const QMetaObject*> strategyMetaObjects = {
 #ifdef Q_OS_WIN
     {"Lime2", &Lime2::staticMetaObject},
     {"Orange3", &Orange3::staticMetaObject},
+    {"Pomelo", &Pomelo::staticMetaObject},
+    {"Mandarin", &Mandarin::staticMetaObject},
+    {"Tangerine", &Tangerine::staticMetaObject},
 #endif
     // Register more strategies here
 };
