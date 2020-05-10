@@ -1,13 +1,11 @@
 #include <QSettings>
 
 #include "config.h"
-#include "datetime_helper.h"
 #include "db_helper.h"
 #include "settings_helper.h"
 #include "market_watcher.h"
 #include "tick_replayer.h"
 #include "replay_sources.h"
-#include "trade_logger.h"
 #include "quant_trader.h"
 #include "ctp_executer.h"
 #include "ctp_executer_states.h"
@@ -17,8 +15,6 @@
 
 using std::placeholders::_1;
 using std::placeholders::_2;
-using std::placeholders::_3;
-using std::placeholders::_4;
 
 QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend)
 {
@@ -51,19 +47,12 @@ QuantTraderBundle::QuantTraderBundle(const QuantTraderOptions &options, const QS
     pManager->init();
 
     if (options.saveTradeLogToDB) {
-        pLogger = new TradeLogger("quant_trader_" + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMddhhmmss")));
-        pTrader->logTrade = std::bind(&TradeLogger::positionChanged, pLogger, _1, _2, _3, _4);
-    } else {
-        pTrader->logTrade = [](qint64 time, const QString &instrumentID, int newPosition, double price) -> void {
-            qInfo().noquote() << utcTimeToString1(time)
-                              << "New position for" << instrumentID << newPosition << ", price =" << price;
-        };
+        pTrader->setupTradeLogger(options.recordName);
     }
 }
 
 QuantTraderBundle::~QuantTraderBundle()
 {
-    delete pLogger;
     auto pSource = pManager->getSource();
     auto pTrader = pManager->getTrader();
     auto pExecuter = pManager->getExecuter();
