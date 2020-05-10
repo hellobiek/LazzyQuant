@@ -14,6 +14,7 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
     saveBarsToDB(saveBarsToDB)
 {
     keys = enumValueToList<TimeFrames>(timeFrameFlags);
+    std::sort(keys.begin(), keys.end(), std::greater<int>());
     for (auto key : qAsConst(keys)) {
         barMap.insert(key, StandardBar());
     }
