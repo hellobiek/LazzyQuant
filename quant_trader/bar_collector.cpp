@@ -1,5 +1,4 @@
 #include <QHash>
-#include <QDebug>
 #include <QMetaEnum>
 
 #include "enum_helper.h"
@@ -14,24 +13,23 @@ BarCollector::BarCollector(const QString &instrumentID, int timeFrameFlags, bool
     saveBarsToDB(saveBarsToDB)
 {
     keys = enumValueToList<TimeFrames>(timeFrameFlags);
+    std::sort(keys.begin(), keys.end(), std::greater<int>());
     for (auto key : qAsConst(keys)) {
         barMap.insert(key, StandardBar());
     }
 
     if (saveBarsToDB) {
-        if (!createDbIfNotExist("market")) {
+        if (!createDbIfNotExists(marketDbName)) {
             this->saveBarsToDB = false;
             return;
         }
 
-        QStringList tableNames;
         for (auto key : qAsConst(keys)) {
             QString tableName = QString("%1_%2").arg(instrumentID, QMetaEnum::fromType<TimeFrames>().valueToKey(key));
-            tableNames << tableName;
-        }
-        if (!createTablesIfNotExist("market", tableNames, barTableFormat)) {
-            qWarning() << "Create market table failed!";
-            this->saveBarsToDB = false;
+            if (!createTblIfNotExists(marketDbName, tableName, barTableFormat)) {
+                this->saveBarsToDB = false;
+                break;
+            }
         }
     }
 }
@@ -141,7 +139,7 @@ void BarCollector::saveEmitReset(int timeFrame, StandardBar &bar)
 {
     if (!bar.isEmpty()) {
         if (saveBarsToDB) {
-            QString dbTableName = QString("market.%1_%2").arg(instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
+            QString dbTableName = QString("%1.%2_%3").arg(marketDbName, instrument, QMetaEnum::fromType<TimeFrames>().valueToKey(timeFrame));
             saveBarToDb(dbTableName, bar, 1);
         }
         emit collectedBar(instrument, timeFrame, bar);

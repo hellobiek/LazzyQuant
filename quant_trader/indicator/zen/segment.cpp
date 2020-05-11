@@ -20,8 +20,8 @@ void Segment::OnInit()
 
 void Segment::setup()
 {
-    createDbIfNotExist("indicator");
-    createTablesIfNotExist("indicator", {signature}, " (`idx` INT NOT NULL,`value` DOUBLE NULL,PRIMARY KEY (`idx`))");
+    createDbIfNotExists("indicator");
+    createTblIfNotExists("indicator", signature, " (`idx` INT NOT NULL,`value` DOUBLE NULL,PRIMARY KEY (`idx`))");
     setDefaultDbName("indicator");
     Editable::setup();
 }

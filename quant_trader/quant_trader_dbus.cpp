@@ -1,9 +1,7 @@
 #include <QSettings>
 #include "config.h"
-#include "datetime_helper.h"
 #include "db_helper.h"
 #include "settings_helper.h"
-#include "trade_logger.h"
 #include "quant_trader.h"
 #include "quant_trader_adaptor.h"
 #include "quant_trader_options.h"
@@ -16,8 +14,6 @@
 
 using std::placeholders::_1;
 using std::placeholders::_2;
-using std::placeholders::_3;
-using std::placeholders::_4;
 
 using namespace com::lazzyquant;
 
@@ -48,13 +44,7 @@ QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
     pManager->init();
 
     if (options.saveTradeLogToDB) {
-        pLogger = new TradeLogger("quant_trader_" + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMddhhmmss")));
-        pTrader->logTrade = std::bind(&TradeLogger::positionChanged, pLogger, _1, _2, _3, _4);
-    } else {
-        pTrader->logTrade = [](qint64 time, const QString &instrumentID, int newPosition, double price) -> void {
-            qInfo().noquote() << utcTimeToString1(time)
-                              << "New position for" << instrumentID << newPosition << ", price =" << price;
-        };
+        pTrader->setupTradeLogger(options.recordName);
     }
 
     new Quant_traderAdaptor(pTrader);
@@ -69,7 +59,6 @@ QuantTraderDbus::~QuantTraderDbus()
     dbus.unregisterObject(traderConfigs[0].dbusObject);
     dbus.unregisterService(traderConfigs[0].dbusService);
 
-    delete pLogger;
     auto pSource = pManager->getSource();
     auto pTrader = pManager->getTrader();
     auto pExecuter = pManager->getExecuter();

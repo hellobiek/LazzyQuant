@@ -14,6 +14,7 @@ const QList<QCommandLineOption> quantTraderOptions = {
     {{"x", "executer"},     "Connect to TradeExecuter, should not be used with -n"},
     {{"n", "noexecuter"},   "Don't connect to TradeExecuter, should not be used with -x"},
     {{"l", "savetradelog"}, "Save trade log to DB."},
+    {{"d", "recordname"},   "Specify trade log record name.", "record name"},
     {{"f", "logtofile"},    "Save log to a file"},
 };
 
@@ -25,6 +26,7 @@ struct QuantTraderOptions {
     bool explicitConnectToExecuter;
     bool explicitNoConnectToExecuter;
     bool saveTradeLogToDB;
+    QString recordName;
     bool log2File;
 
     bool saveBarsToDB() const { return explicitSave || (!replayMode); }
@@ -43,6 +45,7 @@ static QuantTraderOptions getQuantTraderOptions(const QCommandLineParser &parser
     options.explicitConnectToExecuter = parser.isSet("executer");
     options.explicitNoConnectToExecuter = parser.isSet("noexecuter");
     options.saveTradeLogToDB = parser.isSet("savetradelog");
+    options.recordName = parser.value("recordname");
     options.log2File = parser.isSet("logtofile");
     return options;
 }

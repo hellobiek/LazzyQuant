@@ -50,6 +50,7 @@ QString makeOptionID(const QString &futureID, OPTION_TYPE type, int exercisePric
         {"m",  "%1-%2-%3"},
         {"c",  "%1-%2-%3"},
         {"i",  "%1-%2-%3"},
+        {"pg", "%1-%2-%3"},
         {"IO", "%1-%2-%3"},
         {"SR", "%1%2%3"},
         {"CF", "%1%2%3"},

@@ -5,13 +5,17 @@
 #include <QSqlError>
 #include <QDebug>
 
+const QString recordTableName = QString("tradelog.records");
+
 TradeLogger::TradeLogger(const QString &recordName):
     tableName(recordName + "_actions")
 {
-    createDbIfNotExist("tradelog");
-    createTablesIfNotExist("tradelog", {"records"}, " (id INT NOT NULL AUTO_INCREMENT, strategy VARCHAR(255) NULL, instrument VARCHAR(255) NULL, timeframe VARCHAR(255) NULL, datasource VARCHAR(255) NULL, initbalance FLOAT NULL, commissionratio FLOAT NULL, startdate DATE NULL, stopdate DATE NULL, actiontable VARCHAR(255) NULL, dottable VARCHAR(255) NULL, balancetable VARCHAR(255) NULL, PRIMARY KEY (id)) CHARACTER SET = utf8");
-    addRecord();
-    createTablesIfNotExist("tradelog", {tableName}, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
+    createDbIfNotExists("tradelog");
+    createTblIfNotExists("tradelog", "records", " (id INT NOT NULL AUTO_INCREMENT, strategy VARCHAR(255) NULL, instrument VARCHAR(255) NULL, timeframe VARCHAR(255) NULL, datasource VARCHAR(255) NULL, initbalance FLOAT NULL, commissionratio FLOAT NULL, startdate DATE NULL, stopdate DATE NULL, actiontable VARCHAR(255) NULL, dottable VARCHAR(255) NULL, balancetable VARCHAR(255) NULL, PRIMARY KEY (id)) CHARACTER SET = utf8");
+    if (!isRecordExist(tableName)) {
+        addRecord();
+        createTblIfNotExists("tradelog", tableName, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
+    }
 }
 
 void TradeLogger::positionChanged(qint64 actionTime, const QString &instrumentID, int newPosition, double price)
@@ -63,11 +67,28 @@ void TradeLogger::closeShort(qint64 actionTime, const QString &instrumentID, dou
     saveActionToDB(actionTime, instrumentID, price, volume, true, false);
 }
 
+bool TradeLogger::isRecordExist(const QString &actionTableName)
+{
+    QSqlQuery qry;
+    qry.prepare("SELECT actiontable from " + recordTableName);
+    bool ok = qry.exec();
+    if (!ok) {
+        qCritical().noquote() << qry.lastError();
+        qCritical().noquote() << "Select actiontable from " << recordTableName << "failed!";
+        return false;
+    }
+    QStringList existActionNames;
+    while (qry.next()) {
+        QString existActionName = qry.value(0).toString();
+        existActionNames << existActionName;
+    }
+    return existActionNames.contains(actionTableName, Qt::CaseInsensitive);
+}
+
 void TradeLogger::addRecord()
 {
     QSqlQuery qry;
-    QString tableOfDB = QString("tradelog.records");
-    qry.prepare("INSERT INTO " + tableOfDB + " (strategy, instrument, timeframe, datasource, actiontable) "
+    qry.prepare("INSERT INTO " + recordTableName + " (strategy, instrument, timeframe, datasource, actiontable) "
                                              "VALUES (?, ?, ?, ?, ?)");
     qry.bindValue(0, "quant_trader");
     qry.bindValue(1, "");
@@ -77,7 +98,7 @@ void TradeLogger::addRecord()
     bool ok = qry.exec();
     if (!ok) {
         qCritical().noquote() << qry.lastError();
-        qCritical().noquote() << "Insert record into" << tableOfDB << "failed!";
+        qCritical().noquote() << "Insert record into" << recordTableName << "failed!";
     }
 }
 

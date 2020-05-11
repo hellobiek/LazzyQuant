@@ -14,6 +14,7 @@ class AbstractIndicator;
 class AbstractStrategy;
 class Editable;
 class MQL5Indicator;
+class TradeLogger;
 
 const QMetaObject *getAndCheckIndicatorMetaObject(const QString &indicatorName);
 int getParameterNumber(const QMetaObject *metaObject);
@@ -59,7 +60,8 @@ public:
 
     std::function<void(const QString&, int)> setPosition = [](auto, auto) -> void {};
     std::function<void(const QString&)> cancelAllOrders = [](auto) -> void {};
-    std::function<void(qint64, const QString&, int, double)> logTrade = [](auto, auto, auto, auto) -> void {};
+    TradeLogger *pLogger = nullptr;
+    void setupTradeLogger(const QString &logTableName);
 
     /*!
      * \brief 注册指标, 如果已经存在相同合约代码, 相同时间级别, 相同参数的指标, 就直接返回该指标, 否则返回新创建的指标.

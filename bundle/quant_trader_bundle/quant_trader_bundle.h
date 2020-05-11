@@ -4,13 +4,11 @@
 class QString;
 
 class AbstractManager;
-class TradeLogger;
 struct QuantTraderOptions;
 
 class QuantTraderBundle
 {
     AbstractManager *pManager = nullptr;
-    TradeLogger *pLogger = nullptr;
 
 public:
     QuantTraderBundle(const QuantTraderOptions &options, const QString &source, bool atWeekend);

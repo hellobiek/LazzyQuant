@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QSettings>
 #include <QMetaClassInfo>
 
@@ -6,6 +7,7 @@
 #include "enum_helper.h"
 #include "datetime_helper.h"
 #include "settings_helper.h"
+#include "trade_logger.h"
 #include "quant_trader.h"
 #include "standard_bar.h"
 #include "standard_bar_persistence.h"
@@ -48,6 +50,15 @@ QuantTrader::QuantTrader(const QString &configName, bool saveBarsToDB, QObject *
 QuantTrader::~QuantTrader()
 {
     qDebug() << "~QuantTrader";
+    delete pLogger;
+}
+
+void QuantTrader::setupTradeLogger(const QString &logTableName) {
+    auto recordName = logTableName;
+    if (recordName.isEmpty()) {
+        recordName = "quant_trader_" + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMddhhmmss"));
+    }
+    pLogger = new TradeLogger(recordName);
 }
 
 void QuantTrader::loadQuantTraderSettings(const QString &configName)
@@ -158,7 +169,7 @@ QList<StandardBar>* QuantTrader::getBars(const QString &instrumentID, int timeFr
     QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
 
     // Load History Bars
-    const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
+    const QString dbTableName = QString("%1.%2_%3").arg(marketDbName, instrumentID, timeFrameStr);
     barList = loadBarsFromDb(dbTableName);
 
     int barListSize = barList.size();
@@ -313,7 +324,11 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
         positionMap[instrumentID] = newPositionSum;
         cancelAllOrders(instrumentID);
         setPosition(instrumentID, newPositionSum);
-        logTrade(time, instrumentID, newPositionSum, lastPrice);
+        if (pLogger)
+            pLogger->positionChanged(time, instrumentID, newPositionSum, lastPrice);
+        qInfo().noquote() << utcTimeToString1(time)
+                          << "New position for" << instrumentID << newPositionSum
+                          << ", price =" << lastPrice;
     }
 }
 
