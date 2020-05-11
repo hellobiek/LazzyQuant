@@ -10,11 +10,11 @@ const QString recordTableName = QString("tradelog.records");
 TradeLogger::TradeLogger(const QString &recordName):
     tableName(recordName + "_actions")
 {
-    createDbIfNotExist("tradelog");
-    createTablesIfNotExist("tradelog", {"records"}, " (id INT NOT NULL AUTO_INCREMENT, strategy VARCHAR(255) NULL, instrument VARCHAR(255) NULL, timeframe VARCHAR(255) NULL, datasource VARCHAR(255) NULL, initbalance FLOAT NULL, commissionratio FLOAT NULL, startdate DATE NULL, stopdate DATE NULL, actiontable VARCHAR(255) NULL, dottable VARCHAR(255) NULL, balancetable VARCHAR(255) NULL, PRIMARY KEY (id)) CHARACTER SET = utf8");
+    createDbIfNotExists("tradelog");
+    createTblIfNotExists("tradelog", "records", " (id INT NOT NULL AUTO_INCREMENT, strategy VARCHAR(255) NULL, instrument VARCHAR(255) NULL, timeframe VARCHAR(255) NULL, datasource VARCHAR(255) NULL, initbalance FLOAT NULL, commissionratio FLOAT NULL, startdate DATE NULL, stopdate DATE NULL, actiontable VARCHAR(255) NULL, dottable VARCHAR(255) NULL, balancetable VARCHAR(255) NULL, PRIMARY KEY (id)) CHARACTER SET = utf8");
     if (!isRecordExist(tableName)) {
         addRecord();
-        createTablesIfNotExist("tradelog", {tableName}, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
+        createTblIfNotExists("tradelog", tableName, " (id INT UNSIGNED NOT NULL AUTO_INCREMENT, time BIGINT NULL, instrument VARCHAR(45) NULL, price FLOAT NULL, volume INT NULL, direction BOOLEAN NULL, opencloseflag BOOLEAN NULL, label INT NULL, note VARCHAR(255) NULL, PRIMARY KEY (id)) character set = utf8");
     }
 }
 

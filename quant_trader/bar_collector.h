@@ -6,6 +6,8 @@
 
 #include "standard_bar.h"
 
+const QString marketDbName = "market";
+
 class BarCollector : public QObject
 {
     Q_OBJECT

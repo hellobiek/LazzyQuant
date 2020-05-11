@@ -169,7 +169,7 @@ QList<StandardBar>* QuantTrader::getBars(const QString &instrumentID, int timeFr
     QString timeFrameStr = QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrame);
 
     // Load History Bars
-    const QString dbTableName = QString("market.%1_%2").arg(instrumentID, timeFrameStr);
+    const QString dbTableName = QString("%1.%2_%3").arg(marketDbName, instrumentID, timeFrameStr);
     barList = loadBarsFromDb(dbTableName);
 
     int barListSize = barList.size();
