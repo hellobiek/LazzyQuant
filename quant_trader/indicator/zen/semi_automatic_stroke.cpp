@@ -45,8 +45,8 @@ SemiAutomaticStroke::SemiAutomaticStroke(const QString &instrumentID, int timeFr
 
 void SemiAutomaticStroke::OnInit()
 {
-    createDbIfNotExist("zen");
-    createTablesIfNotExist("zen", {confirmTableName}, " (`timestamp` BIGINT NOT NULL,`value` INT NULL,PRIMARY KEY (`timestamp`)) engine=InnoDB");
+    createDbIfNotExists("zen");
+    createTblIfNotExists("zen", confirmTableName, " (`timestamp` BIGINT NOT NULL,`value` INT NULL,PRIMARY KEY (`timestamp`)) engine=InnoDB");
 }
 
 void SemiAutomaticStroke::findFractal()

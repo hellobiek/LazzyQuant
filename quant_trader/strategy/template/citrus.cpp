@@ -104,11 +104,16 @@ void Citrus::onNewBar()
         return;
     }
 
-    // 4. Set position
+    // 5. Set position
     if (getPosition() != upDown && !limited) {
-        double stopLoss = (upDown == 1) ? fmin(lowestSince(fractalIdx), itConfirmedFractal->peakIdx) : fmax(highestSince(fractalIdx), itConfirmedFractal->peakIdx);
+        double stopLoss = (upDown == 1) ? sas->lowestSince(itLastConfirmedStroke->startIndex()) : sas->highestSince(itLastConfirmedStroke->startIndex());
         trailingStop = TrailingStop((upDown == 1), stopLoss, AFstep, AFmax);
         setPosition(upDown);
+    }
+    if (getPosition() != 0 && limited) {
+        if ((getPosition() > 0 && upDown < 0) || (getPosition() < 0 && upDown > 0)) {
+            resetPosition();
+        }
     }
     if (getPosition() == upDown) {
         lastOpenTime = timestamp;
