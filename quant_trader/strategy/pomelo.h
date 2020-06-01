@@ -19,7 +19,7 @@ public:
     void setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
                       const QVariant &param4, const QVariant &param5, const QVariant &param6,
                       const QVariant &param7, const QVariant &param8, const QVariant &param9) override;
-    void setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, ENUM_APPLIED_PRICE maAppliedPrice, double AFstep, double AFmax);
+    void setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, ENUM_APPLIED_PRICE maAppliedPrice, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax);
     void onNewBar() override;
 
 protected:

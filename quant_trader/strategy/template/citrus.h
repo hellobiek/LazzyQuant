@@ -13,10 +13,11 @@ class Citrus : public SingleTimeFrameStrategy
 
 public:
     explicit Citrus(const QString &strategyId, const QString &instrumentId, int timeFrame, QObject *parent = nullptr);
-    void setParameter(int strokeTimeFrame, double AFstep, double AFmax);
+    void setParam(int strokeTimeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax);
     void onNewBar() override;
 
 protected:
+    double extraSL, maxAllowSL;
     double AFstep, AFmax;
 
     Zen::SemiAutomaticStroke *sas;

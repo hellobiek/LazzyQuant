@@ -16,11 +16,14 @@ Citrus::Citrus(const QString &strategyId, const QString &instrumentId, int timeF
 
 }
 
-void Citrus::setParameter(int strokeTimeFrame, double AFstep, double AFmax)
+void Citrus::setParam(int strokeTimeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
 {
     auto pInd = pTrader->registerIndicator(instrumentID, strokeTimeFrame, "SemiAutomaticStroke", instrumentID, strokeTimeFrame);
     addDepend(pInd);
     sas = dynamic_cast<Zen::SemiAutomaticStroke*>(pInd);
+
+    this->extraSL = extraStopLoss;
+    this->maxAllowSL = maxAllowStopLoss;
 
     this->AFstep = AFstep;
     this->AFmax = AFmax;
@@ -106,11 +109,17 @@ void Citrus::onNewBar()
 
     // 5. Set position
     if (getPosition() != upDown && !limited) {
-        double stopLoss = (upDown == 1) ? sas->lowestSince(itLastConfirmedStroke->startIndex()) : sas->highestSince(itLastConfirmedStroke->startIndex());
-        trailingStop = TrailingStop((upDown == 1), stopLoss, AFstep, AFmax);
-        setPosition(upDown);
+        double stopLoss = (upDown == 1) ?
+                    (sas->lowestSince(itLastConfirmedStroke->startIndex()) - extraSL) :
+                    (sas->highestSince(itLastConfirmedStroke->startIndex()) + extraSL);
+        if (qAbs(lastBar->close - stopLoss) <= maxAllowSL) {
+            trailingStop = TrailingStop((upDown == 1), stopLoss, AFstep, AFmax);
+            setPosition(upDown);
+        } else {
+            qInfo().noquote() << strategyID << "Stop loss exceed max allow SL!" << lastBar->close << stopLoss << maxAllowSL;
+        }
     }
-    if (getPosition() != 0 && limited) {
+    if (limited) {
         if ((getPosition() > 0 && upDown < 0) || (getPosition() < 0 && upDown > 0)) {
             resetPosition();
         }

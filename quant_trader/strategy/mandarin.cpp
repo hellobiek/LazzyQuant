@@ -14,18 +14,20 @@ void Mandarin::setParameter(const QVariant& param1, const QVariant& param2, cons
                             const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
 {
     QString timeFrame = param1.toString();
-    double step = param2.toDouble();
-    double max = param3.toDouble();
+    double extra = param2.toDouble();
+    double maxAllow = param3.toDouble();
+    double step = param4.toDouble();
+    double max = param5.toDouble();
 
-    setParameter(timeFrame, step, max);
+    setParameter(timeFrame, extra, maxAllow, step, max);
 }
 
-void Mandarin::setParameter(const QString &timeFrame, double AFstep, double AFmax)
+void Mandarin::setParameter(const QString &timeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
 {
     qDebug().noquote() << "Stroke TimeFrame =" << timeFrame << ", AFstep =" << AFstep << ", AFmax =" << AFmax;
 
     auto strokeTimeFrame = QMetaEnum::fromType<BarCollector::TimeFrames>().keyToValue(timeFrame.toLatin1());
-    Citrus::setParameter(strokeTimeFrame, AFstep, AFmax);
+    Citrus::setParam(strokeTimeFrame, extraStopLoss, maxAllowStopLoss, AFstep, AFmax);
 
     ao = iAO(instrumentID, timeFrames);
 }

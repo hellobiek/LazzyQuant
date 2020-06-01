@@ -13,20 +13,22 @@ void Tangerine::setParameter(const QVariant& param1, const QVariant& param2, con
                              const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
 {
     bool direction = param1.toBool();
-    double step = param2.toDouble();
-    double max = param3.toDouble();
+    double extra = param2.toDouble();
+    double maxAllow = param3.toDouble();
+    double step = param4.toDouble();
+    double max = param5.toDouble();
 
-    setParameter(direction, step, max);
+    setParameter(direction, extra, maxAllow, step, max);
 }
 
-void Tangerine::setParameter(bool direction, double AFstep, double AFmax)
+void Tangerine::setParameter(bool direction, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
 {
     qDebug().noquote() << "Direction =" << direction
                        << ", AFstep =" << AFstep
                        << ", AFmax =" << AFmax;
 
     this->expectDirection = direction;
-    Citrus::setParameter(timeFrames, AFstep, AFmax);
+    Citrus::setParam(timeFrames, extraStopLoss, maxAllowStopLoss, AFstep, AFmax);
 }
 
 void Tangerine::onNewBar()

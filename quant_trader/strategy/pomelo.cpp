@@ -11,7 +11,7 @@ Pomelo::Pomelo(const QString &strategyId, const QString &instrumentId, int timeF
 
 void Pomelo::setParameter(const QVariant& param1, const QVariant& param2, const QVariant& param3,
                           const QVariant& param4, const QVariant& param5, const QVariant& param6,
-                          const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
+                          const QVariant& param7, const QVariant& param8, const QVariant& /*9*/)
 {
     int maPeriod = param1.toInt();
     int maShift = param2.toInt();
@@ -26,13 +26,15 @@ void Pomelo::setParameter(const QVariant& param1, const QVariant& param2, const 
         qCritical().noquote().nospace() << "Param4: " << param4 << " is not a valid ENUM_APPLIED_PRICE!";
     }
 
-    double step = param5.toDouble();
-    double max = param6.toDouble();
+    double extra = param5.toDouble();
+    double maxAllow = param6.toDouble();
+    double step = param7.toDouble();
+    double max = param8.toDouble();
 
-    setParameter(maPeriod, maShift, static_cast<ENUM_MA_METHOD>(maMethod), static_cast<ENUM_APPLIED_PRICE>(maAppliedPrice), step, max);
+    setParameter(maPeriod, maShift, static_cast<ENUM_MA_METHOD>(maMethod), static_cast<ENUM_APPLIED_PRICE>(maAppliedPrice), extra, maxAllow, step, max);
 }
 
-void Pomelo::setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, ENUM_APPLIED_PRICE maAppliedPrice, double AFstep, double AFmax)
+void Pomelo::setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, ENUM_APPLIED_PRICE maAppliedPrice, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
 {
     qDebug().noquote() << "maPeriod =" << maPeriod
                        << ", maShift =" << maShift
@@ -41,7 +43,7 @@ void Pomelo::setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, EN
                        << ", AFstep =" << AFstep
                        << ", AFmax =" << AFmax;
 
-    Citrus::setParameter(timeFrames, AFstep, AFmax);
+    Citrus::setParam(timeFrames, extraStopLoss, maxAllowStopLoss, AFstep, AFmax);
 
     ma = iMA(instrumentID, timeFrames, maPeriod, maShift, maMethod, maAppliedPrice);
     minimumBarsToWork = maPeriod + maShift;
