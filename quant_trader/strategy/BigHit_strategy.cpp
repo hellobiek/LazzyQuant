@@ -1,10 +1,11 @@
+#include "template/trailing_stop.h"
 #include "BigHit_strategy.h"
 
 #include <QVariant>
 #include <QTime>
 
 BigHitStrategy::BigHitStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent) :
-    SingleTimeFrameStrategy(id, instrumentID, timeFrame, parent),
+    SingleTimeFrameStrategy(id, instrumentID, timeFrame, new TrailingStop, parent),
     biggestVolEver(false),
     bigHit(0)
 {

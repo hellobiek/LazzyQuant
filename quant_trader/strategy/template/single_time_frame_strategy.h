@@ -1,10 +1,10 @@
 #ifndef SINGLE_TIME_FRAME_STRATEGY_H
 #define SINGLE_TIME_FRAME_STRATEGY_H
 
-#include "../../indicator/indicator_functions.h"
+#include "indicator/indicator_functions.h"
 #include "abstract_strategy.h"
-#include "trailing_stop.h"
 
+class TrailingStop;
 class QSettings;
 
 class SingleTimeFrameStrategy : public IndicatorFunctions, public AbstractStrategy
@@ -16,7 +16,7 @@ protected:
     StandardBar* lastBar;
     _ListProxy<StandardBar> bars;
 
-    TrailingStop trailingStop;
+    TrailingStop *pTrailing;
     QSettings *pSettings;
 
     void loadStatus() override;
@@ -32,7 +32,7 @@ protected:
     virtual void onNewBar() = 0;
 
 public:
-    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
+    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, TrailingStop *pTrailingStop, QObject *parent = nullptr);
     ~SingleTimeFrameStrategy() override;
 
     //!< Should be called after setParameter

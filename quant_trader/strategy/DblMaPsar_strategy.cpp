@@ -2,11 +2,12 @@
 #include <QDebug>
 
 #include "standard_bar.h"
-#include "../indicator/mql5_indicator.h"
+#include "template/trailing_stop.h"
+#include "indicator/mql5_indicator.h"
 #include "DblMaPsar_strategy.h"
 
 DblMaPsarStrategy::DblMaPsarStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent) :
-    SingleTimeFrameStrategy(id, instrumentID, timeFrame, parent)
+    SingleTimeFrameStrategy(id, instrumentID, timeFrame, new TrailingStop, parent)
 {
     //
 }

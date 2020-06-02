@@ -4,14 +4,16 @@
 
 #include "settings_helper.h"
 #include "standard_bar.h"
-#include "../../bar_collector.h"
-#include "../../indicator/abstract_indicator.h"
+#include "trailing_stop.h"
+#include "bar_collector.h"
+#include "indicator/abstract_indicator.h"
 #include "single_time_frame_strategy.h"
 
-SingleTimeFrameStrategy::SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent) :
+SingleTimeFrameStrategy::SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, TrailingStop *pTrailingStop, QObject *parent) :
     IndicatorFunctions(parent),
     AbstractStrategy(id, instrumentID, timeFrame),
-    bars(nullptr, nullptr)
+    bars(nullptr, nullptr),
+    pTrailing(pTrailingStop)
 {
     qDebug().noquote() << "SingleTimeFrameStrategy ctor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" <<  QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrames);
 
@@ -31,7 +33,7 @@ void SingleTimeFrameStrategy::loadStatus()
         limited  = pSettings->value("Limited").toBool();
         position = pSettings->value("Position").toInt();
 
-        trailingStop.saveToSettings(pSettings, "TrailingStop");
+        pTrailing->loadFromSettings(pSettings, "TrailingStop");
 
         qInfo().noquote() << "Loaded status:" << strategyID;
     }
@@ -44,7 +46,7 @@ void SingleTimeFrameStrategy::saveStatus()
     pSettings->setValue("Limited",  limited);
     pSettings->setValue("Position", position);
 
-    trailingStop.saveToSettings(pSettings, "TrailingStop");
+    pTrailing->saveToSettings(pSettings, "TrailingStop");
 
     qInfo().noquote() << "Saved status:" << strategyID;
 }
@@ -58,7 +60,7 @@ void SingleTimeFrameStrategy::setPosition(int newPosition)
 void SingleTimeFrameStrategy::resetPosition()
 {
     position = 0;
-    trailingStop.setEnabled(false);
+    pTrailing->setEnabled(false);
     saveStatus();
 }
 
@@ -88,15 +90,15 @@ double SingleTimeFrameStrategy::lowestSince(int i) const
 
 void SingleTimeFrameStrategy::checkTPSL(double price)
 {
-    Q_ASSERT((position == 0 && !trailingStop.isEnabled()) ||
-             (position > 0  &&  trailingStop.isEnabled()  &&  trailingStop.getDirection()) ||
-             (position < 0  &&  trailingStop.isEnabled()  && !trailingStop.getDirection()));
+    Q_ASSERT((position == 0 && !pTrailing->isEnabled()) ||
+             (position > 0  &&  pTrailing->isEnabled()  &&  pTrailing->getDirection()) ||
+             (position < 0  &&  pTrailing->isEnabled()  && !pTrailing->getDirection()));
 
     if (position == 0) {
         return;
     }
 
-    if (trailingStop.checkStopLoss(price)) {
+    if (pTrailing->checkStopLoss(price)) {
         resetPosition();
     }
 }
@@ -117,9 +119,9 @@ void SingleTimeFrameStrategy::checkIfNewBar(int newBarTimeFrame)
             indicator->update();
         }
         onNewBar();
-        trailingStop.update(bars[1].high, bars[1].low);
-        if (trailingStop.isEnabled()) {
-            qDebug().noquote() << trailingStop;
+        pTrailing->update(bars[1].high, bars[1].low);
+        if (pTrailing->isEnabled()) {
+            qDebug().noquote() << strategyID << *pTrailing;
         }
         saveStatus();
     }
