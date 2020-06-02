@@ -4,6 +4,7 @@
 #include "trailing_stop.h"
 
 TrailingStop::TrailingStop(bool direction, double initStop, double AFstep, double AFmax) :
+    enabled(true),
     direction(direction),
     stopLoss(initStop),
     AFstep(AFstep),
@@ -11,40 +12,42 @@ TrailingStop::TrailingStop(bool direction, double initStop, double AFstep, doubl
 {
 }
 
-TrailingStop::TrailingStop(bool direction, double initStop) :
-    TrailingStop(direction, initStop, 0.02, 0.19999)
-{
-}
-
 TrailingStop::TrailingStop() :
-    enabled(false)
+    enabled(false),
+    direction(true),
+    stopLoss(0.0),
+    AFstep(0.0),
+    AFmax(0.0)
 {
 }
 
-bool TrailingStop::checkStopLoss(double price) const {
+bool TrailingStop::checkStopLoss(double price) const
+{
     if (enabled) {
         return (direction && price < stopLoss) || (!direction && price > stopLoss);
-    } else {
-        return false;
     }
+    return false;
 }
 
-void TrailingStop::update(double highPrice, double lowPrice) {
+void TrailingStop::update(double highPrice, double lowPrice)
+{
     if (!enabled) {
         return;
     }
 
     if (newCreate) {
         // First time, only record the high/low price, don't update AF and SL
-        if (direction) {
-            highest = highPrice;
-        } else {
-            lowest = lowPrice;
-        }
+        highest = highPrice;
+        lowest = lowPrice;
         newCreate = false;
         return;
     }
 
+    updateAFSL(highPrice, lowPrice);
+}
+
+void TrailingStop::updateAFSL(double highPrice, double lowPrice)
+{
     if (direction) {
         if (highPrice > highest) {
             highest = highPrice;

@@ -1,3 +1,4 @@
+#include "template/trailing_stop.h"
 #include "addon_trailingstop.h"
 
 EnterSignalNeedConfirm::EnterSignalNeedConfirm(bool direction, double triggerPrice, double cancelPrice, AddOnTrailingStop *aots) :
@@ -17,7 +18,7 @@ bool EnterSignalNeedConfirm::confirm(double price) const {
 }
 
 AddOnTrailingStop::AddOnTrailingStop(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent):
-    SingleTimeFrameStrategy(id, instrumentID, timeFrame, parent),
+    SingleTimeFrameStrategy(id, instrumentID, timeFrame, new TrailingStop, parent),
     maxAddOnIdx(3)
 {
     addOnSequence[0] = 0;
@@ -89,11 +90,11 @@ void AddOnTrailingStop::onNewTick(qint64 time, double lastPrice)
     addonSignals = filterAndDelete(addonSignals, checkCancel);
 
     // check stop loss
-    if (trailingStop.checkStopLoss(lastPrice)) {
+    if (pTrailing->checkStopLoss(lastPrice)) {
         targetVolIdx = 0;
         while (!addonSignals.empty())
             delete addonSignals.takeFirst();
-        trailingStop.setEnabled(false);
+        pTrailing->setEnabled(false);
         highestAddon = -DBL_MAX;
         lowestAddon = DBL_MAX;
     }
@@ -122,7 +123,8 @@ void AddOnTrailingStop::onNewTick(qint64 time, double lastPrice)
                 }
                 initStop = maxN;
             }
-            trailingStop = TrailingStop(false, initStop, AFstep, AFmax);
+            delete pTrailing;
+            pTrailing = new TrailingStop(false, initStop, AFstep, AFmax);
             while (!takenSignals.empty())
                 delete takenSignals.takeFirst();
             trigger = signal;
@@ -138,7 +140,8 @@ void AddOnTrailingStop::onNewTick(qint64 time, double lastPrice)
                 }
                 initStop = minN;
             }
-            trailingStop = TrailingStop(true, initStop, AFstep, AFmax);
+            delete pTrailing;
+            pTrailing = new TrailingStop(true, initStop, AFstep, AFmax);
             while (!takenSignals.empty())
                 delete takenSignals.takeFirst();
             trigger = signal;
