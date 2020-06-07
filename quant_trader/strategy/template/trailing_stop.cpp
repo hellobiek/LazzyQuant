@@ -100,7 +100,7 @@ void TrailingStop::loadFromSettings(QSettings *pSettings, const QString &groupNa
 QDebug operator<<(QDebug dbg, const TrailingStop &stop)
 {
     QDebugStateSaver saver(dbg);
-    dbg.nospace() <<   "direction="   << stop.direction
+    dbg.nospace() <<   "direction="   << (stop.direction ? "up" : "down")
                   << ", stopLoss="    << stop.stopLoss
                   << ", AFstep="      << stop.AFstep
                   << ", AFmax="       << stop.AFmax
