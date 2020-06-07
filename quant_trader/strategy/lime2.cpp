@@ -2,14 +2,15 @@
 #include <QDebug>
 
 #include "standard_bar.h"
-#include "../indicator/mql5_indicator.h"
-#include "../indicator/zen/semi_automatic_stroke.h"
-#include "../quant_trader.h"
+#include "template/trailing_stop.h"
+#include "indicator/mql5_indicator.h"
+#include "indicator/zen/semi_automatic_stroke.h"
+#include "quant_trader.h"
 #include "lime2.h"
 #include "stroke_decomposer.h"
 
 Lime2::Lime2(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent) :
-    SingleTimeFrameStrategy(id, instrumentID, timeFrame, parent)
+    SingleTimeFrameStrategy(id, instrumentID, timeFrame, new TrailingStop, parent)
 {
     this->limited = true;
     this->included = false;

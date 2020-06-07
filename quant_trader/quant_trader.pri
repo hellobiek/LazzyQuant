@@ -51,6 +51,7 @@ win32 {
         $$QUANT_TRADER_FOLDER/indicator/zen/semi_automatic_stroke.cpp \
         $$QUANT_TRADER_STRATEGY_FOLDER/lime2.cpp \
         $$QUANT_TRADER_STRATEGY_FOLDER/orange3.cpp \
+        $$QUANT_TRADER_STRATEGY_FOLDER/template/delay_trailing_stop.cpp \
         $$QUANT_TRADER_STRATEGY_FOLDER/template/citrus.cpp \
         $$QUANT_TRADER_STRATEGY_FOLDER/pomelo.cpp \
         $$QUANT_TRADER_STRATEGY_FOLDER/mandarin.cpp \
@@ -63,6 +64,7 @@ win32 {
         $$QUANT_TRADER_FOLDER/indicator/zen/semi_automatic_stroke.h \
         $$QUANT_TRADER_STRATEGY_FOLDER/lime2.h \
         $$QUANT_TRADER_STRATEGY_FOLDER/orange3.h \
+        $$QUANT_TRADER_STRATEGY_FOLDER/template/delay_trailing_stop.h \
         $$QUANT_TRADER_STRATEGY_FOLDER/template/citrus.h \
         $$QUANT_TRADER_STRATEGY_FOLDER/pomelo.h \
         $$QUANT_TRADER_STRATEGY_FOLDER/mandarin.h \

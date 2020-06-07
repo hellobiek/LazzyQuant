@@ -7,12 +7,13 @@
 
 #include "datetime_helper.h"
 #include "standard_bar.h"
+#include "template/trailing_stop.h"
 #include "orange3.h"
 #include "lime2.h"
-#include "../indicator/zen/semi_automatic_stroke.h"
+#include "indicator/zen/semi_automatic_stroke.h"
 
 Orange3::Orange3(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent) :
-    SingleTimeFrameStrategy(id, instrumentID, timeFrame, parent)
+    SingleTimeFrameStrategy(id, instrumentID, timeFrame, new TrailingStop, parent)
 {
 }
 
@@ -78,7 +79,8 @@ void Orange3::onNewBar()
     if (signalCnt == 1) {
         if (getPosition() != direction) {
             double stopLoss = (direction == 1) ? fmin(lowestSince(fractalIdx), pLime2->getPeakPrice()) : fmax(highestSince(fractalIdx), pLime2->getPeakPrice());
-            trailingStop = TrailingStop((direction == 1), stopLoss, AFstep, AFmax);
+            delete pTrailing;
+            pTrailing = new TrailingStop((direction == 1), stopLoss, AFstep, AFmax);
             setPosition(direction);
         }
         lastOpenTime = timestamp;

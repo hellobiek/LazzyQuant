@@ -24,6 +24,8 @@ void Tangerine::setParameter(const QVariant& param1, const QVariant& param2, con
 void Tangerine::setParameter(bool direction, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
 {
     qDebug().noquote() << "Direction =" << direction
+                       << ", extraStopLoss =" << extraStopLoss
+                       << ", maxAllowStopLoss =" << maxAllowStopLoss
                        << ", AFstep =" << AFstep
                        << ", AFmax =" << AFmax;
 

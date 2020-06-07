@@ -22,8 +22,8 @@ double AbstractIndicator::highestSince(int i) const
     double highest = lastBar->high;
     auto barListSize = barList->size();
     for (int j = i; j < barListSize; j++) {
-        if (highest < barList->at(i).high) {
-            highest = barList->at(i).high;
+        if (highest < barList->at(j).high) {
+            highest = barList->at(j).high;
         }
     }
     return highest;
@@ -34,8 +34,8 @@ double AbstractIndicator::lowestSince(int i) const
     double lowest = lastBar->low;
     auto barListSize = barList->size();
     for (int j = i; j < barListSize; j++) {
-        if (lowest > barList->at(i).low) {
-            lowest = barList->at(i).low;
+        if (lowest > barList->at(j).low) {
+            lowest = barList->at(j).low;
         }
     }
     return lowest;

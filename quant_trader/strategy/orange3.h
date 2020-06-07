@@ -2,7 +2,7 @@
 #define ORANGE3_H
 
 #include "template/single_time_frame_strategy.h"
-#include "../indicator/mql5_indicator.h"
+#include "indicator/mql5_indicator.h"
 
 class Lime2;
 

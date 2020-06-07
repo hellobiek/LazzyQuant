@@ -40,6 +40,8 @@ void Pomelo::setParameter(int maPeriod, int maShift, ENUM_MA_METHOD maMethod, EN
                        << ", maShift =" << maShift
                        << ", maMethod =" << maMethod
                        << ", maAppliedPrice =" << maAppliedPrice
+                       << ", extraStopLoss =" << extraStopLoss
+                       << ", maxAllowStopLoss =" << maxAllowStopLoss
                        << ", AFstep =" << AFstep
                        << ", AFmax =" << AFmax;
 
