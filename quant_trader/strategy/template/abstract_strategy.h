@@ -24,7 +24,7 @@ public:
         strategyID(id), instrumentID(instrumentID), timeFrames(timeFrames) {}
     virtual ~AbstractStrategy() = default;
 
-    virtual void setBarList(int, QList<StandardBar> *, StandardBar *) {}
+    virtual void setBarList(int, QList<StandardBar> *, StandardBar *) = 0;
 
     virtual void loadStatus() = 0;
     virtual void saveStatus() = 0;
@@ -38,7 +38,7 @@ public:
                               const QVariant &param4, const QVariant &param5, const QVariant &param6,
                               const QVariant &param7, const QVariant &param8, const QVariant &param9) = 0;
 
-    virtual void checkIfNewBar(int) {}
+    virtual void checkIfNewBar(int) = 0;
     virtual void onNewTick(qint64 time, double lastPrice) = 0;
 
     QString getId() const  { return strategyID; }
