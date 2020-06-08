@@ -326,8 +326,8 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
         setPosition(instrumentID, newPositionSum);
         if (pLogger)
             pLogger->positionChanged(time, instrumentID, newPositionSum, lastPrice);
-        qInfo().noquote() << utcTimeToString1(time)
-                          << "New position for" << instrumentID << newPositionSum
+        qInfo().noquote() << instrumentID << utcTimeToString1(time)
+                          << "position =" << newPositionSum
                           << ", price =" << lastPrice;
     }
 }

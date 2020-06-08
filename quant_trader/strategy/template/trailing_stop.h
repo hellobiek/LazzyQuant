@@ -8,6 +8,7 @@ class QSettings;
 
 class TrailingStop
 {
+protected:
     bool newCreate = true;
     bool enabled;
 
