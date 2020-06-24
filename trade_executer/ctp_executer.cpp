@@ -124,7 +124,9 @@ CtpExecuter::~CtpExecuter()
 
 void CtpExecuter::customEvent(QEvent *event)
 {
-    qDebug() << "TradeExecuter event:" << int(event->type());
+    if (event->type() != RTN_INSTRUMENT_STATUS) {
+        qDebug() << "TradeExecuter event:" << int(event->type());
+    }
     switch (int(event->type())) {
     case ERROR_ID_MSG:
     {
