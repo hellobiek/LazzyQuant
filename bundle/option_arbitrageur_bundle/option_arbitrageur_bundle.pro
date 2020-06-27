@@ -1,4 +1,4 @@
-QT += core xml
+QT += core
 QT -= gui
 
 TARGET = option_arbitrageur_bundle

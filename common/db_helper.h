@@ -3,7 +3,6 @@
 
 class QSettings;
 class QString;
-class QStringList;
 
 /*!
  * \brief 根据配置连接到数据库.

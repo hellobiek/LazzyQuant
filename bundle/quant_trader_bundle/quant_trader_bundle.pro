@@ -1,4 +1,4 @@
-QT += core sql xml
+QT += core sql
 QT -= gui
 
 TARGET = quant_trader_bundle
