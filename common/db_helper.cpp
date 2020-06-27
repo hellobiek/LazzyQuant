@@ -1,7 +1,6 @@
 #include "db_helper.h"
 
 #include <QSettings>
-#include <QStringList>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
