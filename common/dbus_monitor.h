@@ -5,6 +5,7 @@
 #include <QList>
 
 class QDBusAbstractInterface;
+class QTimer;
 
 class DBusMonitor : public QObject
 {

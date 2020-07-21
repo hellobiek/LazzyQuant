@@ -308,6 +308,9 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
     bool isNewTick = collector && collector->onMarketData(time, lastPrice, volume);
 
     const auto strategyList = strategy_map.values(instrumentID);
+    if (strategyList.empty()) {
+        return; // 排除干扰.
+    }
     int newPositionSum = 0;
     for (auto *strategy : strategyList) {
         if (strategy->isEnabled()) {
