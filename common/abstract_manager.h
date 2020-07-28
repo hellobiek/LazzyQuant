@@ -96,7 +96,11 @@ void RealManager<W, T, E>::init()
     QObject::connect(marketOpenTimer, &MultipleTimer::timesUp, checkPrepare);
 
     marketCloseTimer = new MultipleTimer({{15, 5}});
-    QObject::connect(marketCloseTimer, SIGNAL(timesUp(int)), pTrader, SLOT(onMarketClose()));
+    QObject::connect(marketCloseTimer, &MultipleTimer::timesUp, [=]() -> void {
+        if (TradingCalendar::getInstance()->isTradingDay()) {
+            pTrader->onMarketClose();
+        }
+    });
 }
 
 template<class W, class T, class E>
