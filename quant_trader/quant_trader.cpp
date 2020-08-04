@@ -101,7 +101,8 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
         bool ok;
         int timeFrameFlags = QMetaEnum::fromType<BarCollector::TimeFrames>().keysToValue(combinedTimeFrameString.toLatin1().constData(), &ok);
         if (!ok || timeFrameFlags == -1) {
-            qWarning() << "Timeframe setting of" << instrument << "is NOT OK!";
+            qWarning().noquote().nospace() << "The timeframe setting of " << group << " is NOT OK!";
+            settings->endGroup();
             continue;
         }
 
@@ -266,14 +267,6 @@ void QuantTrader::setupIndicator(AbstractIndicator *pIndicator, const QString &i
     }
 }
 
-/*!
- * \brief QuantTrader::onNewBar
- * 储存新收集的K线数据并计算相关策略.
- *
- * \param instrumentID 合约代码.
- * \param timeFrame 时间框架(枚举)
- * \param bar 新的K线数据.
- */
 void QuantTrader::onNewBar(const QString &instrumentID, int timeFrame, const StandardBar &bar)
 {
     bars_map[instrumentID][timeFrame].append(bar);

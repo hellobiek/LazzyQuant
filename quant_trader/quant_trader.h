@@ -101,6 +101,12 @@ private:
     void setupIndicator(AbstractIndicator *pIndicator, const QString &indicatorName, const QVariantList &params);
 
 private slots:
+    /*!
+     * \brief 储存新收集的K线数据并计算相关策略.
+     * \param instrumentID 合约代码.
+     * \param timeFrame 时间级别.
+     * \param bar 新的K线数据.
+     */
     void onNewBar(const QString &instrumentID, int timeFrame, const StandardBar &bar);
 
 signals:
