@@ -32,10 +32,7 @@ public:
     Q_INVOKABLE explicit Lemon1(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
     friend class Class2WiseMan;
 
-    void setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
-                      const QVariant &param4, const QVariant &param5, const QVariant &param6,
-                      const QVariant &param7, const QVariant &param8, const QVariant &param9) override;
-    void setParameter(double fastMA, double slowMA, double AFstep, double AFmax);
+    void init() override;
 
 protected:
     MQL5Indicator *ao;

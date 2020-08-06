@@ -15,28 +15,11 @@ Lemon1::Lemon1(const QString &id, const QString &instrumentID, int timeFrame, QO
     //
 }
 
-void Lemon1::setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
-                          const QVariant &param4, const QVariant &param5, const QVariant &param6,
-                          const QVariant &param7, const QVariant &param8, const QVariant &param9)
+void Lemon1::init()
 {
-    Q_UNUSED(param5)
-    Q_UNUSED(param6)
-    Q_UNUSED(param7)
-    Q_UNUSED(param8)
-    Q_UNUSED(param9)
+    qInfo() << "AFstep = " << AFstep << ", AFmax = " << AFmax;
 
-    double fastMA = param1.toDouble();
-    double slowMA = param2.toDouble();
-    double AFstep = param3.toDouble();
-    double AFmax = param4.toDouble();
-    setParameter(fastMA, slowMA, AFstep, AFmax);
-}
-
-void Lemon1::setParameter(double fastMA, double slowMA, double AFstep, double AFmax)
-{
-    qDebug() << "fastMA = " << fastMA << ", slowMA = " << slowMA << "AFstep = " << AFstep << ", AFmax = " << AFmax;
-
-    AddOnTrailingStop::setParameter(AFstep, AFmax, 1, 0);
+    AddOnTrailingStop::setParameter(1, 0);
     ao = iAO(instrumentID, timeFrames);
     segment = static_cast<Zen::Segment*>(
                 pTrader->registerIndicator(

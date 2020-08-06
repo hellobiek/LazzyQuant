@@ -17,13 +17,15 @@ public:
 class AddOnTrailingStop : public SingleTimeFrameStrategy
 {
     Q_OBJECT
+    Q_PROPERTY(double AFstep MEMBER AFstep)
+    Q_PROPERTY(double AFmax MEMBER AFmax)
 
 public:
     explicit AddOnTrailingStop(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
     ~AddOnTrailingStop() override;
     friend class EnterSignalNeedConfirm;
 
-    void setParameter(double AFstep, double AFmax, int openVol, int addOn1Vol);
+    void setParameter(int openVol, int addOn1Vol);
 
 protected:
     double AFstep, AFmax;

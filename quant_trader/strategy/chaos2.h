@@ -50,6 +50,11 @@ public:
 class Chaos2 : public AddOnTrailingStop
 {
     Q_OBJECT
+    Q_PROPERTY(int OpenVol MEMBER openVol)
+    Q_PROPERTY(int AddOn1Vol MEMBER addOn1Vol)
+    Q_PROPERTY(int BandsPeriod MEMBER bandsPeriod)
+    Q_PROPERTY(double BandsDeviations MEMBER bandsDeviations)
+    Q_PROPERTY(double StdDevThreshold MEMBER stdDevThreshold)
 
 public:
     Q_INVOKABLE explicit Chaos2(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
@@ -57,12 +62,13 @@ public:
     friend class WiseMan3;
     friend class AOSignal;
 
-    void setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
-                      const QVariant &param4, const QVariant &param5, const QVariant &param6,
-                      const QVariant &param7, const QVariant &param8, const QVariant &param9) override;
-    void setParameter(double AFstep, double AFmax, int openVol, int addOn1Vol, int BBPeriod, double BBDeviations, double stdDevThreshold);
+    void init() override;
 
 protected:
+    int openVol;
+    int addOn1Vol;
+    int bandsPeriod;
+    double bandsDeviations;
     double stdDevThreshold;
 
     MQL5Indicator *bb;

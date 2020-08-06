@@ -6,17 +6,27 @@
 class DblMaPsarStrategy : public SingleTimeFrameStrategy
 {
     Q_OBJECT
+    Q_PROPERTY(int FastPeriod MEMBER fastPeriod)
+    Q_PROPERTY(int SlowPeriod MEMBER slowPeriod)
+    Q_PROPERTY(ENUM_MA_METHOD MaMethod MEMBER maMethod)
+    Q_PROPERTY(ENUM_APPLIED_PRICE AppliedPrice MEMBER appliedPrice)
+    Q_PROPERTY(double SARStep MEMBER SARStep)
+    Q_PROPERTY(double SARMaximum MEMBER SARMaximum)
 
 public:
     Q_INVOKABLE explicit DblMaPsarStrategy(const QString &id, const QString &instrumentID, int timeFrame, QObject *parent = nullptr);
 
-    void setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
-                      const QVariant &param4, const QVariant &param5, const QVariant &param6,
-                      const QVariant &param7, const QVariant &param8, const QVariant &param9) override;
-    void setParameter(int fastPeriod, int slowPeriod, ENUM_MA_METHOD ma_method, ENUM_APPLIED_PRICE applied_price, double SARStep, double SARMaximum);
+    void init() override;
     void onNewBar() override;
 
 protected:
+    int fastPeriod;
+    int slowPeriod;
+    ENUM_MA_METHOD maMethod;
+    ENUM_APPLIED_PRICE appliedPrice;
+    double SARStep;
+    double SARMaximum;
+
     MQL5Indicator *fast_ma;
     MQL5Indicator *slow_ma;
     MQL5Indicator *psar;
