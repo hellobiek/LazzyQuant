@@ -93,8 +93,14 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
     const QStringList groups = settings->childGroups();
     qDebug() << groups.size() << "strategies in all.";
 
-    for (const QString& group : groups) {
-        QVariantMap params;
+    QVariantMap defaultParams;
+    const auto defaultKeys = settings->childKeys();
+    for (const auto &key : defaultKeys) {
+        defaultParams.insert(key, settings->value(key));
+    }
+
+    for (const QString &group : groups) {
+        QVariantMap params = defaultParams;
         settings->beginGroup(group);
         const auto keys = settings->childKeys();
         for (const auto &key : keys) {
@@ -123,8 +129,10 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
             qCritical().noquote().nospace() << "Instantiating strategy id " << group << ", class name " << strategyClassName << " failed!";
             continue;
         }
-        for (const auto &key : keys) {
-            object->setProperty(qPrintable(key), params.value(key));
+        QMapIterator<QString, QVariant> i(params);
+        while (i.hasNext()) {
+            i.next();
+            object->setProperty(qPrintable(i.key()), i.value());
         }
 
         auto *strategy = dynamic_cast<AbstractStrategy*>(object);
