@@ -40,8 +40,8 @@ QuantTrader::QuantTrader(const QString &configName, bool saveBarsToDB, QObject *
     QObject(parent),
     saveBarsToDB(saveBarsToDB)
 {
-    qRegisterMetaType<int>("ENUM_MA_METHOD");
-    qRegisterMetaType<int>("ENUM_APPLIED_PRICE");
+    qRegisterMetaType<ENUM_MA_METHOD>("ENUM_MA_METHOD");
+    qRegisterMetaType<ENUM_APPLIED_PRICE>("ENUM_APPLIED_PRICE");
 
     loadQuantTraderSettings(configName);
     loadTradeStrategySettings("trade_strategy");
@@ -93,51 +93,56 @@ void QuantTrader::loadTradeStrategySettings(const QString &configName)
     const QStringList groups = settings->childGroups();
     qDebug() << groups.size() << "strategies in all.";
 
-    for (const QString& group : groups) {
+    QVariantMap defaultParams;
+    const auto defaultKeys = settings->childKeys();
+    for (const auto &key : defaultKeys) {
+        defaultParams.insert(key, settings->value(key));
+    }
+
+    for (const QString &group : groups) {
+        QVariantMap params = defaultParams;
         settings->beginGroup(group);
-        QString strategy_name = settings->value("strategy").toString();
-        QString instrument = settings->value("instrument").toString();
-        QString combinedTimeFrameString = settings->value("timeframe").toString();
+        const auto keys = settings->childKeys();
+        for (const auto &key : keys) {
+            params.insert(key, settings->value(key));
+        }
+        settings->endGroup();
+
+        QString strategyClassName = params.value("Strategy").toString();
+        QString instrument = params.value("Instrument").toString();
+        QString combinedTimeFrameString = params.value("Timeframe").toString();
         bool ok;
         int timeFrameFlags = QMetaEnum::fromType<BarCollector::TimeFrames>().keysToValue(combinedTimeFrameString.toLatin1().constData(), &ok);
         if (!ok || timeFrameFlags == -1) {
-            qWarning() << "Timeframe setting of" << instrument << "is NOT OK!";
+            qWarning().noquote().nospace() << "The timeframe setting of " << group << " is NOT OK!";
             continue;
         }
 
-        QVariant param1 = settings->value("param1");
-        QVariant param2 = settings->value("param2");
-        QVariant param3 = settings->value("param3");
-        QVariant param4 = settings->value("param4");
-        QVariant param5 = settings->value("param5");
-        QVariant param6 = settings->value("param6");
-        QVariant param7 = settings->value("param7");
-        QVariant param8 = settings->value("param8");
-        QVariant param9 = settings->value("param9");
-
-        settings->endGroup();
-
-        const QMetaObject* strategy_meta_object = getStrategyMetaObject(strategy_name);
-        if (strategy_meta_object == nullptr) {
-            qCritical().noquote().nospace() << "Strategy " << group << ": " << strategy_name << " is not supported!";
+        const QMetaObject* metaObject = getStrategyMetaObject(strategyClassName);
+        if (metaObject == nullptr) {
+            qCritical().noquote().nospace() << "Strategy id " << group << ", class name " << strategyClassName << " is not supported!";
             continue;
         }
-        QObject *object = nullptr;
-        object = strategy_meta_object->newInstance(Q_ARG(QString, group), Q_ARG(QString, instrument), Q_ARG(int, timeFrameFlags), Q_ARG(QObject*, this));
 
+        auto *object = metaObject->newInstance(Q_ARG(QString, group), Q_ARG(QString, instrument), Q_ARG(int, timeFrameFlags), Q_ARG(QObject*, this));
         if (object == nullptr) {
-            qCritical().noquote().nospace() << "Instantiating strategy " << group << ": " << strategy_name << " failed!";
+            qCritical().noquote().nospace() << "Instantiating strategy id " << group << ", class name " << strategyClassName << " failed!";
             continue;
+        }
+        QMapIterator<QString, QVariant> i(params);
+        while (i.hasNext()) {
+            i.next();
+            object->setProperty(qPrintable(i.key()), i.value());
         }
 
         auto *strategy = dynamic_cast<AbstractStrategy*>(object);
         if (strategy == nullptr) {
-            qCritical().noquote().nospace() << "Cast strategy " << group << ": " << strategy_name << " failed!";
+            qCritical().noquote().nospace() << "Cast strategy id " << group << " failed!";
             delete object;
             continue;
         }
 
-        strategy->setParameter(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+        strategy->init();
         for (int timeFrame : enumValueToList<BarCollector::TimeFrames>(timeFrameFlags)) {
             strategy->setBarList(timeFrame, getBars(instrument, timeFrame), collector_map[instrument]->getBarPtr(timeFrame));
         }
@@ -266,14 +271,6 @@ void QuantTrader::setupIndicator(AbstractIndicator *pIndicator, const QString &i
     }
 }
 
-/*!
- * \brief QuantTrader::onNewBar
- * 储存新收集的K线数据并计算相关策略.
- *
- * \param instrumentID 合约代码.
- * \param timeFrame 时间框架(枚举)
- * \param bar 新的K线数据.
- */
 void QuantTrader::onNewBar(const QString &instrumentID, int timeFrame, const StandardBar &bar)
 {
     bars_map[instrumentID][timeFrame].append(bar);
@@ -308,6 +305,9 @@ void QuantTrader::onMarketData(const QString &instrumentID, qint64 time, double 
     bool isNewTick = collector && collector->onMarketData(time, lastPrice, volume);
 
     const auto strategyList = strategy_map.values(instrumentID);
+    if (strategyList.empty()) {
+        return; // 排除干扰.
+    }
     int newPositionSum = 0;
     for (auto *strategy : strategyList) {
         if (strategy->isEnabled()) {

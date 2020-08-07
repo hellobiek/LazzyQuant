@@ -35,11 +35,8 @@ AddOnTrailingStop::~AddOnTrailingStop()
     qDeleteAll(takenSignals);
 }
 
-void AddOnTrailingStop::setParameter(double AFstep, double AFmax, int openVol, int addOn1Vol)
+void AddOnTrailingStop::setParameter(int openVol, int addOn1Vol)
 {
-    this->AFstep = AFstep;
-    this->AFmax = AFmax;
-
     addOnSequence[1] = openVol;
     addOnSequence[2] = openVol + addOn1Vol;
 }

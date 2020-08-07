@@ -35,7 +35,7 @@ public:
     explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, TrailingStop *pTrailingStop, QObject *parent = nullptr);
     ~SingleTimeFrameStrategy() override;
 
-    //!< Should be called after setParameter
+    //!< Should be called after init
     void setBarList(int timeFrame, QList<StandardBar> *barList, StandardBar *lastBar) override;
 
     void checkIfNewBar(int newBarTimeFrame) override;

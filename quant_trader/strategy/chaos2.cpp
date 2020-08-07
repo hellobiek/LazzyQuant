@@ -55,33 +55,18 @@ Chaos2::Chaos2(const QString &id, const QString &instrumentID, int timeFrame, QO
     //
 }
 
-void Chaos2::setParameter(const QVariant &param1, const QVariant &param2, const QVariant &param3,
-                          const QVariant &param4, const QVariant &param5, const QVariant &param6,
-                          const QVariant &param7, const QVariant &param8, const QVariant &param9)
+void Chaos2::init()
 {
-    Q_UNUSED(param8)
-    Q_UNUSED(param9)
+    qInfo().nospace() << "Strategy id:" << strategyID
+                      << ", AFstep = " << AFstep << ", AFmax = " << AFmax
+                      << ", OpenVol = " << openVol << ", AddOn1Vol = " << addOn1Vol
+                      << ", BandsPeriod = " << bandsPeriod << ", BandsDeviations = " << bandsDeviations
+                      << ", StdDevThreshold = " << stdDevThreshold;
 
-    double AFstep = param1.toDouble();
-    double AFmax = param2.toDouble();
-    int openVol = param3.toInt();
-    int addOn1Vol = param4.toInt();
-    int BBPeriod = param5.toInt();
-    double BBDeviations = param6.toDouble();
-    double stdDevThreshold = param7.toDouble();
-    setParameter(AFstep, AFmax, openVol, addOn1Vol, BBPeriod, BBDeviations, stdDevThreshold);
-}
+    AddOnTrailingStop::setParameter(openVol, addOn1Vol);
 
-void Chaos2::setParameter(double AFstep, double AFmax, int openVol, int addOn1Vol, int BBPeriod, double BBDeviations, double stdDevThreshold)
-{
-    qDebug() << "AFstep = " << AFstep << ", AFmax = " << AFmax << ", openVol = " << openVol << ", addOn1Vol = " << addOn1Vol
-             << ", BBPeriod = " << BBPeriod << ", BBDeviations = " << BBDeviations << ", stdDevThreshold = " << stdDevThreshold;
-
-    AddOnTrailingStop::setParameter(AFstep, AFmax, openVol, addOn1Vol);
-    this->stdDevThreshold = stdDevThreshold;
-
-    auto pTrader = static_cast<QuantTrader*>(parent());
-    bb = iBands(instrumentID, timeFrames, BBPeriod, 0, BBDeviations, PRICE_CLOSE);
+    auto pTrader = qobject_cast<QuantTrader*>(parent());
+    bb = iBands(instrumentID, timeFrames, bandsPeriod, 0, bandsDeviations, PRICE_CLOSE);
     divergentBar = static_cast<DivergentBar*>(
                 pTrader->registerIndicator(
                     instrumentID, timeFrames, "DivergentBar"

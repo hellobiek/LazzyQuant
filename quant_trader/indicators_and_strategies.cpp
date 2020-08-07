@@ -11,7 +11,6 @@
 #include "indicator/zen/segment.h"
 
 #include "strategy/DblMaPsar_strategy.h"
-#include "strategy/BigHit_strategy.h"
 #include "strategy/chaos2.h"
 #include "strategy/lemon1.h"
 
@@ -42,7 +41,6 @@ const QMap<QString, const QMetaObject*> indicatorMetaObjects = {
 
 const QMap<QString, const QMetaObject*> strategyMetaObjects = {
     {"DblMaPsarStrategy", &DblMaPsarStrategy::staticMetaObject},
-    {"BigHitStrategy", &BigHitStrategy::staticMetaObject},
     {"Chaos2", &Chaos2::staticMetaObject},
     {"Lemon1", &Lemon1::staticMetaObject},
 #ifdef Q_OS_WIN
