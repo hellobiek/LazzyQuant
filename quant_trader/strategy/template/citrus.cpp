@@ -17,17 +17,17 @@ Citrus::Citrus(const QString &strategyId, const QString &instrumentId, int timeF
 
 }
 
-void Citrus::setParam(int strokeTimeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
+void Citrus::init()
 {
-    auto pInd = pTrader->registerIndicator(instrumentID, strokeTimeFrame, "SemiAutomaticStroke", instrumentID, strokeTimeFrame);
+    qInfo().noquote().nospace() << "Stroke Timeframe = " << strokeTimeframe
+                                 << ", Extra StopLoss = " << extraSL
+                                 << ", MaxAllow StopLoss = " << maxAllowSL
+                                 << ", AFstep = " << AFstep
+                                 << ", AFmax  = " << AFmax;
+
+    auto pInd = pTrader->registerIndicator(instrumentID, (int)strokeTimeframe, "SemiAutomaticStroke", instrumentID, (int)strokeTimeframe);
     addDepend(pInd);
     sas = dynamic_cast<Zen::SemiAutomaticStroke*>(pInd);
-
-    this->extraSL = extraStopLoss;
-    this->maxAllowSL = maxAllowStopLoss;
-
-    this->AFstep = AFstep;
-    this->AFmax = AFmax;
 }
 
 void Citrus::onNewBar()

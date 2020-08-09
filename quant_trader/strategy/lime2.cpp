@@ -16,35 +16,17 @@ Lime2::Lime2(const QString &id, const QString &instrumentID, int timeFrame, QObj
     this->included = false;
 }
 
-void Lime2::setParameter(const QVariant& param1, const QVariant& param2, const QVariant& param3,
-                         const QVariant& param4, const QVariant& param5, const QVariant& param6,
-                         const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
+void Lime2::init()
 {
-    int BBPeriod = param1.toInt();
-    double BBDeviations = param2.toDouble();
-    setParameter(BBPeriod, BBDeviations);
-}
-
-void Lime2::setParameter(int BBPeriod, double BBDeviations)
-{
-    qDebug() << "BBPeriod =" << BBPeriod << ", BBDeviations =" << BBDeviations;
+    qInfo().noquote() << "Strategy id:" << strategyID;
 
     auto pInd = pTrader->registerIndicator(instrumentID, timeFrames, "SemiAutomaticStroke", instrumentID, timeFrames);
     addDepend(pInd);
     sas = dynamic_cast<Zen::SemiAutomaticStroke*>(pInd);
-    bb = iBands(instrumentID, timeFrames, BBPeriod, 0, BBDeviations, PRICE_CLOSE);
 }
 
 void Lime2::onNewBar()
 {
-    IndicatorBuffer<double> middleLine = bb->getBufferByIndex(0);
-    IndicatorBuffer<double> topLine    = bb->getBufferByIndex(1);
-    IndicatorBuffer<double> bottomLine = bb->getBufferByIndex(2);
-
-    ArraySetAsSeries(middleLine, false);
-    ArraySetAsSeries(topLine   , false);
-    ArraySetAsSeries(bottomLine, false);
-
     // TODO confirm 2buy/2sell and fractal
     auto strokeListSize = sas->strokeList.size();
     if (strokeListSize < 5) {

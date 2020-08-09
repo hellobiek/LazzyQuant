@@ -9,29 +9,11 @@ Mandarin::Mandarin(const QString &strategyId, const QString &instrumentId, int t
 
 }
 
-void Mandarin::setParameter(const QVariant& param1, const QVariant& param2, const QVariant& param3,
-                            const QVariant& param4, const QVariant& param5, const QVariant& param6,
-                            const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
+void Mandarin::init()
 {
-    QString timeFrame = param1.toString();
-    double extra = param2.toDouble();
-    double maxAllow = param3.toDouble();
-    double step = param4.toDouble();
-    double max = param5.toDouble();
+    qInfo().noquote() << "Strategy id:" << strategyID;
 
-    setParameter(timeFrame, extra, maxAllow, step, max);
-}
-
-void Mandarin::setParameter(const QString &timeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
-{
-    qDebug().noquote() << "Stroke TimeFrame =" << timeFrame
-                       << ", extraStopLoss =" << extraStopLoss
-                       << ", maxAllowStopLoss =" << maxAllowStopLoss
-                       << ", AFstep =" << AFstep
-                       << ", AFmax =" << AFmax;
-
-    auto strokeTimeFrame = QMetaEnum::fromType<BarCollector::TimeFrames>().keyToValue(timeFrame.toLatin1());
-    Citrus::setParam(strokeTimeFrame, extraStopLoss, maxAllowStopLoss, AFstep, AFmax);
+    Citrus::init();
 
     ao = iAO(instrumentID, timeFrames);
 }

@@ -17,24 +17,12 @@ Orange3::Orange3(const QString &id, const QString &instrumentID, int timeFrame, 
 {
 }
 
-void Orange3::setParameter(const QVariant& param1, const QVariant& param2, const QVariant& param3,
-                           const QVariant& param4, const QVariant& param5, const QVariant& param6,
-                           const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
+void Orange3::init()
 {
-    QString timeFrame = param1.toString();
-    double step = param2.toDouble();
-    double max = param3.toDouble();
-
-    setParameter(timeFrame, step, max);
-}
-
-void Orange3::setParameter(const QString &timeFrame, double AFstep, double AFmax)
-{
-    qDebug().noquote() << "UpperTimeFrame =" << timeFrame << ", AFstep =" << AFstep << ", AFmax =" << AFmax;
-
-    this->upperTimeFrame = QMetaEnum::fromType<BarCollector::TimeFrames>().keyToValue(timeFrame.toLatin1());
-    this->AFstep = AFstep;
-    this->AFmax = AFmax;
+    qInfo().noquote().nospace() << "Strategy id: " << strategyID
+                                << ", StrokeTimeFrame = " << strokeTimeframe
+                                << ", AFstep = " << AFstep
+                                << ", AFmax = " << AFmax;
 
     ao = iAO(instrumentID, timeFrames);
 }
@@ -49,7 +37,7 @@ void Orange3::onNewBar()
     if (!checkLime2()) {
         return;
     }
-    pLime2->checkIfNewBar(upperTimeFrame);
+    pLime2->checkIfNewBar(strokeTimeframe);
 
     int direction = pLime2->getDirection();
 
@@ -118,7 +106,7 @@ bool Orange3::checkLime2()
 
     const auto strategyList = parent()->findChildren<Lime2*>();
     for (auto *strategy : strategyList) {
-        if (strategy->getInstrument() == instrumentID && strategy->getTimeFrames() == upperTimeFrame) {
+        if (strategy->getInstrument() == instrumentID && strategy->getTimeFrames() == strokeTimeframe) {
             pLime2 = strategy;
             return true;
         }

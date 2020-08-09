@@ -8,29 +8,12 @@ Tangerine::Tangerine(const QString &strategyId, const QString &instrumentId, int
 
 }
 
-void Tangerine::setParameter(const QVariant& param1, const QVariant& param2, const QVariant& param3,
-                             const QVariant& param4, const QVariant& param5, const QVariant& param6,
-                             const QVariant& /*7*/ , const QVariant& /*8*/ , const QVariant& /*9*/)
+void Tangerine::init()
 {
-    bool direction = param1.toBool();
-    double extra = param2.toDouble();
-    double maxAllow = param3.toDouble();
-    double step = param4.toDouble();
-    double max = param5.toDouble();
+    qInfo().noquote().nospace() << "Strategy id: " << strategyID
+                                << ", ExpectDirection = " << expectDirection;
 
-    setParameter(direction, extra, maxAllow, step, max);
-}
-
-void Tangerine::setParameter(bool direction, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax)
-{
-    qDebug().noquote() << "Direction =" << direction
-                       << ", extraStopLoss =" << extraStopLoss
-                       << ", maxAllowStopLoss =" << maxAllowStopLoss
-                       << ", AFstep =" << AFstep
-                       << ", AFmax =" << AFmax;
-
-    this->expectDirection = direction;
-    Citrus::setParam(timeFrames, extraStopLoss, maxAllowStopLoss, AFstep, AFmax);
+    Citrus::init();
 }
 
 void Tangerine::onNewBar()

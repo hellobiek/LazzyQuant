@@ -10,13 +10,20 @@ namespace Zen {
 class Citrus : public SingleTimeFrameStrategy
 {
     Q_OBJECT
+    Q_PROPERTY(BarCollector::TimeFrame StrokeTimeframe MEMBER strokeTimeframe)
+    Q_PROPERTY(double ExtraSL MEMBER extraSL)
+    Q_PROPERTY(double MaxAllowSL MEMBER maxAllowSL)
+    Q_PROPERTY(double AFstep MEMBER AFstep)
+    Q_PROPERTY(double AFmax MEMBER AFmax)
 
 public:
     explicit Citrus(const QString &strategyId, const QString &instrumentId, int timeFrame, QObject *parent = nullptr);
-    void setParam(int strokeTimeFrame, double extraStopLoss, double maxAllowStopLoss, double AFstep, double AFmax);
+
+    void init() override;
     void onNewBar() override;
 
 protected:
+    BarCollector::TimeFrame strokeTimeframe;
     double extraSL, maxAllowSL;
     double AFstep, AFmax;
 
