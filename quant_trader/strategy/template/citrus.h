@@ -15,6 +15,7 @@ class Citrus : public SingleTimeFrameStrategy
     Q_PROPERTY(double MaxAllowSL MEMBER maxAllowSL)
     Q_PROPERTY(double AFstep MEMBER AFstep)
     Q_PROPERTY(double AFmax MEMBER AFmax)
+    Q_PROPERTY(int MaxPosition MEMBER maxPosition)
 
 public:
     explicit Citrus(const QString &strategyId, const QString &instrumentId, int timeFrame, QObject *parent = nullptr);
@@ -26,6 +27,7 @@ protected:
     BarCollector::TimeFrame strokeTimeframe;
     double extraSL, maxAllowSL;
     double AFstep, AFmax;
+    int maxPosition;
 
     Zen::SemiAutomaticStroke *sas;
 

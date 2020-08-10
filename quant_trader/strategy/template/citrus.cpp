@@ -11,6 +11,17 @@
 #include "delay_trailing_stop.h"
 #include "citrus.h"
 
+static int sgn(int i)
+{
+    if (i > 0) {
+        return 1;
+    }
+    if (i < 0) {
+        return -1;
+    }
+    return 0;
+}
+
 Citrus::Citrus(const QString &strategyId, const QString &instrumentId, int timeFrame, QObject *parent) :
     SingleTimeFrameStrategy(strategyId, instrumentId, timeFrame, new DelayTrailingStop, parent)
 {
@@ -23,7 +34,8 @@ void Citrus::init()
                                  << ", Extra StopLoss = " << extraSL
                                  << ", MaxAllow StopLoss = " << maxAllowSL
                                  << ", AFstep = " << AFstep
-                                 << ", AFmax  = " << AFmax;
+                                 << ", AFmax = " << AFmax
+                                 << ", MaxPosition = " << maxPosition;
 
     auto pInd = pTrader->registerIndicator(instrumentID, (int)strokeTimeframe, "SemiAutomaticStroke", instrumentID, (int)strokeTimeframe);
     addDepend(pInd);
@@ -117,19 +129,19 @@ void Citrus::onNewBar()
     }
 
     // 5. Set position
-    if (getPosition() != upDown) {
+    if (sgn(getPosition()) != upDown) {
         double stopLoss = (upDown == 1) ?
                     (sas->lowestSince(itLastConfirmedStroke->startIndex()) - extraSL) :
                     (sas->highestSince(itLastConfirmedStroke->startIndex()) + extraSL);
         if (qAbs(lastBar->close - stopLoss) <= maxAllowSL) {
             delete pTrailing;
             pTrailing = new DelayTrailingStop((upDown == 1), stopLoss, lastBar->close, (lastBar->close * 2 - stopLoss), AFstep, AFmax);
-            setPosition(upDown);
+            setPosition(upDown * maxPosition);
         } else {
             qInfo().noquote() << strategyID << "Stop loss exceed max allow SL!" << lastBar->close << stopLoss << maxAllowSL;
         }
     }
-    if (getPosition() == upDown) {
+    if (sgn(getPosition()) == upDown) {
         lastOpenTime = timestamp;
     }
 }
