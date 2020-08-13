@@ -32,7 +32,7 @@ protected:
     virtual void onNewBar() = 0;
 
 public:
-    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, TrailingStop *pTrailingStop, QObject *parent = nullptr);
+    explicit SingleTimeFrameStrategy(const QString &id, const QString &instrumentID, int timeFrame, TrailingStop *pTrailingStop = nullptr, QObject *parent = nullptr);
     ~SingleTimeFrameStrategy() override;
 
     //!< Should be called after init

@@ -65,11 +65,11 @@ public:
     void init() override;
 
 protected:
-    int openVol;
-    int addOn1Vol;
-    int bandsPeriod;
-    double bandsDeviations;
-    double stdDevThreshold;
+    int openVol = 1;
+    int addOn1Vol = 1;
+    int bandsPeriod = 20;
+    double bandsDeviations = 2.0;
+    double stdDevThreshold = 0.0;
 
     MQL5Indicator *bb;
     DivergentBar *divergentBar;

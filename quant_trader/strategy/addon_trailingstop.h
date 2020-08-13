@@ -28,7 +28,7 @@ public:
     void setParameter(int openVol, int addOn1Vol);
 
 protected:
-    double AFstep, AFmax;
+    double AFstep = 0.02, AFmax = 0.2;
 
     int addOnSequence[4];
     const int maxAddOnIdx;
