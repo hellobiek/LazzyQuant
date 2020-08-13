@@ -25,10 +25,10 @@ public:
     void onNewBar() override;
 
 protected:
-    int maPeriod;
-    int maShift;
-    ENUM_MA_METHOD maMethod;
-    ENUM_APPLIED_PRICE maAppliedPrice;
+    int maPeriod = 5;
+    int maShift = 0;
+    ENUM_MA_METHOD maMethod = MODE_SMA;
+    ENUM_APPLIED_PRICE maAppliedPrice = PRICE_CLOSE;
 
     MQL5Indicator *ma;
     IndicatorBuffer<double> maBuffer;

@@ -20,8 +20,8 @@ public:
     void onNewBar() override;
 
 protected:
-    BarCollector::TimeFrame strokeTimeframe;
-    double AFstep, AFmax;
+    BarCollector::TimeFrame strokeTimeframe = BarCollector::MIN1;
+    double AFstep = 0.02, AFmax = 0.2;
 
     Lime2 *pLime2 = nullptr;
     MQL5Indicator *ao;

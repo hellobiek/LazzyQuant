@@ -13,7 +13,7 @@ class Tangerine : public Citrus
     Q_OBJECT
     Q_PROPERTY(bool ExpectDirection MEMBER expectDirection)
 
-    bool expectDirection;
+    bool expectDirection = false;
 
 public:
     Q_INVOKABLE explicit Tangerine(const QString &strategyId, const QString &instrumentId, int timeFrame, QObject *parent = nullptr);

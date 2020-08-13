@@ -24,10 +24,10 @@ public:
     void onNewBar() override;
 
 protected:
-    BarCollector::TimeFrame strokeTimeframe;
-    double extraSL, maxAllowSL;
-    double AFstep, AFmax;
-    int maxPosition;
+    BarCollector::TimeFrame strokeTimeframe = BarCollector::MIN1;
+    double extraSL = 1.0, maxAllowSL = 1.0;
+    double AFstep = 0.02, AFmax = 0.2;
+    int maxPosition = 1;
 
     Zen::SemiAutomaticStroke *sas;
 
