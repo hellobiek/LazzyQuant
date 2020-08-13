@@ -23,6 +23,8 @@ SingleTimeFrameStrategy::SingleTimeFrameStrategy(const QString &id, const QStrin
 SingleTimeFrameStrategy::~SingleTimeFrameStrategy()
 {
     qDebug().noquote() << "~SingleTimeFrameStrategy dtor, id =" << strategyID << ", instrument =" << instrumentID << ", timeFrame =" << QMetaEnum::fromType<BarCollector::TimeFrames>().valueToKey(timeFrames);
+
+    delete pTrailing;
 }
 
 void SingleTimeFrameStrategy::loadStatus()

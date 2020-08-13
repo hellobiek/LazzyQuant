@@ -187,7 +187,7 @@ QList<StandardBar>* QuantTrader::getBars(const QString &instrumentID, int timeFr
     }
 
     if (!collector_map.contains(instrumentID)) {
-        qWarning() << "Warning! Missing collector for" << instrumentID << "!";
+        qWarning().noquote() << "Missing collector for" << instrumentID << "!";
     }
 
     return &barList;

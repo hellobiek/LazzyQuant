@@ -20,12 +20,12 @@ public:
     void onNewBar() override;
 
 protected:
-    int fastPeriod;
-    int slowPeriod;
-    ENUM_MA_METHOD maMethod;
-    ENUM_APPLIED_PRICE appliedPrice;
-    double SARStep;
-    double SARMaximum;
+    int fastPeriod = 10;
+    int slowPeriod = 30;
+    ENUM_MA_METHOD maMethod = MODE_SMA;
+    ENUM_APPLIED_PRICE appliedPrice = PRICE_CLOSE;
+    double SARStep = 0.02;
+    double SARMaximum = 0.2;
 
     MQL5Indicator *fast_ma;
     MQL5Indicator *slow_ma;

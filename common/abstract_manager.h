@@ -169,9 +169,16 @@ void ReplayManager<R, T, E>::init()
             }
         }
 
+        if (replayDates.empty()) {
+            qWarning() << "The replay settings is NOT OK!";
+            QMetaObject::invokeMethod(qApp, &QCoreApplication::quit, Qt::QueuedConnection);
+            return;
+        }
+
         if (quitAfterReplay) {
+            auto lastReplayDate = replayDates.last();
             QObject::connect(pReplayer, &R::endOfReplay, [=](const QString &day) -> void {
-                if (day == endDay) {
+                if (day == lastReplayDate) {
                     QCoreApplication::quit();
                 }
             });
