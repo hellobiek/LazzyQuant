@@ -12,9 +12,17 @@ MarketWatcherDbus::MarketWatcherDbus(bool atWeekend)
             pWatcher->setWeekend();
         }
         new Market_watcherAdaptor(pWatcher);
-        dbus.registerObject(config.dbusObject, pWatcher);
-        dbus.registerService(config.dbusService);
-        watcherList.append(pWatcher);
+        if (dbus.registerService(config.dbusService)){
+            qInfo() << "register service success" << dbus.lastError();
+            if (dbus.registerObject(config.dbusObject, pWatcher)){
+                qInfo() << "register object success" << dbus.lastError();
+                watcherList.append(pWatcher);
+	    }else{
+                qInfo() << "register object failed" <<  dbus.lastError();
+	    }
+	}else{
+	    qInfo() << "register service failed" << config.dbusService << dbus.lastError();
+	}
     }
 }
 

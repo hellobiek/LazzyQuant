@@ -12,9 +12,17 @@ TradeExecuterDbus::TradeExecuterDbus(const QString &suffix)
         auto *pExecuter = new CtpExecuter(config.name);
         setupUpdateStateMachine(pExecuter);
         new Trade_executerAdaptor(pExecuter);
-        dbus.registerObject(config.dbusObject + suffix, pExecuter);
-        dbus.registerService(config.dbusService + suffix);
-        executerList.append(pExecuter);
+        if (dbus.registerService(config.dbusService + suffix)){
+            qInfo() << "register trade executer service success" << config.dbusService + suffix;
+            if (dbus.registerObject(config.dbusObject + suffix, pExecuter)){
+            	qInfo() << "register trade executer object success" << config.dbusObject + suffix;
+            	executerList.append(pExecuter);
+	        }else{
+                qInfo() << "register trade executer object failed" << dbus.lastError();
+	        }
+	    }else{
+            qInfo() << "register trade executer service failed" << config.dbusService + suffix << dbus.lastError();
+	    }
     }
 }
 

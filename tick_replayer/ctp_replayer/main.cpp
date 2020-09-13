@@ -15,8 +15,13 @@ int main(int argc, char *argv[])
 
     new Tick_replayerAdaptor(&replayer);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject(replayerConfigs[0].dbusObject, &replayer);
-    dbus.registerService(replayerConfigs[0].dbusService);
+    if (dbus.registerService(replayerConfigs[0].dbusService)){
+    	if (not dbus.registerObject(replayerConfigs[0].dbusObject, &replayer)){
+            qInfo() << "register dbus obj failed" << replayerConfigs[0].dbusObject << dbus.lastError();
+        }
+    }else{
+        qInfo() << "register service failed" << replayerConfigs[0].dbusService << dbus.lastError();
+    }
 
     return a.exec();
 }

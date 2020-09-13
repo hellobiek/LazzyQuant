@@ -3,6 +3,7 @@
 #endif
 
 #include <cfloat>
+#include <QDebug>
 #include <QSettings>
 #include <QTimer>
 #include <QTextCodec>
@@ -771,7 +772,6 @@ int CtpExecuter::settlementInfoConfirm()
     memset(&confirmField, 0, sizeof (CThostFtdcSettlementInfoConfirmField));
     strcpy(confirmField.BrokerID, brokerID);
     strcpy(confirmField.InvestorID, userID);
-
     int ret = pUserApi->ReqSettlementInfoConfirm(&confirmField, nRequestID++);
     Q_UNUSED(ret)
     return nRequestID;
@@ -1511,11 +1511,9 @@ void CtpExecuter::onMarketClose()
 QString CtpExecuter::getStatus() const
 {
     qInfo() << __FUNCTION__;
-    qDebug() << "loginState =" << loginState;
     CHECK_LOGIN_STATE_RET(QStringLiteral("NotReady"))
     CHECK_USER_CACHE_READY_RET(QStringLiteral("NotReady"))
     CHECK_MARKET_CACHE_READY_RET(QStringLiteral("NotReady"))
-
     return QStringLiteral("Ready");
 }
 
@@ -1657,7 +1655,6 @@ void CtpExecuter::updateOrderMap(const QString &instrument)
             }
         }
     }
-
     qryOrder(instrument);
 }
 

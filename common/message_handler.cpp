@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <QByteArray>
+#include <QDebug>
 #include <QDateTime>
+#include <QByteArray>
 #include <QCoreApplication>
 
 #include "message_handler.h"
@@ -53,6 +54,7 @@ static void toStdOutAndFile(QtMsgType type, const QMessageLogContext &context, c
     puts(localMsg.constData());
     fputs(localMsg.constData(), pLogFile);
     fputc('\n', pLogFile);
+    fflush(pLogFile);
     if (type == QtFatalMsg) {
         fclose(pLogFile);
         abort();
@@ -64,6 +66,7 @@ static void toFile(QtMsgType type, const QMessageLogContext &context, const QStr
     QByteArray localMsg = getLocalMsg(type, context, msg);
     fputs(localMsg.constData(), pLogFile);
     fputc('\n', pLogFile);
+    fflush(pLogFile);
     if (type == QtFatalMsg) {
         fclose(pLogFile);
         abort();

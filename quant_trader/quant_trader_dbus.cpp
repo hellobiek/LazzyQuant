@@ -19,7 +19,9 @@ using namespace com::lazzyquant;
 
 QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
 {
-    connectSqlDb(getSettingsSmart("sqldb_conn").get());
+    if (not connectSqlDb(getSettingsSmart("sqldb_conn").get())){
+        qCritical() << "quant trader connect to mysql failed";
+    }
     QuantTrader *pTrader = new QuantTrader(traderConfigs[0].name, options.saveBarsToDB());
 
     trade_executer *pExecuter = nullptr;
@@ -49,8 +51,8 @@ QuantTraderDbus::QuantTraderDbus(const QuantTraderOptions &options)
 
     new Quant_traderAdaptor(pTrader);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject(traderConfigs[0].dbusObject, pTrader);
     dbus.registerService(traderConfigs[0].dbusService);
+    dbus.registerObject(traderConfigs[0].dbusObject, pTrader);
 }
 
 QuantTraderDbus::~QuantTraderDbus()

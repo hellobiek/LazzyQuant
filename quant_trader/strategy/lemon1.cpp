@@ -99,7 +99,6 @@ QList<EnterSignalNeedConfirm*> Lemon1::getOpenSignals()
             wiseMans.append(new Class2WiseMan(false, 2, this));
         }
     }
-
     return wiseMans;
 }
 

@@ -85,6 +85,8 @@ void RealManager<W, T, E>::init()
             qWarning() << "MarketWatcher or TradeExecuter is not ready!";
         }
     };
+
+
     QMetaObject::invokeMethod(pTrader, checkPrepare, Qt::QueuedConnection);
 
     if (pExecuter) {
@@ -191,6 +193,4 @@ void ReplayManager<R, T, E>::init()
         }, Qt::QueuedConnection);
     }
 }
-
-
 #endif // ABSTRACT_MANAGER_H
